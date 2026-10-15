@@ -1,0 +1,521 @@
+﻿ <!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>122崔溢文的《高级网页设计》课堂实践</title>
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --bg-mid: #111827;
+            --panel: rgba(15, 23, 42, 0.75);
+            --panel-light: rgba(255, 255, 255, 0.08);
+            --card: rgba(255, 255, 255, 0.08);
+            --line: rgba(148, 163, 184, 0.2);
+            --text: #e5eefb;
+            --muted: #b4c3d9;
+            --primary: #7dd3fc;
+            --primary-strong: #38bdf8;
+            --accent: #f9a8d4;
+            --accent-2: #a7f3d0;
+            --gold: #fbbf24;
+            --shadow: 0 20px 45px rgba(15, 23, 42, 0.4);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+            background:
+                radial-gradient(circle at top left, rgba(59, 130, 246, 0.28), transparent 32%),
+                radial-gradient(circle at bottom right, rgba(236, 72, 153, 0.2), transparent 30%),
+                linear-gradient(135deg, var(--bg-dark), var(--bg-mid));
+            color: var(--text);
+        }
+
+        .wrapper {
+            width: min(1200px, calc(100% - 40px));
+            margin: 0 auto;
+            padding: 40px 0 70px;
+        }
+
+        .header {
+            position: relative;
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid var(--line);
+            border-radius: 24px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            margin-bottom: 32px;
+        }
+
+        .header::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(120deg, rgba(125, 211, 252, 0.12), rgba(249, 168, 212, 0.08), rgba(167, 243, 208, 0.12));
+            pointer-events: none;
+        }
+
+        .header-inner {
+            position: relative;
+            z-index: 1;
+            padding: 42px 36px 30px;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 999px;
+            background: rgba(125, 211, 252, 0.12);
+            border: 1px solid rgba(125, 211, 252, 0.35);
+            color: var(--primary);
+            font-size: 12px;
+            letter-spacing: 1px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            margin: 18px 0 12px;
+            font-size: clamp(2rem, 4vw, 3.2rem);
+            line-height: 1.2;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            margin: 0;
+            color: var(--muted);
+            font-size: 1.04rem;
+            line-height: 1.8;
+            max-width: 820px;
+        }
+
+        .meta {
+            margin-top: 24px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .meta-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 10px 16px;
+            color: var(--text);
+            font-size: 0.95rem;
+        }
+
+        .section {
+            margin-top: 28px;
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 22px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+        }
+
+        .section-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 22px 26px 16px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .section-head h2 {
+            margin: 0;
+            font-size: clamp(1.3rem, 2vw, 2rem);
+        }
+
+        .badge {
+            padding: 7px 12px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, rgba(250, 204, 21, 0.18), rgba(244, 114, 182, 0.16));
+            color: var(--gold);
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 22px;
+            padding: 26px;
+        }
+
+        .card {
+            background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            padding: 22px 20px;
+            transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: "";
+            position: absolute;
+            inset: 0 auto auto 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent), var(--accent-2));
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(125, 211, 252, 0.5);
+            box-shadow: 0 18px 30px rgba(14, 116, 144, 0.16);
+        }
+
+        .card-number {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 10px;
+            background: rgba(125, 211, 252, 0.12);
+            color: var(--primary);
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-bottom: 14px;
+        }
+
+        .card h3 {
+            margin: 0 0 12px;
+            font-size: 1.25rem;
+        }
+
+        .card p {
+            margin: 0 0 18px;
+            color: var(--muted);
+            line-height: 1.7;
+            min-height: 74px;
+        }
+
+        .card a {
+            display: inline-block;
+            text-decoration: none;
+            color: #08111d;
+            background: linear-gradient(135deg, var(--primary), var(--accent-2));
+            font-weight: 700;
+            padding: 10px 16px;
+            border-radius: 12px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .card a:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 18px rgba(125, 211, 252, 0.35);
+        }
+
+        .prompt-box {
+            padding: 26px;
+        }
+
+        blockquote {
+            margin: 0;
+            padding: 22px 24px;
+            border-left: 4px solid var(--accent);
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text);
+            line-height: 1.9;
+            font-size: 1rem;
+            white-space: pre-wrap;
+        }
+
+        .footer {
+            margin-top: 30px;
+            color: var(--muted);
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .cui-pill-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding: 26px;
+        }
+
+        .cui-pill {
+            display: inline-block;
+            text-decoration: none;
+            padding: 10px 16px;
+            border-radius: 999px;
+            background: rgba(125, 211, 252, 0.1);
+            border: 1px solid rgba(125, 211, 252, 0.35);
+            color: var(--primary);
+            font-size: 0.92rem;
+            font-weight: 700;
+            transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .cui-pill:hover {
+            transform: translateY(-2px);
+            background: rgba(125, 211, 252, 0.2);
+            box-shadow: 0 8px 18px rgba(125, 211, 252, 0.25);
+        }
+
+        @media (max-width: 640px) {
+            .wrapper {
+                width: min(100% - 20px, 1200px);
+                padding-top: 20px;
+            }
+
+            .header-inner,
+            .section-head,
+            .card-grid,
+            .prompt-box,
+            .cui-pill-grid {
+                padding-left: 18px;
+                padding-right: 18px;
+            }
+
+            .section-head {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <header class="header">
+            <div class="header-inner">
+                <div class="tag">课程作品集</div>
+                <h1>122崔溢文的《高级网页设计》课堂实践</h1>
+                <p class="subtitle">
+                    这是一次以 HTML + CSS 为核心的前端学习实践，涵盖了网页结构、表单设计、图片与表格应用、层叠样式与选择器等内容，
+                    每一个页面都记录了我在课堂中的学习成果与创意尝试。
+                </p>
+                <div class="meta">
+                    <div class="meta-item">学号：24001010122</div>
+                    <div class="meta-item">姓名：崔溢文</div>
+                    <div class="meta-item">班级：计算机24001</div>
+                </div>
+            </div>
+        </header>
+
+        <section class="section">
+            <div class="section-head">
+                <h2>作品导航</h2>
+                <span class="badge">HTML/CSS 实践</span>
+            </div>
+            <div class="card-grid">
+                <article class="card">
+                    <div class="card-number">作业 01</div>
+                    <h3>2-1.html</h3>
+                    <p>基础 HTML 结构与网页元素练习，涵盖文本、标题、列表与常用标签的组合使用。</p>
+                    <a href="2-1.html" target="_blank" rel="noopener">访问页面</a>
+                </article>
+
+                <article class="card">
+                    <div class="card-number">作业 02</div>
+                    <h3>2-2.html</h3>
+                    <p>超链接、图片插入以及表格布局的综合示例，体现了网页中常见内容组织方式。</p>
+                    <a href="2-2.html" target="_blank" rel="noopener">访问页面</a>
+                </article>
+
+                <article class="card">
+                    <div class="card-number">作业 03</div>
+                    <h3>3-1form.html</h3>
+                    <p>表单元素实战，包括文本框、密码框、单选、多选、下拉列表和文件上传等内容。</p>
+                    <a href="3-1form.html" target="_blank" rel="noopener">访问页面</a>
+                </article>
+
+                <article class="card">
+                    <div class="card-number">作业 04</div>
+                    <h3>3-2 css.html</h3>
+                    <p>CSS 初步学习，展示了基础样式设置、盒子布局和文本颜色、背景的控制方法。</p>
+                    <a href="3-2 css.html" target="_blank" rel="noopener">访问页面</a>
+                </article>
+
+                <article class="card">
+                    <div class="card-number">作业 05</div>
+                    <h3>4-1 css2.html</h3>
+                    <p>CSS 进阶实例，练习了群组选择器、后代选择器与结构化样式设计等知识点。</p>
+                    <a href="4-1 css2.html" target="_blank" rel="noopener">访问页面</a>
+                </article>
+
+                <article class="card">
+                    <div class="card-number">作业 06</div>
+                    <h3>5-1 层叠与继承.html</h3>
+                    <p>围绕层叠顺序、优先级和样式继承展开，展示 CSS 规则生效逻辑的实践示例。</p>
+                    <a href="5-1 层叠与继承.html" target="_blank" rel="noopener">访问页面</a>
+                </article>
+
+                <article class="card">
+                    <div class="card-number">作业 07</div>
+                    <h3>5-2 盒模型.html</h3>
+                    <p>深入学习盒模型，包括内容区、内边距、边框与外边距的组成，以及布局间距控制。</p>
+                    <a href="5-2 盒模型.html" target="_blank" rel="noopener">访问页面</a>
+                </article>
+
+                <article class="card">
+                    <div class="card-number">作业 08</div>
+                    <h3>6-1 flex.html</h3>
+                    <p>Flex 弹性布局练习，用于实现横向和纵向排列、对齐与空间分配的网页布局效果。</p>
+                    <a href="6-1 flex.html" target="_blank" rel="noopener">访问页面</a>
+                </article>
+
+                <article class="card">
+                    <div class="card-number">作业 09</div>
+                    <h3>6-2 一左一右.html</h3>
+                    <p>左右分栏页面设计，练习响应式布局思路与页面结构的视觉平衡。</p>
+                    <a href="6-2 一左一右.html" target="_blank" rel="noopener">访问页面</a>
+                </article>
+
+                <article class="card">
+                    <div class="card-number">作业 10</div>
+                    <h3>7-1 上图下文.html</h3>
+                    <p>上图下文组合布局的典型页面结构，强调图片展示与文字说明的层次感设计。</p>
+                    <a href="7-1 上图下文.html" target="_blank" rel="noopener">访问页面</a>
+                </article>
+
+                <article class="card">
+                    <div class="card-number">作业 11</div>
+                    <h3>7-2 左图右文.html</h3>
+                    <p>左图右文排版实例，展现图文混排与信息层级优化的常见网页表现形式。</p>
+                    <a href="7-2 左图右文.html" target="_blank" rel="noopener">访问页面</a>
+                </article>
+
+                <article class="card">
+                    <div class="card-number">作业 12</div>
+                    <h3>8-1 css3 选择器.html</h3>
+                    <p>CSS3 选择器练习，重点应用属性选择器、伪类和结构选择器提升页面样式表达能力。</p>
+                    <a href="8-1 css3 选择器.html" target="_blank" rel="noopener">访问页面</a>
+                </article>
+
+                <article class="card">
+                    <div class="card-number">作业 13</div>
+                    <h3>9-1 transition.html</h3>
+                    <p>过渡动画实践，展示元素状态变化时的平滑动画效果与交互细节设计。</p>
+                    <a href="9-1 transition.html" target="_blank" rel="noopener">访问页面</a>
+                </article>
+
+                <article class="card">
+                    <div class="card-number">作业 14</div>
+                    <h3>10-1 animation.html</h3>
+                    <p>纯 CSS 动画练习，通过关键帧组合实现颜色渐变、浮动、旋转与发光效果。</p>
+                    <a href="10-1 animation.html" target="_blank" rel="noopener">访问页面</a>
+                </article>
+
+                <article class="card">
+                    <div class="card-number">作业 15</div>
+                    <h3>10-2.html</h3>
+                    <p>CSS 动画幻灯片，三张图片淡入淡出自动轮播，带标题与文字信息浮层。</p>
+                    <a href="10-2.html" target="_blank" rel="noopener">访问页面</a>
+                </article>
+
+                <article class="card">
+                    <div class="card-number">作业 16</div>
+                    <h3>10-3.html</h3>
+                    <p>响应式全屏动画页面，元素随窗口尺寸自适应并保持动画表现。</p>
+                    <a href="10-3.html" target="_blank" rel="noopener">访问页面</a>
+                </article>
+
+                <article class="card">
+                    <div class="card-number">作业 17</div>
+                    <h3>10-4.html</h3>
+                    <p>响应式布局练习，不同屏幕宽度下的自适应排版与结构重排。</p>
+                    <a href="10-4.html" target="_blank" rel="noopener">访问页面</a>
+                </article>
+
+                <article class="card">
+                    <div class="card-number">作业 18</div>
+                    <h3>11-1.html</h3>
+                    <p>CSS 长度单位可视化演示：绝对单位与 em/rem/vw/%/fr 等相对单位的对比速查。</p>
+                    <a href="11-1.html" target="_blank" rel="noopener">访问页面</a>
+                </article>
+
+                <article class="card">
+                    <div class="card-number">作业 19</div>
+                    <h3>11-2.html</h3>
+                    <p>CSS3 3D 动画：旋转立方体、悬停翻转卡片、环形轮播与倾斜交互四大透视效果。</p>
+                    <a href="11-2.html" target="_blank" rel="noopener">访问页面</a>
+                </article>
+
+                <article class="card">
+                    <div class="card-number">作业 20</div>
+                    <h3>11-4.html</h3>
+                    <p>CSS3 3D 图片动画：图片立方体、图片环形轮播、翻转卡片与 3D 图片墙。</p>
+                    <a href="11-4.html" target="_blank" rel="noopener">访问页面</a>
+                </article>
+
+                <article class="card">
+                    <div class="card-number">作业 21</div>
+                    <h3>网页元素1原图实现.html</h3>
+                    <p>根据原图还原网页元素的实现练习，锻炼结构拆解与样式复刻能力。</p>
+                    <a href="网页元素1原图实现.html" target="_blank" rel="noopener">访问页面</a>
+                </article>
+
+                <article class="card">
+                    <div class="card-number">作业 22</div>
+                    <h3>网页元素2原图实现.html</h3>
+                    <p>第二组原图还原练习，对照设计稿实现对应的 HTML 与 CSS 结构。</p>
+                    <a href="网页元素2原图实现.html" target="_blank" rel="noopener">访问页面</a>
+                </article>
+
+                <article class="card">
+                    <div class="card-number">作业 23</div>
+                    <h3>网页元素3原图实现.html</h3>
+                    <p>第三组原图还原练习，综合运用布局与样式还原视觉细节。</p>
+                    <a href="网页元素3原图实现.html" target="_blank" rel="noopener">访问页面</a>
+                </article>
+
+                <article class="card">
+                    <div class="card-number">综合实例</div>
+                    <h3>index.html（好书推荐）</h3>
+                    <p>好书推荐主题综合页，内含 b1–b12 共 12 个图书详情子页的入口。</p>
+                    <a href="index.html" target="_blank" rel="noopener">访问页面</a>
+                </article>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="section-head">
+                <h2>图书详情页</h2>
+                <span class="badge">b1 – b12</span>
+            </div>
+            <div class="cui-pill-grid">
+                <a class="cui-pill" href="b1.html" target="_blank" rel="noopener">b1 月亮与六便士</a>
+                <a class="cui-pill" href="b2.html" target="_blank" rel="noopener">b2 朝花夕拾</a>
+                <a class="cui-pill" href="b3.html" target="_blank" rel="noopener">b3 杀死一只知更鸟</a>
+                <a class="cui-pill" href="b4.html" target="_blank" rel="noopener">b4 边城</a>
+                <a class="cui-pill" href="b5.html" target="_blank" rel="noopener">b5 追风筝的人</a>
+                <a class="cui-pill" href="b6.html" target="_blank" rel="noopener">b6 活着</a>
+                <a class="cui-pill" href="b7.html" target="_blank" rel="noopener">b7 长安的荔枝</a>
+                <a class="cui-pill" href="b8.html" target="_blank" rel="noopener">b8 解忧杂货店</a>
+                <a class="cui-pill" href="b9.html" target="_blank" rel="noopener">b9 傲慢与偏见</a>
+                <a class="cui-pill" href="b10.html" target="_blank" rel="noopener">b10 小王子</a>
+                <a class="cui-pill" href="b11.html" target="_blank" rel="noopener">b11 百年孤独</a>
+                <a class="cui-pill" href="b12.html" target="_blank" rel="noopener">b12 挪威的森林</a>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="section-head">
+                <h2>本提示词</h2>
+                <span class="badge">原始要求</span>
+            </div>
+            <div class="prompt-box">
+                <blockquote>“创建一个新页面，包括本目录下的所有网页的超链接，使用原生代码，不使用cdn，新页面名称为index.html，主题为122崔溢文的《高级网页设计》课堂实践，美化页面，页面中包括本提示词。”</blockquote>
+            </div>
+        </section>
+
+        <div class="footer">© 2026 122 崔溢文 · 《高级网页设计》课堂实践</div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,125 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>css3</title>
+    <style>
+        .main{
+            display: flex;
+            flex-wrap: wrap;
+            margin:10px;
+        }
+        .box{
+            width: 150px;
+            height: 150px;
+            border: 1px solid #ccc;
+            margin: 10px;
+            display: flex;
+            /*水平垂直居中*/
+            justify-content: center;
+            align-items: center;
+            font-size: 40px;
+            transition:all 0.6s;
+            box-sizing: border-box;
+            /*width:包含padding和border*/
+        }
+        .box:first-child:hover
+        {
+            background-color: red;
+            color: white;
+            font-size: 140px;
+        }
+        .box:nth-child(2):hover
+        {
+            border-radius: 50%;
+            border-width: 10px;
+        }
+        .box:nth-child(3):hover
+        {
+            box-shadow: 10px  10px  10px #ccc;
+        }
+        .box:nth-of-type(4):hover
+        {
+            text-shadow: 100px 10px 10px #5c3abb;
+        }
+        .box:nth-of-type(5):hover
+        {
+           /*线性渐变*/
+           background: linear-gradient(red,blue);
+        }
+        .box:nth-of-type(5)+.box
+        {
+            /*径向渐变*/
+            background: radial-gradient(red,blue);
+        }
+        .box:nth-of-type(7):hover
+        {
+            transform:scale(0.5);
+
+        }
+        .box:nth-child(8):hover
+        {
+            transform:translateX(-150px);
+        }
+        .box:nth-child(9):hover
+        {
+            transform:rotateX(-180deg);
+        }
+        .box:nth-child(10):hover
+        {
+            transform:skewX(20deg) translateY(50px);
+        }
+        .box:nth-last-child(2):hover::before
+        {
+            content: "*";
+            color: red;
+        }
+        .box:nth-child(12):hover::after
+        {
+            content: "崔溢文";
+            display: block;
+            padding:  5px 10px;
+            font-size: 16px;
+        }
+        .box:nth-child(3n):hover
+        {
+            border: 3px solid red;
+        }
+        .box:nth-child(2n):hover
+        {
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4, #fbc2eb);
+            border: 4px dashed #3d3d3d;
+            box-shadow: 0 0 25px rgba(92, 58, 187, 0.5);
+            color: #fff;
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4);
+        }
+        .box:nth-child(8):hover
+        {
+            transform: translateX(-150px) translateY(-12px) scale(1.08) rotateZ(5deg);
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4, #fbc2eb);
+            border: 4px dashed #3d3d3d;
+            box-shadow: 0 0 25px rgba(92, 58, 187, 0.5);
+            color: #fff;
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4);
+        }
+     </style>
+</head>
+<body>
+    <div class="main">
+       <div class="box">1</div>
+       <div class="box">2</div>
+       <div class="box">3</div>
+       <div class="box">4</div>
+       <div class="box">5</div>
+       <div class="box">6</div>
+       <div class="box">7</div>
+       <div class="box">8</div>
+       <div class="box">9</div>
+       <div class="box">10</div>
+       <div class="box">11</div>
+       <div class="box">12</div>
+    </div>
+    
+</body>
+</html>
