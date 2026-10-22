@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>13-4 SVG 图标 · 移动端底部导航</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cui-brand: #0f9d8f;
+    --cui-ink: #1f2733;
+    --cui-muted: #7a8296;
+    --cui-line: #e2ece9;
+    --cui-red: #ff3b30;
+  }
+
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    font-family: "Microsoft YaHei", "PingFang SC", system-ui, -apple-system, sans-serif;
+    background: #f1f6f4;
+    color: var(--cui-ink);
+    min-height: 100vh;
+    /* 给固定导航留出高度（98px），避免内容被挡住（含 iPhone 底部安全区） */
+    padding-bottom: calc(98px + env(safe-area-inset-bottom));
+  }
+
+  /* 内联的 SVG 雪碧图（symbol 集合），本身不可见 */
+  .cui-sprite {
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+  }
+
+  /* ---------- 顶栏 ---------- */
+  .cui-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: #fff;
+    border-bottom: 1px solid var(--cui-line);
+    padding: 14px 16px;
+  }
+
+  .cui-crumb {
+    font-size: 12px;
+    color: var(--cui-brand);
+    margin-bottom: 2px;
+  }
+
+  .cui-topbar h1 { font-size: 19px; }
+
+  .cui-sub {
+    font-size: 12.5px;
+    color: var(--cui-muted);
+    margin-top: 3px;
+  }
+
+  /* ---------- 内容区 ---------- */
+  .cui-main {
+    max-width: 640px;      /* 手机上等于全屏，桌面上居中，导航仍保持全屏宽 */
+    margin: 0 auto;
+    padding: 16px;
+  }
+
+  .cui-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 14px;
+    box-shadow: 0 4px 14px rgba(31, 39, 51, .06);
+  }
+
+  .cui-card h2 {
+    font-size: 16px;
+    margin-bottom: 10px;
+    padding-left: 9px;
+    border-left: 3px solid var(--cui-brand);
+  }
+
+  .cui-points { list-style: none; }
+
+  .cui-points li {
+    position: relative;
+    font-size: 13.5px;
+    color: #4a5265;
+    padding: 5px 0 5px 16px;
+    line-height: 1.7;
+  }
+
+  .cui-points li::before {
+    content: "";
+    position: absolute;
+    left: 2px;
+    top: 13px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--cui-brand);
+  }
+
+  code {
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 12.5px;
+    background: #e7f4f1;
+    color: #0b6f65;
+    padding: 1px 5px;
+    border-radius: 4px;
+  }
+
+  .cui-code {
+    background: #10201e;
+    color: #d5e8e3;
+    border-radius: 10px;
+    padding: 14px;
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 12.5px;
+    line-height: 1.75;
+    overflow-x: auto;
+    white-space: pre;
+  }
+
+  .cui-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 0;
+    border-bottom: 1px dashed var(--cui-line);
+  }
+
+  .cui-row:last-child { border-bottom: none; }
+
+  .cui-avatar {
+    flex: 0 0 auto;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #0f9d8f, #63d5c8);
+    color: #fff;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .cui-row-text { flex: 1 1 auto; min-width: 0; }
+
+  .cui-row-text b { display: block; font-size: 14.5px; font-weight: 600; }
+
+  .cui-row-text span {
+    display: block;
+    font-size: 12.5px;
+    color: var(--cui-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .cui-row-time { font-size: 12px; color: #a3a9b8; }
+
+  .cui-foot { text-align: center; margin: 22px 0 6px; }
+
+  .cui-foot a {
+    display: inline-block;
+    background: var(--cui-brand);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 999px;
+    padding: 9px 26px;
+    font-size: 14px;
+  }
+
+  .cui-foot a:hover { background: #0b7a70; }
+
+  /* ---------- 固定底部导航：全屏宽度 ---------- */
+  .cui-tabbar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    max-width: none;
+    z-index: 99;
+    display: flex;
+    background: #f9f9f9;
+    border-top: 1px solid rgba(0, 0, 0, .08);
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, .04);
+    padding-bottom: env(safe-area-inset-bottom);
+    height: 98px;
+  }
+
+  .cui-nav-item {
+    position: relative;
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 2px 8px;
+    text-decoration: none;
+    color: #ff8d32;
+    font-size: 16px;
+    transition: color .2s ease;
+  }
+
+  .cui-icon-box {
+    position: relative;
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    color: #111;
+    overflow: visible;
+  }
+
+  /* SVG 图标：整只图形用填充渲染，颜色继承文字色 currentColor */
+  .cui-nav-svg {
+    width: 38px;
+    height: 38px;
+    display: block;
+    fill: currentColor;
+    stroke: none;
+  }
+
+  /* 数字徽章：挂在图标方框的右上角 */
+  .cui-badge {
+    position: absolute;
+    top: 4px;
+    right: -6px;
+    min-width: 22px;
+    height: 22px;
+    padding: 0 6px;
+    background: #ff7a1a;
+    color: #fff;
+    border-radius: 11px;
+    font: 700 12px/22px Arial, "Microsoft YaHei", sans-serif;
+    text-align: center;
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 0 2px #f9f9f9;
+    z-index: 2;
+  }
+
+  /* 我的红点：跟论坛数字徽章一样，挂在图标右上角 */
+  .cui-dot {
+    position: absolute;
+    top: 2px;
+    right: 6px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--cui-red);
+    box-shadow: 0 0 0 2px #f9f9f9;
+    z-index: 3;
+    display: block;
+  }
+
+  .cui-nav-item:last-child .cui-dot {
+    top: 4px;
+    right: -6px;
+    width: 10px;
+    height: 10px;
+  }
+
+  .cui-label {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1;
+    font-weight: 500;
+    color: #ff8d32;
+    letter-spacing: .5px;
+  }
+
+  /* 当前选中项：fill: currentColor 让 SVG 图标跟着 color 一起换色 */
+  .cui-nav-item[aria-current="page"] .cui-nav-svg,
+  .cui-nav-item[aria-current="page"] .cui-label {
+    color: var(--cui-brand);
+    font-weight: 700;
+  }
+
+  @media (max-width: 360px) {
+    .cui-nav-item { font-size: 13px; }
+    .cui-nav-svg { width: 30px; height: 30px; }
+    .cui-badge {
+      min-width: 20px;
+      height: 20px;
+      padding: 0 5px;
+      font-size: 11px;
+      line-height: 20px;
+      border-radius: 10px;
+      right: -4px;
+    }
+    .cui-dot { right: 6px; top: 2px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SVG 雪碧图：源码取自 font/iconfont.js 中的 <symbol>（不运行 JS，仅内联 SVG 片段）；已删除写死的 fill 属性，颜色统一交给 fill: currentColor -->
+<svg class="cui-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+  <symbol id="icon-shujia" viewBox="0 0 1024 1024"><path d="M892.6 957.7H134.1c-19.3 0-35-15.7-35-35V97.9c0-19.3 15.7-35 35-35h758.4c19.3 0 35 15.7 35 35v824.7c0.1 19.4-15.6 35.1-34.9 35.1z m-747.5-46h736.4V108.9H145.1v802.8z"></path><path d="M889.2 375.5H137.5c-12.7 0-23-10.3-23-23s10.3-23 23-23h751.8c12.7 0 23 10.3 23 23s-10.4 23-23.1 23zM889.2 691.1H137.5c-12.7 0-23-10.3-23-23s10.3-23 23-23h751.8c12.7 0 23 10.3 23 23s-10.4 23-23.1 23z"></path><path d="M513.3 941.6c-12.7 0-23-10.3-23-23V89.7c0-12.7 10.3-23 23-23s23 10.3 23 23v828.9c0 12.7-10.3 23-23 23zM270.7 660.5c-10.3 0-19.7-7-22.3-17.4l-27.1-108.4c-3.1-12.3 4.4-24.8 16.7-27.9 12.3-3.1 24.8 4.4 27.9 16.7L293 631.9c3.1 12.3-4.4 24.8-16.7 27.9-1.9 0.5-3.8 0.7-5.6 0.7zM201.4 661.5c-10.3 0-19.7-7-22.3-17.4L152 535.6c-3.1-12.3 4.4-24.8 16.7-27.9 12.3-3.1 24.8 4.4 27.9 16.7l27.1 108.4c3.1 12.3-4.4 24.8-16.7 27.9-1.8 0.6-3.7 0.8-5.6 0.8zM666.4 368.7c-10.3 0-19.7-7-22.3-17.4L617 242.8c-3.1-12.3 4.4-24.8 16.7-27.9 12.3-3.1 24.8 4.4 27.9 16.7L688.7 340c3.1 12.3-4.4 24.8-16.7 27.9-1.9 0.6-3.8 0.8-5.6 0.8zM597.1 369.7c-10.3 0-19.7-7-22.3-17.4l-27.1-108.4c-3.1-12.3 4.4-24.8 16.7-27.9 12.3-3.1 24.8 4.4 27.9 16.7l27.1 108.4c3.1 12.3-4.4 24.8-16.7 27.9-1.9 0.4-3.7 0.7-5.6 0.7zM677.2 940.4c-10.3 0-19.7-7-22.3-17.4l-27.1-108.4c-3.1-12.3 4.4-24.8 16.7-27.9 12.3-3.1 24.8 4.4 27.9 16.7l27.1 108.4c3.1 12.3-4.4 24.8-16.7 27.9-1.8 0.5-3.7 0.7-5.6 0.7zM608 941.4c-10.3 0-19.7-7-22.3-17.4l-27.1-108.4c-3.1-12.3 4.4-24.8 16.7-27.9 12.3-3.1 24.8 4.4 27.9 16.7l27.1 108.4c3.1 12.3-4.4 24.8-16.7 27.9-1.9 0.5-3.8 0.7-5.6 0.7z"></path><path d="M683.4 445.8c-8.2 0-14.9-6.6-15-14.9-0.1-8.3 6.6-15.1 14.9-15.1l19.8-0.2c8.3-0.1 15.1 6.6 15.1 14.9 0.1 8.3-6.6 15.1-14.9 15.1l-19.8 0.2h-0.1z"></path><path d="M836.6 622.6c-8.3 0-15-6.7-15-15V480.3c-1-14.9-6.3-24.7-16.3-29.9-7.3-3.8-14.7-3.8-14.7-3.8h-37.1c-8.3 0-15-6.7-15-15s6.7-15 15-15H790c2.6 0 15.6 0.1 29.2 7.2 13.7 7.1 30.4 22.5 32.4 55.2v128.6c0 8.3-6.7 15-15 15z"></path></symbol>
+  <symbol id="icon-faxian1" viewBox="0 0 1024 1024"><path d="M512 62C263.5 62 62 263.5 62 512s201.5 450 450 450 450-201.5 450-450S760.5 62 512 62z m0 810c-198.8 0-360-161.2-360-360s161.2-360 360-360 360 161.2 360 360-161.2 360-360 360z"></path><path d="M933 799.6l-42.4-42.4c-26.5-26.5-65.7-32.8-98.4-19.2-14.6 18.1-30.9 34.8-48.8 49.7-12.7 32.4-6.1 70.7 19.9 96.8l42.4 42.4c35 35 92.3 35 127.3 0s35-92.3 0-127.3zM272 572c24.9 0 45-20.1 45-45 0-116 94-210 210-210 24.9 0 45-20.1 45-45s-20.1-45-45-45c-165.7 0-300 134.3-300 300 0 24.9 20.1 45 45 45z"></path></symbol>
+  <symbol id="icon-shucheng" viewBox="0 0 1024 1024"><path d="M765.9 792.6H258.1c-18.6 0-31 11.1-31 27.8 0 16.7 12.4 27.8 31 27.8h507.8c18.6 0 31-11.1 31-27.8-0.1-16.7-12.4-27.8-31-27.8M852.6 198c0-16.6 12.3-27.7 30.9-27.7 18.6 0 31 16.6 31 27.7v655.7c0 55.5-55.7 105.6-123.9 105.6H227.2c-55.7-5.5-111.5-44.5-117.7-94.5V164.7c0-66.6 68.1-100 136.2-100h421.1c74.3 0 123.8 38.9 123.8 100v544.5c0 16.7-12.4 27.8-31 27.8H239.5c-37.2 0-74.3 16.7-74.3 44.5v61.1c0 27.8 43.4 55.6 80.5 55.6h545c31 0 62-27.8 62-55.6V198z m-680.3-0.7v483.1h559.1V197.3c0-21.3-8.5-41.8-23.6-56.9-15.1-15.1-35.6-23.6-56.9-23.6H252.8c-21.4 0-41.8 8.5-56.9 23.6-15.1 15-23.6 35.5-23.6 56.9z m0 0"></path></symbol>
+  <symbol id="icon-14" viewBox="0 0 1024 1024"><path d="M810.666667 256h42.666666a128 128 0 0 1 128 128v363.221333A106.112 106.112 0 0 1 875.221333 853.333333h-53.76a42.666667 42.666667 0 0 0-38.442666 24.277334l-26.026667 54.442666a85.333333 85.333333 0 0 1-155.648-3.584l-20.693333-49.066666a42.666667 42.666667 0 0 0-39.296-26.069334h-113.92a42.666667 42.666667 0 0 1 0-85.333333h113.92a128 128 0 0 1 117.930666 78.250667l20.693334 49.066666 26.026666-54.485333A128 128 0 0 1 821.504 768h53.717333c11.477333 0 20.778667-9.301333 20.778667-20.778667V384a42.666667 42.666667 0 0 0-42.666667-42.666667h-42.666666v255.317334a128.128 128.128 0 0 1-127.872 128.298666h-213.589334c-35.712 0-90.197333 22.485333-115.370666 47.530667l-37.418667 37.205333C272.981333 852.906667 213.333333 829.098667 213.333333 767.232h85.333334v0.682667H213.333333c0-24.277333-19.541333-44.373333-43.605333-44.885334A130.261333 130.261333 0 0 1 42.666667 593.450667V255.658667A127.744 127.744 0 0 1 170.410667 128h512.512A128.085333 128.085333 0 0 1 810.666667 256zM298.666667 767.914667H213.333333v-0.682667h85.333334v0.682667z m-10.24-50.688l5.248-5.248c41.130667-40.96 117.290667-72.362667 175.530666-72.362667h213.589334c23.381333 0 42.538667-19.2 42.538666-42.965333V256.298667C725.333333 232.576 706.218667 213.333333 682.922667 213.333333H170.410667A42.410667 42.410667 0 0 0 128 255.658667v337.792c0 23.68 19.669333 43.733333 43.605333 44.288A130.133333 130.133333 0 0 1 288.426667 717.226667z"></path><path d="M256 384h341.333333a42.666667 42.666667 0 0 0 0-85.333333H256a42.666667 42.666667 0 1 0 0 85.333333zM256 554.666667h256a42.666667 42.666667 0 0 0 0-85.333334H256a42.666667 42.666667 0 1 0 0 85.333334z"></path></symbol>
+  <symbol id="icon-wode1" viewBox="0 0 1024 1024"><path d="M512 632c100.8 0 184-83.2 184-184S612.8 264 512 264 328 347.2 328 448 411.2 632 512 632z m0-320c75.2 0 136 60.8 136 136s-60.8 136-136 136-136-60.8-136-136 60.8-136 136-136z"></path><path d="M792 785.6c70.4-72 112-168 112-273.6 0-216-176-392-392-392S120 296 120 512c0 105.6 41.6 201.6 110.4 273.6 0 0 0 1.6 1.6 1.6 68.8 70.4 161.6 112 259.2 116.8h41.6c97.6-4.8 190.4-46.4 259.2-118.4zM512 168c190.4 0 344 153.6 344 344 0 76.8-25.6 148.8-68.8 206.4-16-51.2-38.4-96-68.8-134.4-8-11.2-24-12.8-33.6-4.8-11.2 8-12.8 22.4-4.8 33.6 32 41.6 56 92.8 68.8 148.8-4.8 3.2-8 8-12.8 11.2-3.2 1.6-4.8 4.8-8 6.4-6.4 4.8-12.8 9.6-20.8 16-1.6 1.6-3.2 3.2-4.8 3.2l-24 14.4c-1.6 0-3.2 1.6-3.2 1.6-8 4.8-17.6 9.6-25.6 12.8-1.6 0-1.6 1.6-3.2 1.6-9.6 3.2-17.6 6.4-27.2 9.6-1.6 0-3.2 1.6-4.8 1.6-8 3.2-17.6 4.8-27.2 6.4-1.6 0-4.8 1.6-6.4 1.6-8 1.6-17.6 3.2-27.2 4.8-3.2 0-4.8 1.6-8 1.6-11.2 1.6-22.4 1.6-33.6 1.6s-22.4 0-33.6-1.6c-3.2 0-4.8 0-8-1.6-9.6-1.6-17.6-1.6-27.2-4.8-1.6 0-4.8-1.6-6.4-1.6-9.6-1.6-17.6-4.8-27.2-6.4-1.6 0-3.2-1.6-4.8-1.6-9.6-3.2-17.6-6.4-27.2-9.6-1.6 0-1.6-1.6-3.2-1.6-9.6-3.2-17.6-8-25.6-12.8-1.6 0-3.2-1.6-3.2-1.6l-24-14.4c-1.6-1.6-3.2-3.2-4.8-3.2-6.4-4.8-14.4-9.6-20.8-16-3.2-1.6-4.8-4.8-8-6.4-4.8-3.2-8-8-12.8-11.2 12.8-56 36.8-107.2 68.8-148.8 8-11.2 6.4-25.6-4.8-33.6s-25.6-6.4-33.6 4.8c-30.4 38.4-52.8 84.8-68.8 134.4-43.2-57.6-68.8-128-68.8-206.4 0-190.4 153.6-344 344-344z"></path></symbol>
+</svg>
+
+<header class="cui-topbar">
+  <p class="cui-crumb">13-4 · SVG 矢量图标</p>
+  <h1>移动端底部导航（SVG 版）</h1>
+  <p class="cui-sub">固定底部 · 全屏宽度 · 5 项等分自适应 · 每项带数字徽章与右上角红点 · 零字体、零 JS</p>
+</header>
+
+<main class="cui-main">
+
+  <section class="cui-card">
+    <h2>实现要点</h2>
+    <ul class="cui-points">
+      <li>图标数据同样来自 <code>font/</code> 目录：把 <code>iconfont.js</code> 中导出的 5 个 <code>&lt;symbol&gt;</code>（icon-shujia / icon-faxian1 / icon-shucheng / icon-14 / icon-wode1）当作 SVG 源码内联到页面顶部，组成雪碧图（本身宽高为 0，不占位置）。</li>
+      <li>5 项导航分别对应 书架 / 发现 / 书城 / 论坛 / 我的，用 <code>&lt;svg&gt;&lt;use href="#icon-shujia"&gt;&lt;/svg&gt;</code> 复用 symbol，不加载字体、不执行任何 JavaScript。</li>
+      <li>导出文件里路径写死了 <code>fill="#728BFF"</code> 之类颜色，已删除这些属性，改由 <code>fill: currentColor</code> 继承文字颜色 → 激活/未激活一键换色。</li>
+      <li>导航容器 <code>position: fixed; left:0; right:0; bottom:0; width:100%</code> → 永远钉在屏幕底部且占满整个屏幕宽度。</li>
+      <li>5 个导航项 <code>flex: 1 1 0; min-width:0</code> → 无论 320px 手机还是 2560px 桌面，都自动等分成 20%，宽度随屏幕自适应。</li>
+      <li>每项都有 <b>数字徽章</b>（图标方框右上角 <code>top:4px; right:-6px</code>）和 <b>右上角红点</b>（导航项右上角 <code>top:2px; right:6px</code>），两者上下错开、互不遮挡；<code>env(safe-area-inset-bottom)</code> 适配 iPhone 底部横条。</li>
+    </ul>
+  </section>
+
+  <section class="cui-card">
+    <h2>结构与关键样式</h2>
+    <pre class="cui-code">&lt;svg class="cui-sprite"&gt;&lt;symbol id="icon-shujia" viewBox="0 0 1024 1024"&gt;...&lt;/symbol&gt;&lt;/svg&gt;  <span style="color:#7dd3fc;">&lt;!-- 雪碧图 --&gt;</span>
+
+&lt;nav class="cui-tabbar"&gt;
+  &lt;a class="cui-nav-item" href="#" aria-current="page"&gt;
+    &lt;span class="cui-dot"&gt;&lt;/span&gt;                      <span style="color:#7dd3fc;">&lt;!-- 右上角红点 --&gt;</span>
+    &lt;span class="cui-icon-box"&gt;
+      &lt;svg class="cui-nav-svg"&gt;                        <span style="color:#7dd3fc;">&lt;!-- SVG 图标 --&gt;</span>
+        &lt;use href="#icon-shucheng"&gt;&lt;/use&gt;
+      &lt;/svg&gt;
+      &lt;span class="cui-badge"&gt;12&lt;/span&gt;               <span style="color:#7dd3fc;">&lt;!-- 数字徽章 --&gt;</span>
+    &lt;/span&gt;
+    &lt;span class="cui-label"&gt;书城&lt;/span&gt;
+  &lt;/a&gt;
+  ... 5 项：书架(#icon-shujia) / 发现(#icon-faxian1) / 书城(#icon-shucheng)
+          / 论坛(#icon-14) / 我的(#icon-wode1)
+&lt;/nav&gt;
+
+.cui-tabbar   { position: fixed; left:0; right:0; bottom:0;
+                width: 100%; max-width: none; display: flex;
+                padding-bottom: env(safe-area-inset-bottom); }
+.cui-nav-item { flex: 1 1 0; min-width: 0; }    <span style="color:#bef264;">/* 5 等分、自适应任意屏宽 */</span>
+.cui-nav-svg  { width:38px; height:38px; fill: currentColor; }
+.cui-badge    { position:absolute; top:4px; right:-6px;
+                background:#ff7a1a; border-radius:11px; }
+.cui-dot      { position:absolute; top:2px; right:6px;
+                width:9px; height:9px; border-radius:50%; background:#ff3b30; }</pre>
+  </section>
+
+  <section class="cui-card">
+    <h2>内容区（可上下滚动，导航始终固定在底部）</h2>
+    <div class="cui-row">
+      <div class="cui-avatar">崔</div>
+      <div class="cui-row-text"><b>高级网页设计 · 课堂实践</b><span>第 13 次作业：字体图标与 SVG 图标的底部导航</span></div>
+      <div class="cui-row-time">09:12</div>
+    </div>
+    <div class="cui-row">
+      <div class="cui-avatar">符</div>
+      <div class="cui-row-text"><b>&lt;use href="#id"&gt;</b><span>同一份 symbol 可被页面任意位置复用，体积只算一次</span></div>
+      <div class="cui-row-time">10:05</div>
+    </div>
+    <div class="cui-row">
+      <div class="cui-avatar">色</div>
+      <div class="cui-row-text"><b>fill: currentColor</b><span>去掉写死的 fill 后，图标颜色跟随所在导航项的 color</span></div>
+      <div class="cui-row-time">11:47</div>
+    </div>
+    <div class="cui-row">
+      <div class="cui-avatar">徽</div>
+      <div class="cui-row-text"><b>徽章与红点</b><span>数字胶囊挂在图标右上角，红点定位在导航项右上角，互不遮挡</span></div>
+      <div class="cui-row-time">13:20</div>
+    </div>
+    <div class="cui-row">
+      <div class="cui-avatar">宽</div>
+      <div class="cui-row-text"><b>全屏宽度验证</b><span>把浏览器窗口拉窄或拉宽，导航条始终贴满整个屏幕宽度</span></div>
+      <div class="cui-row-time">15:36</div>
+    </div>
+  </section>
+
+  <p class="cui-foot"><a href="./1-1.html">返回首页 1-1.html</a></p>
+
+</main>
+
+<nav class="cui-tabbar" aria-label="底部导航">
+  <a class="cui-nav-item" href="#">
+    <span class="cui-icon-box">
+      <svg class="cui-nav-svg" viewBox="0 0 1024 1024" aria-hidden="true"><use href="#icon-shujia"></use></svg>
+    </span>
+    <span class="cui-label">书架</span>
+  </a>
+
+  <a class="cui-nav-item" href="#">
+    <span class="cui-icon-box">
+      <svg class="cui-nav-svg" viewBox="0 0 1024 1024" aria-hidden="true"><use href="#icon-faxian1"></use></svg>
+    </span>
+    <span class="cui-label">发现</span>
+  </a>
+
+  <a class="cui-nav-item" href="#" aria-current="page">
+    <span class="cui-icon-box">
+      <svg class="cui-nav-svg" viewBox="0 0 1024 1024" aria-hidden="true"><use href="#icon-shucheng"></use></svg>
+    </span>
+    <span class="cui-label">书城</span>
+  </a>
+
+  <a class="cui-nav-item" href="#">
+    <span class="cui-icon-box">
+      <svg class="cui-nav-svg" viewBox="0 0 1024 1024" aria-hidden="true"><use href="#icon-14"></use></svg>
+      <span class="cui-badge">8</span>
+    </span>
+    <span class="cui-label">论坛</span>
+  </a>
+
+  <a class="cui-nav-item" href="#">
+    <span class="cui-icon-box">
+      <span class="cui-dot" aria-hidden="true"></span>
+      <svg class="cui-nav-svg" viewBox="0 0 1024 1024" aria-hidden="true"><use href="#icon-wode1"></use></svg>
+    </span>
+    <span class="cui-label">我的</span>
+  </a>
+</nav>
+
+</body>
+</html>

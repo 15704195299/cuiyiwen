@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>13-2 Lucide SVG 图标</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: "Microsoft YaHei", "PingFang SC", system-ui, -apple-system, sans-serif;
+    background: #f4f8f7;
+    color: #222a2a;
+    line-height: 1.7;
+  }
+
+  .cui-wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 36px 20px 72px;
+  }
+
+  .cui-header {
+    background: linear-gradient(135deg, #0f766e, #14b8a6);
+    color: #fff;
+    border-radius: 16px;
+    padding: 30px 32px;
+    box-shadow: 0 10px 26px rgba(15, 118, 110, .28);
+  }
+
+  .cui-header h1 {
+    font-size: 28px;
+    margin-bottom: 8px;
+  }
+
+  .cui-header p {
+    font-size: 15px;
+    opacity: .95;
+  }
+
+  .cui-badge {
+    display: inline-block;
+    background: rgba(255, 255, 255, .22);
+    border: 1px solid rgba(255, 255, 255, .45);
+    border-radius: 999px;
+    padding: 3px 14px;
+    font-size: 13px;
+    margin-bottom: 14px;
+  }
+
+  .cui-note {
+    background: #fff;
+    border-left: 4px solid #0f766e;
+    border-radius: 0 12px 12px 0;
+    padding: 16px 20px;
+    margin: 24px 0;
+    font-size: 14.5px;
+    box-shadow: 0 4px 14px rgba(34, 42, 42, .06);
+  }
+
+  .cui-note strong { color: #0f766e; }
+
+  .cui-section {
+    background: #fff;
+    border-radius: 16px;
+    padding: 24px;
+    margin-top: 26px;
+    box-shadow: 0 4px 16px rgba(34, 42, 42, .07);
+  }
+
+  .cui-section h2 {
+    font-size: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px dashed #d3ded9;
+    margin-bottom: 18px;
+  }
+
+  .cui-count {
+    font-size: 12px;
+    font-weight: normal;
+    color: #8a968f;
+    margin-left: 8px;
+  }
+
+  .cui-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+    gap: 12px;
+  }
+
+  .cui-card {
+    background: #f7fbfa;
+    border: 1px solid #e0ebe7;
+    border-radius: 12px;
+    padding: 18px 6px 14px;
+    text-align: center;
+    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+  }
+
+  .cui-card:hover {
+    transform: translateY(-4px);
+    border-color: #14b8a6;
+    box-shadow: 0 10px 20px rgba(34, 42, 42, .12);
+  }
+
+  .cui-card svg {
+    width: 28px;
+    height: 28px;
+    stroke-width: 2;
+    color: #0f766e;
+  }
+
+  .cui-card img {
+    width: 28px;
+    height: 28px;
+    display: block;
+    margin: 0 auto;
+  }
+
+  .cui-name {
+    display: block;
+    margin-top: 8px;
+    font-size: 11.5px;
+    color: #77827d;
+    word-break: break-all;
+  }
+
+  .cui-demo {
+    background: #101f1d;
+    color: #d5e8e3;
+    border-radius: 12px;
+    padding: 16px 18px;
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 14px;
+    overflow-x: auto;
+    white-space: pre;
+    margin-bottom: 14px;
+  }
+
+  .cui-demo .cui-tag { color: #7dd3fc; }
+  .cui-demo .cui-attr { color: #fca5a5; }
+  .cui-demo .cui-val { color: #bef264; }
+  .cui-demo .cui-cmt { color: #7f918c; }
+
+  .cui-tip {
+    font-size: 14px;
+    color: #56615d;
+    margin-bottom: 22px;
+  }
+
+  .cui-tip:last-child { margin-bottom: 0; }
+
+  .cui-preview {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 22px;
+    background: #f4faf8;
+    border: 1px solid #e0ebe7;
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 18px;
+    font-size: 24px;
+  }
+
+  .cui-preview span { font-size: 13px; color: #77827d; }
+
+  .cui-preview svg {
+    width: 30px;
+    height: 30px;
+    stroke-width: 2;
+  }
+
+  .cui-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+
+  .cui-table th,
+  .cui-table td {
+    border: 1px solid #d3ded9;
+    padding: 10px 14px;
+    text-align: left;
+    vertical-align: top;
+  }
+
+  .cui-table th { background: #eef6f3; color: #0f766e; }
+
+  .cui-footer {
+    margin-top: 40px;
+    text-align: center;
+    font-size: 14px;
+  }
+
+  .cui-footer a {
+    display: inline-block;
+    background: #0f766e;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 999px;
+    padding: 9px 26px;
+    transition: background .2s ease;
+  }
+
+  .cui-footer a:hover { background: #0b5c55; }
+</style>
+</head>
+<body>
+<div class="cui-wrap">
+
+  <header class="cui-header">
+    <div class="cui-badge">13-2 &middot; 矢量图形 SVG</div>
+    <h1>Lucide 图标</h1>
+    <p>本页图标全部以「SVG 矢量图形」形式渲染：每个图标就是一段可直接写在 HTML 里的 &lt;svg&gt; 代码，文件保存在 cdn/lucide/icons/。</p>
+  </header>
+
+  <div class="cui-note">
+    <strong>原理：</strong>Lucide 把每个图标发布成独立的 <code>.svg</code> 文件
+    （本目录 <code>cdn/lucide/icons/</code>，共 48 个）。
+    SVG 是 HTML 支持的图形标签，可以直接内联到页面里：
+    <code>stroke="currentColor"</code> 让线条颜色继承文字颜色，
+    <code>stroke-width / stroke-linecap</code> 控制线条粗细与端点样式，
+    <code>width / height</code> 控制尺寸——它不是字体，不依赖任何字体文件。
+  </div>
+
+  <section class="cui-section">
+    <h2>内联 SVG 图标<span class="cui-count">共 48 个（写在页面里的矢量图形）</span></h2>
+    <div class="cui-grid">
+      <div class="cui-card">
+        <!-- @license lucide-static v0.469.0 - ISC -->
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M10.268 21a2 2 0 0 0 3.464 0" />
+  <path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326" />
+</svg>
+        <span class="cui-name">bell</span>
+      </div>
+      <div class="cui-card">
+        <!-- @license lucide-static v0.469.0 - ISC -->
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z" />
+</svg>
+        <span class="cui-name">bookmark</span>
+      </div>
+      <div class="cui-card">
+        <!-- @license lucide-static v0.469.0 - ISC -->
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M8 2v4" />
+  <path d="M16 2v4" />
+  <rect width="18" height="18" x="3" y="4" rx="2" />
+  <path d="M3 10h18" />
+</svg>
+        <span class="cui-name">calendar</span>
+      </div>
+      <div class="cui-card">
+        <!-- @license lucide-static v0.469.0 - ISC -->
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z" />
+  <circle cx="12" cy="13" r="3" />
+</svg>
+        <span class="cui-name">camera</span>
+      </div>
+      <div class="cui-card">
+        <!-- @license lucide-static v0.469.0 - ISC -->
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20 6 9 17l-5-5" />
+</svg>
+        <span class="cui-name">check</span>
+      </div>
+      <div class="cui-card">
+        <!-- @license lucide-static v0.469.0 - ISC -->
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="10" />
+  <polyline points="12 6 12 12 16 14" />
+</svg>
+        <span class="cui-name">clock</span>
+      </div>
+      <div class="cui-card">
+        <!-- @license lucide-static v0.469.0 - ISC -->
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z" />
+</svg>
+        <span class="cui-name">cloud</span>
+      </div>
+      <div class="cui-card">
+        <!-- @license lucide-static v0.469.0 - ISC -->
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <polyline points="16 18 22 12 16 6" />
+  <polyline points="8 6 2 12 8 18" />
+</svg>
+        <span class="cui-name">code</span>
+      </div>
+      <div class="cui-card">
+        <!-- @license lucide-static v0.469.0 - ISC -->
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <ellipse cx="12" cy="5" rx="9" ry="3" />
+  <path d="M3 5V19A9 3 0 0 0 21 19V5" />
+  <path d="M3 12A9 3 0 0 0 21 12" />
+</svg>
+        <span class="cui-name">database</span>
+      </div>
+      <div class="cui-card">
+        <!-- @license lucide-static v0.469.0 - ISC -->
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+  <polyline points="7 10 12 15 17 10" />
+  <line x1="12" x2="12" y1="15" y2="3" />
+</svg>
+        <span class="cui-name">download</span>
+      </div>
+      <div class="cui-card">
+        <!-- @license lucide-static v0.469.0 - ISC -->
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" />
+  <circle cx="12" cy="12" r="3" />
+</svg>
+        <span class="cui-name">eye</span>
+      </div>
+      <div class="cui-card">
+        <!-- @license lucide-static v0.469.0 - ISC -->
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
+  <path d="M14 2v4a2 2 0 0 0 2 2h4" />
+  <path d="M10 9H8" />
+  <path d="M16 13H8" />
+  <path d="M16 17H8" />
+</svg>
+        <span class="cui-name">file-text</span>
+      </div>
+      <div class="cui-card">
+        <!-- @license lucide-static v0.469.0 - ISC -->
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
+  <line x1="4" x2="4" y1="22" y2="15" />
+</svg>
+        <span class="cui-name">flag</span>
+      </div>
+      <div class="cui-card">
+        <!-- @license lucide-static v0.469.0 - ISC -->
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z" />
+</svg>
+        <span class="cui-name">folder</span>
+      </div>
+      <div class="cui-card">
+        <!-- @license lucide-static v0.469.0 - ISC -->
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect x="3" y="8" width="18" height="4" rx="1" />
+  <path d="M12 8v13" />
+  <path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7" />
+  <path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5" />
+</svg>
+        <span class="cui-name">gift</span>
+      </div>
+      <div class="cui-card">
+        <!-- @license lucide-static v0.469.0 - ISC -->
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
+  <path d="M9 18c-4.51 2-5-2-7-2" />
+</svg>
+        <span class="cui-name">github</span>
+      </div>
+      <div class="cui-card">
+        <!-- @license lucide-static v0.469.0 - ISC -->
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="10" />
+  <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
+  <path d="M2 12h20" />
+</svg>
+        <span class="cui-name">globe</span>
+      </div>
+      <div class="cui-card">
+        <!-- @license lucide-static v0.469.0 - ISC -->
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+</svg>
+        <span class="cui-name">heart</span>
+      </div>
+      <div class="cui-card">
+        <!-- @license lucide-static v0.469.0 - ISC -->
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" />
+  <path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+</svg>
+        <span class="cui-name">home</span>
+      </div>
+      <div class="cui-card">
+        <!-- @license lucide-static v0.469.0 - ISC -->
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
+  <circle cx="9" cy="9" r="2" />
+  <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
+</svg>
+        <span class="cui-name">image</span>
+      </div>
+      <div class="cui-card">
+        <!-- @license lucide-static v0.469.0 - ISC -->
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+  <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+</svg>
+        <span class="cui-name">instagram</span>
+      </div>
+      <div class="cui-card">
+        <!-- @license lucide-static v0.469.0 - ISC -->
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4" />
+  <path d="m21 2-9.6 9.6" />
+  <circle cx="7.5" cy="15.5" r="5.5" />
+</svg>
+        <span class="cui-name">key</span>
+      </div>
+      <div class="cui-card">
+        <!-- @license lucide-static v0.469.0 - ISC -->
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+</svg>
+        <span class="cui-name">link</span>
+      </div>
+      <div class="cui-card">
+        <!-- @license lucide-static v0.469.0 - ISC -->
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+  <rect width="4" height="12" x="2" y="9" />
+  <circle cx="4" cy="4" r="2" />
+</svg>
+        <span class="cui-name">linkedin</span>
+      </div>
+      <div class="cui-card">
+        <!-- @license lucide-static v0.469.0 - ISC -->
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+</svg>
+        <span class="cui-name">lock</span>
+      </div>
+      <div class="cui-card">
+        <!-- @license lucide-static v0.469.0 - ISC -->
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <rect width="20" height="16" x="2" y="4" rx="2" />
+  <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+</svg>
+        <span class="cui-name">mail</span>
+      </div>
+      <div class="cui-card">
+        <!-- @license lucide-static v0.469.0 - ISC -->
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0" />
+  <circle cx="12" cy="10" r="3" />
+</svg>
+        <span class="cui-name">map-pin</span>
+      </div>
+      <div class="cui-card">
+        <!-- @license lucide-static v0.469.0 - ISC -->
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
+</svg>
+        <span class="cui-name">message-circle</span>
+      </div>
+      <div class="cui-card">
+        <!-- @license lucide-static v0.469.0 - ISC -->
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+</svg>
+        <span class="cui-name">moon</span>
+      </div>
+      <div class="cui-card">
+        <!-- @license lucide-static v0.469.0 - ISC -->
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" />
+  <path d="m15 5 4 4" />
+</svg>
+        <span class="cui-name">pencil</span>
+      </div>
+      <div class="cui-card">
+        <!-- @license lucide-static v0.469.0 - ISC -->
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+</svg>
+        <span class="cui-name">phone</span>
+      </div>
+      <div class="cui-card">
+        <!-- @license lucide-static v0.469.0 - ISC -->
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <polygon points="6 3 20 12 6 21 6 3" />
+</svg>
+        <span class="cui-name">play</span>
+      </div>
+      <div class="cui-card">
+        <!-- @license lucide-static v0.469.0 - ISC -->
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M5 12h14" />
+  <path d="M12 5v14" />
+</svg>
+        <span class="cui-name">plus</span>
+      </div>
+      <div class="cui-card">
+        <!-- @license lucide-static v0.469.0 - ISC -->
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
+  <path d="M21 3v5h-5" />
+  <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
+  <path d="M8 16H3v5" />
+</svg>
+        <span class="cui-name">refresh-cw</span>
+      </div>
+      <div class="cui-card">
+        <!-- @license lucide-static v0.469.0 - ISC -->
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z" />
+  <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z" />
+  <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0" />
+  <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" />
+</svg>
+        <span class="cui-name">rocket</span>
+      </div>
+      <div class="cui-card">
+        <!-- @license lucide-static v0.469.0 - ISC -->
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="11" cy="11" r="8" />
+  <path d="m21 21-4.3-4.3" />
+</svg>
+        <span class="cui-name">search</span>
+      </div>
+      <div class="cui-card">
+        <!-- @license lucide-static v0.469.0 - ISC -->
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+  <circle cx="12" cy="12" r="3" />
+</svg>
+        <span class="cui-name">settings</span>
+      </div>
+      <div class="cui-card">
+        <!-- @license lucide-static v0.469.0 - ISC -->
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
+</svg>
+        <span class="cui-name">shield</span>
+      </div>
+      <div class="cui-card">
+        <!-- @license lucide-static v0.469.0 - ISC -->
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="8" cy="21" r="1" />
+  <circle cx="19" cy="21" r="1" />
+  <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12" />
+</svg>
+        <span class="cui-name">shopping-cart</span>
+      </div>
+      <div class="cui-card">
+        <!-- @license lucide-static v0.469.0 - ISC -->
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z" />
+</svg>
+        <span class="cui-name">star</span>
+      </div>
+      <div class="cui-card">
+        <!-- @license lucide-static v0.469.0 - ISC -->
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <circle cx="12" cy="12" r="4" />
+  <path d="M12 2v2" />
+  <path d="M12 20v2" />
+  <path d="m4.93 4.93 1.41 1.41" />
+  <path d="m17.66 17.66 1.41 1.41" />
+  <path d="M2 12h2" />
+  <path d="M20 12h2" />
+  <path d="m6.34 17.66-1.41 1.41" />
+  <path d="m19.07 4.93-1.41 1.41" />
+</svg>
+        <span class="cui-name">sun</span>
+      </div>
+      <div class="cui-card">
+        <!-- @license lucide-static v0.469.0 - ISC -->
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <polyline points="4 17 10 11 4 5" />
+  <line x1="12" x2="20" y1="19" y2="19" />
+</svg>
+        <span class="cui-name">terminal</span>
+      </div>
+      <div class="cui-card">
+        <!-- @license lucide-static v0.469.0 - ISC -->
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M3 6h18" />
+  <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+  <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+  <line x1="10" x2="10" y1="11" y2="17" />
+  <line x1="14" x2="14" y1="11" y2="17" />
+</svg>
+        <span class="cui-name">trash-2</span>
+      </div>
+      <div class="cui-card">
+        <!-- @license lucide-static v0.469.0 - ISC -->
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z" />
+</svg>
+        <span class="cui-name">twitter</span>
+      </div>
+      <div class="cui-card">
+        <!-- @license lucide-static v0.469.0 - ISC -->
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+  <polyline points="17 8 12 3 7 8" />
+  <line x1="12" x2="12" y1="3" y2="15" />
+</svg>
+        <span class="cui-name">upload</span>
+      </div>
+      <div class="cui-card">
+        <!-- @license lucide-static v0.469.0 - ISC -->
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+  <circle cx="12" cy="7" r="4" />
+</svg>
+        <span class="cui-name">user</span>
+      </div>
+      <div class="cui-card">
+        <!-- @license lucide-static v0.469.0 - ISC -->
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12 20h.01" />
+  <path d="M2 8.82a15 15 0 0 1 20 0" />
+  <path d="M5 12.859a10 10 0 0 1 14 0" />
+  <path d="M8.5 16.429a5 5 0 0 1 7 0" />
+</svg>
+        <span class="cui-name">wifi</span>
+      </div>
+      <div class="cui-card">
+        <!-- @license lucide-static v0.469.0 - ISC -->
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z" />
+</svg>
+        <span class="cui-name">zap</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="cui-section">
+    <h2>写法与特性</h2>
+
+    <p class="cui-tip">① 一个图标就是一段 SVG 源码（以下为 cdn/lucide/icons/home.svg 的内容）：</p>
+    <div class="cui-demo"><span class="cui-tag">&lt;svg</span> <span class="cui-attr">xmlns</span>=<span class="cui-val">"http://www.w3.org/2000/svg"</span> <span class="cui-attr">width</span>=<span class="cui-val">"24"</span> <span class="cui-attr">height</span>=<span class="cui-val">"24"</span>
+     <span class="cui-attr">viewBox</span>=<span class="cui-val">"0 0 24 24"</span> <span class="cui-attr">fill</span>=<span class="cui-val">"none"</span> <span class="cui-attr">stroke</span>=<span class="cui-val">"currentColor"</span>
+     <span class="cui-attr">stroke-width</span>=<span class="cui-val">"2"</span> <span class="cui-attr">stroke-linecap</span>=<span class="cui-val">"round"</span> <span class="cui-attr">stroke-linejoin</span>=<span class="cui-val">"round"</span><span class="cui-tag">&gt;</span>
+  <span class="cui-tag">&lt;path</span> <span class="cui-attr">d</span>=<span class="cui-val">"M15 21v-8a1 1 0 0 0-1-1h-4a1 1 ..."</span> <span class="cui-tag">/&gt;</span>
+  <span class="cui-tag">&lt;path</span> <span class="cui-attr">d</span>=<span class="cui-val">"M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 ..."</span> <span class="cui-tag">/&gt;</span>
+<span class="cui-tag">&lt;/svg&gt;</span></div>
+
+    <p class="cui-tip">② 因为是图形不是文字，样式要写在 SVG 自身的属性上（或用 CSS 选择器选中它）：</p>
+    <div class="cui-preview">
+      <span>默认</span>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      <span>改色</span>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#e53e3e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      <span>加粗 3.5</span>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#3182ce" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      <span>放大 48px</span>
+      <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#0f766e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+    </div>
+    <div class="cui-demo"><span class="cui-tag">&lt;svg</span> <span class="cui-attr">stroke</span>=<span class="cui-val">"#e53e3e"</span> <span class="cui-attr">stroke-width</span>=<span class="cui-val">"3.5"</span> <span class="cui-attr">width</span>=<span class="cui-val">"48"</span> <span class="cui-attr">height</span>=<span class="cui-val">"48"</span> ...<span class="cui-tag">&gt;</span>
+  ...
+<span class="cui-tag">&lt;/svg&gt;</span></div>
+
+    <p class="cui-tip">③ 也可以不内联，直接把 cdn 目录里的 svg 当作图片引用（见下一节）；两种方式都不需要字体文件、不需要 JavaScript。</p>
+  </section>
+
+  <section class="cui-section">
+    <h2>引用 cdn/lucide/icons/ 中的 SVG 文件<span class="cui-count">用 &lt;img&gt; 加载（12 个）</span></h2>
+    <div class="cui-grid">
+      <div class="cui-card"><img src="./cdn/lucide/icons/home.svg" alt="home"><span class="cui-name">home</span></div>
+      <div class="cui-card"><img src="./cdn/lucide/icons/user.svg" alt="user"><span class="cui-name">user</span></div>
+      <div class="cui-card"><img src="./cdn/lucide/icons/settings.svg" alt="settings"><span class="cui-name">settings</span></div>
+      <div class="cui-card"><img src="./cdn/lucide/icons/search.svg" alt="search"><span class="cui-name">search</span></div>
+      <div class="cui-card"><img src="./cdn/lucide/icons/heart.svg" alt="heart"><span class="cui-name">heart</span></div>
+      <div class="cui-card"><img src="./cdn/lucide/icons/star.svg" alt="star"><span class="cui-name">star</span></div>
+      <div class="cui-card"><img src="./cdn/lucide/icons/bell.svg" alt="bell"><span class="cui-name">bell</span></div>
+      <div class="cui-card"><img src="./cdn/lucide/icons/mail.svg" alt="mail"><span class="cui-name">mail</span></div>
+      <div class="cui-card"><img src="./cdn/lucide/icons/calendar.svg" alt="calendar"><span class="cui-name">calendar</span></div>
+      <div class="cui-card"><img src="./cdn/lucide/icons/camera.svg" alt="camera"><span class="cui-name">camera</span></div>
+      <div class="cui-card"><img src="./cdn/lucide/icons/cloud.svg" alt="cloud"><span class="cui-name">cloud</span></div>
+      <div class="cui-card"><img src="./cdn/lucide/icons/download.svg" alt="download"><span class="cui-name">download</span></div>
+    </div>
+  </section>
+
+  <section class="cui-section">
+    <h2>字体图标 vs SVG 图标</h2>
+    <table class="cui-table">
+      <tr>
+        <th>对比项</th>
+        <th>字体图标（Font Awesome / 13-1）</th>
+        <th>SVG 图标（Lucide / 13-2）</th>
+      </tr>
+      <tr>
+        <td>本质</td>
+        <td>icon font 里的一个字形，由 ::before 的 content 显示</td>
+        <td>一段图形代码 &lt;svg&gt;，由浏览器直接绘制</td>
+      </tr>
+      <tr>
+        <td>着色</td>
+        <td>整枚图标只能一个颜色（继承文字 color）</td>
+        <td>可用 stroke / fill / CSS 单独控制每条路径</td>
+      </tr>
+      <tr>
+        <td>依赖</td>
+        <td>必须下载字体文件，加载失败会变成豆腐块</td>
+        <td>内联时零额外请求；用 &lt;img&gt; 时只请求 svg 文件</td>
+      </tr>
+      <tr>
+        <td>多色图标</td>
+        <td>不支持</td>
+        <td>支持（不同 path 不同颜色）</td>
+      </tr>
+      <tr>
+        <td>清晰度</td>
+        <td>矢量，缩放清晰</td>
+        <td>矢量，缩放清晰</td>
+      </tr>
+    </table>
+  </section>
+
+  <footer class="cui-footer">
+    <a href="./1-1.html">首页</a>
+  </footer>
+
+</div>
+</body>
+</html>

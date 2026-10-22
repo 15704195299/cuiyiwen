@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>13-3 字体图标 · 移动端底部导航</title>
+<link rel="stylesheet" href="./font/iconfont.css">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cui-brand: #2f6bff;
+    --cui-ink: #1f2733;
+    --cui-muted: #7a8296;
+    --cui-line: #e6eaf1;
+    --cui-red: #ff3b30;
+  }
+
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    font-family: "Microsoft YaHei", "PingFang SC", system-ui, -apple-system, sans-serif;
+    background: #f2f4f8;
+    color: var(--cui-ink);
+    min-height: 100vh;
+    /* 给固定导航留出高度（98px），避免内容被挡住（含 iPhone 底部安全区） */
+    padding-bottom: calc(98px + env(safe-area-inset-bottom));
+  }
+
+  /* ---------- 顶栏 ---------- */
+  .cui-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: #fff;
+    border-bottom: 1px solid var(--cui-line);
+    padding: 14px 16px;
+  }
+
+  .cui-crumb {
+    font-size: 12px;
+    color: var(--cui-brand);
+    margin-bottom: 2px;
+  }
+
+  .cui-topbar h1 { font-size: 19px; }
+
+  .cui-sub {
+    font-size: 12.5px;
+    color: var(--cui-muted);
+    margin-top: 3px;
+  }
+
+  /* ---------- 内容区 ---------- */
+  .cui-main {
+    max-width: 640px;      /* 手机上等于全屏，桌面上居中，导航仍保持全屏宽 */
+    margin: 0 auto;
+    padding: 16px;
+  }
+
+  .cui-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 14px;
+    box-shadow: 0 4px 14px rgba(31, 39, 51, .06);
+  }
+
+  .cui-card h2 {
+    font-size: 16px;
+    margin-bottom: 10px;
+    padding-left: 9px;
+    border-left: 3px solid var(--cui-brand);
+  }
+
+  .cui-points { list-style: none; }
+
+  .cui-points li {
+    position: relative;
+    font-size: 13.5px;
+    color: #4a5265;
+    padding: 5px 0 5px 16px;
+    line-height: 1.7;
+  }
+
+  .cui-points li::before {
+    content: "";
+    position: absolute;
+    left: 2px;
+    top: 13px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--cui-brand);
+  }
+
+  code {
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 12.5px;
+    background: #eef2fb;
+    color: #2447a8;
+    padding: 1px 5px;
+    border-radius: 4px;
+  }
+
+  .cui-code {
+    background: #101828;
+    color: #d7e3f4;
+    border-radius: 10px;
+    padding: 14px;
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 12.5px;
+    line-height: 1.75;
+    overflow-x: auto;
+    white-space: pre;
+  }
+
+  .cui-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 0;
+    border-bottom: 1px dashed var(--cui-line);
+  }
+
+  .cui-row:last-child { border-bottom: none; }
+
+  .cui-avatar {
+    flex: 0 0 auto;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #2f6bff, #7aa2ff);
+    color: #fff;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .cui-row-text { flex: 1 1 auto; min-width: 0; }
+
+  .cui-row-text b { display: block; font-size: 14.5px; font-weight: 600; }
+
+  .cui-row-text span {
+    display: block;
+    font-size: 12.5px;
+    color: var(--cui-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .cui-row-time { font-size: 12px; color: #a3a9b8; }
+
+  .cui-foot { text-align: center; margin: 22px 0 6px; }
+
+  .cui-foot a {
+    display: inline-block;
+    background: var(--cui-brand);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 999px;
+    padding: 9px 26px;
+    font-size: 14px;
+  }
+
+  .cui-foot a:hover { background: #2453b8; }
+
+  /* ---------- 固定底部导航：全屏宽度 ---------- */
+  .cui-tabbar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    max-width: none;
+    z-index: 99;
+    display: flex;
+    background: #f9f9f9;
+    border-top: 1px solid rgba(0, 0, 0, .08);
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, .04);
+    padding-bottom: env(safe-area-inset-bottom);
+    height: 98px;
+  }
+
+  .cui-nav-item {
+    position: relative;
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 2px 8px;
+    text-decoration: none;
+    color: #ff8d32;
+    font-size: 16px;
+    transition: color .2s ease;
+  }
+
+  .cui-icon-box {
+    position: relative;
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    color: #111;
+    overflow: visible;
+  }
+
+  /* 字体图标：字形由 font/iconfont.css 里的 @font-face 提供 */
+  .cui-icon-box .cui-nav-icon {
+    font-size: 34px;
+    line-height: 1;
+    color: #111;
+    font-style: normal;
+  }
+
+  /* 数字徽章：挂在图标方框的右上角 */
+  .cui-badge {
+    position: absolute;
+    top: 4px;
+    right: -6px;
+    min-width: 22px;
+    height: 22px;
+    padding: 0 6px;
+    background: #ff7a1a;
+    color: #fff;
+    border-radius: 11px;
+    font: 700 12px/22px Arial, "Microsoft YaHei", sans-serif;
+    text-align: center;
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 0 2px #f9f9f9;
+    z-index: 2;
+  }
+
+  /* 我的红点：跟论坛数字徽章一样，挂在图标右上角 */
+  .cui-dot {
+    position: absolute;
+    top: 2px;
+    right: 6px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--cui-red);
+    box-shadow: 0 0 0 2px #f9f9f9;
+    z-index: 3;
+    display: block;
+  }
+
+  .cui-nav-item:last-child .cui-dot {
+    top: 4px;
+    right: -6px;
+    width: 10px;
+    height: 10px;
+  }
+
+  .cui-label {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1;
+    font-weight: 500;
+    color: #ff8d32;
+    letter-spacing: .5px;
+  }
+
+  /* 当前选中项：图标与文字一起换色（字体图标同样跟随 color） */
+  .cui-nav-item[aria-current="page"] .cui-icon-box .cui-nav-icon,
+  .cui-nav-item[aria-current="page"] .cui-label {
+    color: var(--cui-brand);
+    font-weight: 700;
+  }
+
+  @media (max-width: 360px) {
+    .cui-nav-item { font-size: 13px; }
+    .cui-icon-box .cui-nav-icon { font-size: 27px; }
+    .cui-badge {
+      min-width: 20px;
+      height: 20px;
+      padding: 0 5px;
+      font-size: 11px;
+      line-height: 20px;
+      border-radius: 10px;
+      right: -4px;
+    }
+    .cui-dot { right: 6px; top: 2px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="cui-topbar">
+  <p class="cui-crumb">13-3 · 字体图标 iconfont</p>
+  <h1>移动端底部导航（字体图标版）</h1>
+  <p class="cui-sub">固定底部 · 全屏宽度 · 5 项等分自适应 · 每项带数字徽章与右上角红点</p>
+</header>
+
+<main class="cui-main">
+
+  <section class="cui-card">
+    <h2>实现要点</h2>
+    <ul class="cui-points">
+      <li>图标来自项目字体 <code>font/iconfont.css</code>，写法是 <code>&lt;i class="iconfont icon-shujia"&gt;&lt;/i&gt;</code>，字形由 @font-face 渲染（woff2 / woff / ttf）。</li>
+      <li>5 个图标对应 <code>icon-shujia</code> / <code>icon-faxian1</code> / <code>icon-shucheng</code> / <code>icon-14</code> / <code>icon-wode1</code>，分别用于 书架 / 发现 / 书城 / 论坛 / 我的。</li>
+      <li>导航容器 <code>position: fixed; left:0; right:0; bottom:0; width:100%</code> → 永远钉在屏幕底部且占满整个屏幕宽度。</li>
+      <li>5 个导航项 <code>flex: 1 1 0; min-width:0</code> → 无论 320px 手机还是 2560px 桌面，都自动等分成 20%，宽度随屏幕自适应。</li>
+      <li>每项都有 <b>数字徽章</b>（图标方框右上角 <code>top:4px; right:-6px</code>）和 <b>右上角红点</b>（导航项右上角 <code>top:2px; right:6px</code>），两者上下错开、互不遮挡。</li>
+      <li><code>padding-bottom: env(safe-area-inset-bottom)</code> 适配 iPhone 底部横条；<code>viewport-fit=cover</code> 才能生效。</li>
+      <li>正文留了 <code>padding-bottom</code>，滚动时内容不会被固定导航盖住。</li>
+    </ul>
+  </section>
+
+  <section class="cui-card">
+    <h2>结构与关键样式</h2>
+    <pre class="cui-code">&lt;link rel="stylesheet" href="./font/iconfont.css"&gt;   <span style="color:#7dd3fc;">&lt;!-- @font-face + 图标 class --&gt;</span>
+
+&lt;nav class="cui-tabbar"&gt;
+  &lt;a class="cui-nav-item" href="#" aria-current="page"&gt;
+    &lt;span class="cui-dot"&gt;&lt;/span&gt;                      <span style="color:#7dd3fc;">&lt;!-- 右上角红点 --&gt;</span>
+    &lt;span class="cui-icon-box"&gt;
+      &lt;i class="iconfont icon-shujia"&gt;&lt;/i&gt;           <span style="color:#7dd3fc;">&lt;!-- 字体图标·书架 --&gt;</span>
+      &lt;span class="cui-badge"&gt;3&lt;/span&gt;                <span style="color:#7dd3fc;">&lt;!-- 数字徽章 --&gt;</span>
+    &lt;/span&gt;
+    &lt;span class="cui-label"&gt;书架&lt;/span&gt;
+  &lt;/a&gt;
+  ... 5 项：书架(icon-shujia) / 发现(icon-faxian1) / 书城(icon-shucheng)
+          / 论坛(icon-14) / 我的(icon-wode1)
+&lt;/nav&gt;
+
+.cui-tabbar   { position: fixed; left:0; right:0; bottom:0;
+                width: 100%; max-width: none; display: flex;
+                padding-bottom: env(safe-area-inset-bottom); }
+.cui-nav-item { flex: 1 1 0; min-width: 0; }    <span style="color:#bef264;">/* 5 等分、自适应任意屏宽 */</span>
+.cui-nav-icon { font-size: 34px; }              <span style="color:#bef264;">/* 图标大小用 font-size 控制 */</span>
+.cui-badge    { position:absolute; top:4px; right:-6px;
+                background:#ff7a1a; border-radius:11px; }
+.cui-dot      { position:absolute; top:2px; right:6px;
+                width:9px; height:9px; border-radius:50%; background:#ff3b30; }</pre>
+  </section>
+
+  <section class="cui-card">
+    <h2>内容区（可上下滚动，导航始终固定在底部）</h2>
+    <div class="cui-row">
+      <div class="cui-avatar">崔</div>
+      <div class="cui-row-text"><b>高级网页设计 · 课堂实践</b><span>第 13 次作业：字体图标与 SVG 图标的底部导航</span></div>
+      <div class="cui-row-time">09:12</div>
+    </div>
+    <div class="cui-row">
+      <div class="cui-avatar">页</div>
+      <div class="cui-row-text"><b>iconfont 项目导出</b><span>font 目录：iconfont.css / .woff2 / .ttf / iconfont.js</span></div>
+      <div class="cui-row-time">10:05</div>
+    </div>
+    <div class="cui-row">
+      <div class="cui-avatar">徽</div>
+      <div class="cui-row-text"><b>数字徽章（badge）</b><span>数字用圆角胶囊包住，白色描边保证在图标上清晰可见</span></div>
+      <div class="cui-row-time">11:47</div>
+    </div>
+    <div class="cui-row">
+      <div class="cui-avatar">红</div>
+      <div class="cui-row-text"><b>右上角红点（dot）</b><span>10px 圆点 + 白色描边，定位在每个导航项的右上角</span></div>
+      <div class="cui-row-time">13:20</div>
+    </div>
+    <div class="cui-row">
+      <div class="cui-avatar">宽</div>
+      <div class="cui-row-text"><b>全屏宽度验证</b><span>把浏览器窗口拉窄或拉宽，导航条始终贴满整个屏幕宽度</span></div>
+      <div class="cui-row-time">15:36</div>
+    </div>
+  </section>
+
+  <p class="cui-foot"><a href="./1-1.html">返回首页 1-1.html</a></p>
+
+</main>
+
+<nav class="cui-tabbar" aria-label="底部导航">
+  <a class="cui-nav-item" href="#">
+    <span class="cui-icon-box">
+      <i class="iconfont icon-shujia cui-nav-icon" aria-hidden="true"></i>
+    </span>
+    <span class="cui-label">书架</span>
+  </a>
+
+  <a class="cui-nav-item" href="#">
+    <span class="cui-icon-box">
+      <i class="iconfont icon-faxian1 cui-nav-icon" aria-hidden="true"></i>
+    </span>
+    <span class="cui-label">发现</span>
+  </a>
+
+  <a class="cui-nav-item" href="#" aria-current="page">
+    <span class="cui-icon-box">
+      <i class="iconfont icon-shucheng cui-nav-icon" aria-hidden="true"></i>
+    </span>
+    <span class="cui-label">书城</span>
+  </a>
+
+  <a class="cui-nav-item" href="#">
+    <span class="cui-icon-box">
+      <i class="iconfont icon-14 cui-nav-icon" aria-hidden="true"></i>
+      <span class="cui-badge">8</span>
+    </span>
+    <span class="cui-label">论坛</span>
+  </a>
+
+  <a class="cui-nav-item" href="#">
+    <span class="cui-icon-box">
+      <span class="cui-dot" aria-hidden="true"></span>
+      <i class="iconfont icon-wode1 cui-nav-icon" aria-hidden="true"></i>
+    </span>
+    <span class="cui-label">我的</span>
+  </a>
+</nav>
+
+</body>
+</html>

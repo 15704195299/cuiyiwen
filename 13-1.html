@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>13-1 Font Awesome 字体图标</title>
+<link rel="stylesheet" href="./cdn/fontawesome/css/all.min.css">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: "Microsoft YaHei", "PingFang SC", system-ui, -apple-system, sans-serif;
+    background: #f5f7fb;
+    color: #242938;
+    line-height: 1.7;
+  }
+
+  .cui-wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 36px 20px 72px;
+  }
+
+  .cui-header {
+    background: linear-gradient(135deg, #2b6cb0, #4299e1);
+    color: #fff;
+    border-radius: 16px;
+    padding: 30px 32px;
+    box-shadow: 0 10px 26px rgba(43, 108, 176, .28);
+  }
+
+  .cui-header h1 {
+    font-size: 28px;
+    margin-bottom: 8px;
+  }
+
+  .cui-header p {
+    font-size: 15px;
+    opacity: .95;
+  }
+
+  .cui-badge {
+    display: inline-block;
+    background: rgba(255, 255, 255, .22);
+    border: 1px solid rgba(255, 255, 255, .45);
+    border-radius: 999px;
+    padding: 3px 14px;
+    font-size: 13px;
+    margin-bottom: 14px;
+  }
+
+  .cui-note {
+    background: #fff;
+    border-left: 4px solid #2b6cb0;
+    border-radius: 0 12px 12px 0;
+    padding: 16px 20px;
+    margin: 24px 0;
+    font-size: 14.5px;
+    box-shadow: 0 4px 14px rgba(31, 41, 63, .06);
+  }
+
+  .cui-note strong { color: #2b6cb0; }
+
+  .cui-section {
+    background: #fff;
+    border-radius: 16px;
+    padding: 24px;
+    margin-top: 26px;
+    box-shadow: 0 4px 16px rgba(31, 41, 63, .07);
+  }
+
+  .cui-section h2 {
+    font-size: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px dashed #d7dbe6;
+    margin-bottom: 18px;
+  }
+
+  .cui-count {
+    font-size: 12px;
+    font-weight: normal;
+    color: #8a90a2;
+    margin-left: 8px;
+  }
+
+  .cui-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+    gap: 12px;
+  }
+
+  .cui-card {
+    background: #fafbfe;
+    border: 1px solid #e7eaf2;
+    border-radius: 12px;
+    padding: 18px 6px 14px;
+    text-align: center;
+    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+  }
+
+  .cui-card:hover {
+    transform: translateY(-4px);
+    border-color: #4299e1;
+    box-shadow: 0 10px 20px rgba(31, 41, 63, .12);
+  }
+
+  .cui-card i { font-size: 26px; }
+
+  .cui-name {
+    display: block;
+    margin-top: 8px;
+    font-size: 11.5px;
+    color: #7b8194;
+    word-break: break-all;
+  }
+
+  .cui-section--solid .cui-card i { color: #2b6cb0; }
+  .cui-section--regular .cui-card i { color: #2f855a; }
+  .cui-section--brands .cui-card i { color: #6b46c1; }
+
+  .cui-demo {
+    background: #101828;
+    color: #d7e3f4;
+    border-radius: 12px;
+    padding: 16px 18px;
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 14px;
+    overflow-x: auto;
+    white-space: pre;
+    margin-bottom: 14px;
+  }
+
+  .cui-demo .cui-tag { color: #7dd3fc; }
+  .cui-demo .cui-attr { color: #fca5a5; }
+  .cui-demo .cui-val { color: #bef264; }
+
+  .cui-tip {
+    font-size: 14px;
+    color: #5b6172;
+    margin-bottom: 22px;
+  }
+
+  .cui-tip:last-child { margin-bottom: 0; }
+
+  .cui-preview {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 22px;
+    background: #f7f9fd;
+    border: 1px solid #e7eaf2;
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 18px;
+    font-size: 24px;
+  }
+
+  .cui-preview span { font-size: 13px; color: #7b8194; }
+
+  .cui-footer {
+    margin-top: 40px;
+    text-align: center;
+    font-size: 14px;
+  }
+
+  .cui-footer a {
+    display: inline-block;
+    background: #2b6cb0;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 999px;
+    padding: 9px 26px;
+    transition: background .2s ease;
+  }
+
+  .cui-footer a:hover { background: #21568c; }
+</style>
+</head>
+<body>
+<div class="cui-wrap">
+
+  <header class="cui-header">
+    <div class="cui-badge">13-1 &middot; 字体图标 Font Icon</div>
+    <h1>Font Awesome 图标</h1>
+    <p>本页图标全部以「字体」形式渲染：图标 = 一个 icon font 文件中的字形，用 CSS 像操作文字一样控制它们。</p>
+  </header>
+
+  <div class="cui-note">
+    <strong>原理：</strong>引入 <code>cdn/fontawesome/css/all.min.css</code> 后，
+    CSS 通过 <code>@font-face</code> 加载 <code>cdn/fontawesome/webfonts/</code> 下的字体文件
+    （fa-solid-900 / fa-regular-400 / fa-brands-400），
+    再用 <code>&lt;i class="fa-solid fa-house"&gt;&lt;/i&gt;</code> 的
+    <code>::before</code> 伪元素写入 <code>content</code> 字符码，
+    浏览器便从图标字体中取出对应字形绘制出来。因此颜色、大小、阴影、旋转都可以用普通 CSS 控制。
+  </div>
+
+  <section class="cui-section cui-section--solid">
+    <h2>实心图标 fa-solid<span class="cui-count">共 44 个</span></h2>
+    <div class="cui-grid">
+      <div class="cui-card"><i class="fa-solid fa-house" aria-hidden="true"></i><span class="cui-name">fa-solid fa-house</span></div>
+      <div class="cui-card"><i class="fa-solid fa-user" aria-hidden="true"></i><span class="cui-name">fa-solid fa-user</span></div>
+      <div class="cui-card"><i class="fa-solid fa-gear" aria-hidden="true"></i><span class="cui-name">fa-solid fa-gear</span></div>
+      <div class="cui-card"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><span class="cui-name">fa-solid fa-magnifying-glass</span></div>
+      <div class="cui-card"><i class="fa-solid fa-heart" aria-hidden="true"></i><span class="cui-name">fa-solid fa-heart</span></div>
+      <div class="cui-card"><i class="fa-solid fa-star" aria-hidden="true"></i><span class="cui-name">fa-solid fa-star</span></div>
+      <div class="cui-card"><i class="fa-solid fa-bell" aria-hidden="true"></i><span class="cui-name">fa-solid fa-bell</span></div>
+      <div class="cui-card"><i class="fa-solid fa-envelope" aria-hidden="true"></i><span class="cui-name">fa-solid fa-envelope</span></div>
+      <div class="cui-card"><i class="fa-solid fa-calendar" aria-hidden="true"></i><span class="cui-name">fa-solid fa-calendar</span></div>
+      <div class="cui-card"><i class="fa-solid fa-camera" aria-hidden="true"></i><span class="cui-name">fa-solid fa-camera</span></div>
+      <div class="cui-card"><i class="fa-solid fa-cloud" aria-hidden="true"></i><span class="cui-name">fa-solid fa-cloud</span></div>
+      <div class="cui-card"><i class="fa-solid fa-download" aria-hidden="true"></i><span class="cui-name">fa-solid fa-download</span></div>
+      <div class="cui-card"><i class="fa-solid fa-file-lines" aria-hidden="true"></i><span class="cui-name">fa-solid fa-file-lines</span></div>
+      <div class="cui-card"><i class="fa-solid fa-folder" aria-hidden="true"></i><span class="cui-name">fa-solid fa-folder</span></div>
+      <div class="cui-card"><i class="fa-solid fa-gift" aria-hidden="true"></i><span class="cui-name">fa-solid fa-gift</span></div>
+      <div class="cui-card"><i class="fa-solid fa-globe" aria-hidden="true"></i><span class="cui-name">fa-solid fa-globe</span></div>
+      <div class="cui-card"><i class="fa-solid fa-image" aria-hidden="true"></i><span class="cui-name">fa-solid fa-image</span></div>
+      <div class="cui-card"><i class="fa-solid fa-link" aria-hidden="true"></i><span class="cui-name">fa-solid fa-link</span></div>
+      <div class="cui-card"><i class="fa-solid fa-lock" aria-hidden="true"></i><span class="cui-name">fa-solid fa-lock</span></div>
+      <div class="cui-card"><i class="fa-solid fa-location-dot" aria-hidden="true"></i><span class="cui-name">fa-solid fa-location-dot</span></div>
+      <div class="cui-card"><i class="fa-solid fa-comment" aria-hidden="true"></i><span class="cui-name">fa-solid fa-comment</span></div>
+      <div class="cui-card"><i class="fa-solid fa-phone" aria-hidden="true"></i><span class="cui-name">fa-solid fa-phone</span></div>
+      <div class="cui-card"><i class="fa-solid fa-play" aria-hidden="true"></i><span class="cui-name">fa-solid fa-play</span></div>
+      <div class="cui-card"><i class="fa-solid fa-plus" aria-hidden="true"></i><span class="cui-name">fa-solid fa-plus</span></div>
+      <div class="cui-card"><i class="fa-solid fa-trash" aria-hidden="true"></i><span class="cui-name">fa-solid fa-trash</span></div>
+      <div class="cui-card"><i class="fa-solid fa-upload" aria-hidden="true"></i><span class="cui-name">fa-solid fa-upload</span></div>
+      <div class="cui-card"><i class="fa-solid fa-wifi" aria-hidden="true"></i><span class="cui-name">fa-solid fa-wifi</span></div>
+      <div class="cui-card"><i class="fa-solid fa-moon" aria-hidden="true"></i><span class="cui-name">fa-solid fa-moon</span></div>
+      <div class="cui-card"><i class="fa-solid fa-sun" aria-hidden="true"></i><span class="cui-name">fa-solid fa-sun</span></div>
+      <div class="cui-card"><i class="fa-solid fa-circle-check" aria-hidden="true"></i><span class="cui-name">fa-solid fa-circle-check</span></div>
+      <div class="cui-card"><i class="fa-solid fa-bolt" aria-hidden="true"></i><span class="cui-name">fa-solid fa-bolt</span></div>
+      <div class="cui-card"><i class="fa-solid fa-bookmark" aria-hidden="true"></i><span class="cui-name">fa-solid fa-bookmark</span></div>
+      <div class="cui-card"><i class="fa-solid fa-code" aria-hidden="true"></i><span class="cui-name">fa-solid fa-code</span></div>
+      <div class="cui-card"><i class="fa-solid fa-terminal" aria-hidden="true"></i><span class="cui-name">fa-solid fa-terminal</span></div>
+      <div class="cui-card"><i class="fa-solid fa-database" aria-hidden="true"></i><span class="cui-name">fa-solid fa-database</span></div>
+      <div class="cui-card"><i class="fa-solid fa-cart-shopping" aria-hidden="true"></i><span class="cui-name">fa-solid fa-cart-shopping</span></div>
+      <div class="cui-card"><i class="fa-solid fa-eye" aria-hidden="true"></i><span class="cui-name">fa-solid fa-eye</span></div>
+      <div class="cui-card"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i><span class="cui-name">fa-solid fa-shield-halved</span></div>
+      <div class="cui-card"><i class="fa-solid fa-key" aria-hidden="true"></i><span class="cui-name">fa-solid fa-key</span></div>
+      <div class="cui-card"><i class="fa-solid fa-rocket" aria-hidden="true"></i><span class="cui-name">fa-solid fa-rocket</span></div>
+      <div class="cui-card"><i class="fa-solid fa-flag" aria-hidden="true"></i><span class="cui-name">fa-solid fa-flag</span></div>
+      <div class="cui-card"><i class="fa-solid fa-rotate" aria-hidden="true"></i><span class="cui-name">fa-solid fa-rotate</span></div>
+      <div class="cui-card"><i class="fa-solid fa-clock" aria-hidden="true"></i><span class="cui-name">fa-solid fa-clock</span></div>
+      <div class="cui-card"><i class="fa-solid fa-pen" aria-hidden="true"></i><span class="cui-name">fa-solid fa-pen</span></div>
+    </div>
+  </section>
+
+  <section class="cui-section cui-section--regular">
+    <h2>常规（描边）图标 fa-regular<span class="cui-count">共 18 个</span></h2>
+    <div class="cui-grid">
+      <div class="cui-card"><i class="fa-regular fa-heart" aria-hidden="true"></i><span class="cui-name">fa-regular fa-heart</span></div>
+      <div class="cui-card"><i class="fa-regular fa-star" aria-hidden="true"></i><span class="cui-name">fa-regular fa-star</span></div>
+      <div class="cui-card"><i class="fa-regular fa-bell" aria-hidden="true"></i><span class="cui-name">fa-regular fa-bell</span></div>
+      <div class="cui-card"><i class="fa-regular fa-envelope" aria-hidden="true"></i><span class="cui-name">fa-regular fa-envelope</span></div>
+      <div class="cui-card"><i class="fa-regular fa-calendar" aria-hidden="true"></i><span class="cui-name">fa-regular fa-calendar</span></div>
+      <div class="cui-card"><i class="fa-regular fa-user" aria-hidden="true"></i><span class="cui-name">fa-regular fa-user</span></div>
+      <div class="cui-card"><i class="fa-regular fa-comment" aria-hidden="true"></i><span class="cui-name">fa-regular fa-comment</span></div>
+      <div class="cui-card"><i class="fa-regular fa-bookmark" aria-hidden="true"></i><span class="cui-name">fa-regular fa-bookmark</span></div>
+      <div class="cui-card"><i class="fa-regular fa-circle-check" aria-hidden="true"></i><span class="cui-name">fa-regular fa-circle-check</span></div>
+      <div class="cui-card"><i class="fa-regular fa-moon" aria-hidden="true"></i><span class="cui-name">fa-regular fa-moon</span></div>
+      <div class="cui-card"><i class="fa-regular fa-sun" aria-hidden="true"></i><span class="cui-name">fa-regular fa-sun</span></div>
+      <div class="cui-card"><i class="fa-regular fa-image" aria-hidden="true"></i><span class="cui-name">fa-regular fa-image</span></div>
+      <div class="cui-card"><i class="fa-regular fa-eye" aria-hidden="true"></i><span class="cui-name">fa-regular fa-eye</span></div>
+      <div class="cui-card"><i class="fa-regular fa-flag" aria-hidden="true"></i><span class="cui-name">fa-regular fa-flag</span></div>
+      <div class="cui-card"><i class="fa-regular fa-folder" aria-hidden="true"></i><span class="cui-name">fa-regular fa-folder</span></div>
+      <div class="cui-card"><i class="fa-regular fa-trash-can" aria-hidden="true"></i><span class="cui-name">fa-regular fa-trash-can</span></div>
+      <div class="cui-card"><i class="fa-regular fa-clock" aria-hidden="true"></i><span class="cui-name">fa-regular fa-clock</span></div>
+      <div class="cui-card"><i class="fa-regular fa-file-lines" aria-hidden="true"></i><span class="cui-name">fa-regular fa-file-lines</span></div>
+    </div>
+  </section>
+
+  <section class="cui-section cui-section--brands">
+    <h2>品牌图标 fa-brands<span class="cui-count">共 24 个</span></h2>
+    <div class="cui-grid">
+      <div class="cui-card"><i class="fa-brands fa-github" aria-hidden="true"></i><span class="cui-name">fa-brands fa-github</span></div>
+      <div class="cui-card"><i class="fa-brands fa-twitter" aria-hidden="true"></i><span class="cui-name">fa-brands fa-twitter</span></div>
+      <div class="cui-card"><i class="fa-brands fa-linkedin" aria-hidden="true"></i><span class="cui-name">fa-brands fa-linkedin</span></div>
+      <div class="cui-card"><i class="fa-brands fa-instagram" aria-hidden="true"></i><span class="cui-name">fa-brands fa-instagram</span></div>
+      <div class="cui-card"><i class="fa-brands fa-youtube" aria-hidden="true"></i><span class="cui-name">fa-brands fa-youtube</span></div>
+      <div class="cui-card"><i class="fa-brands fa-facebook" aria-hidden="true"></i><span class="cui-name">fa-brands fa-facebook</span></div>
+      <div class="cui-card"><i class="fa-brands fa-google" aria-hidden="true"></i><span class="cui-name">fa-brands fa-google</span></div>
+      <div class="cui-card"><i class="fa-brands fa-apple" aria-hidden="true"></i><span class="cui-name">fa-brands fa-apple</span></div>
+      <div class="cui-card"><i class="fa-brands fa-chrome" aria-hidden="true"></i><span class="cui-name">fa-brands fa-chrome</span></div>
+      <div class="cui-card"><i class="fa-brands fa-firefox" aria-hidden="true"></i><span class="cui-name">fa-brands fa-firefox</span></div>
+      <div class="cui-card"><i class="fa-brands fa-gitlab" aria-hidden="true"></i><span class="cui-name">fa-brands fa-gitlab</span></div>
+      <div class="cui-card"><i class="fa-brands fa-codepen" aria-hidden="true"></i><span class="cui-name">fa-brands fa-codepen</span></div>
+      <div class="cui-card"><i class="fa-brands fa-slack" aria-hidden="true"></i><span class="cui-name">fa-brands fa-slack</span></div>
+      <div class="cui-card"><i class="fa-brands fa-figma" aria-hidden="true"></i><span class="cui-name">fa-brands fa-figma</span></div>
+      <div class="cui-card"><i class="fa-brands fa-discord" aria-hidden="true"></i><span class="cui-name">fa-brands fa-discord</span></div>
+      <div class="cui-card"><i class="fa-brands fa-reddit" aria-hidden="true"></i><span class="cui-name">fa-brands fa-reddit</span></div>
+      <div class="cui-card"><i class="fa-brands fa-linux" aria-hidden="true"></i><span class="cui-name">fa-brands fa-linux</span></div>
+      <div class="cui-card"><i class="fa-brands fa-node-js" aria-hidden="true"></i><span class="cui-name">fa-brands fa-node-js</span></div>
+      <div class="cui-card"><i class="fa-brands fa-react" aria-hidden="true"></i><span class="cui-name">fa-brands fa-react</span></div>
+      <div class="cui-card"><i class="fa-brands fa-angular" aria-hidden="true"></i><span class="cui-name">fa-brands fa-angular</span></div>
+      <div class="cui-card"><i class="fa-brands fa-vuejs" aria-hidden="true"></i><span class="cui-name">fa-brands fa-vuejs</span></div>
+      <div class="cui-card"><i class="fa-brands fa-npm" aria-hidden="true"></i><span class="cui-name">fa-brands fa-npm</span></div>
+      <div class="cui-card"><i class="fa-brands fa-stack-overflow" aria-hidden="true"></i><span class="cui-name">fa-brands fa-stack-overflow</span></div>
+      <div class="cui-card"><i class="fa-brands fa-medium" aria-hidden="true"></i><span class="cui-name">fa-brands fa-medium</span></div>
+    </div>
+  </section>
+
+  <section class="cui-section">
+    <h2>写法与特性</h2>
+
+    <p class="cui-tip">① 基本写法：样式前缀决定使用哪套字体（solid / regular / brands）。</p>
+    <div class="cui-demo"><span class="cui-tag">&lt;i</span> <span class="cui-attr">class</span>=<span class="cui-val">"fa-solid fa-house"</span><span class="cui-tag">&gt;&lt;/i&gt;</span>
+<span class="cui-tag">&lt;i</span> <span class="cui-attr">class</span>=<span class="cui-val">"fa-regular fa-heart"</span><span class="cui-tag">&gt;&lt;/i&gt;</span>
+<span class="cui-tag">&lt;i</span> <span class="cui-attr">class</span>=<span class="cui-val">"fa-brands fa-github"</span><span class="cui-tag">&gt;&lt;/i&gt;</span></div>
+
+    <p class="cui-tip">② 既然只是「文字」，就能直接用 CSS 设置颜色、尺寸、旋转和动画。</p>
+    <div class="cui-preview">
+      <span>默认</span><i class="fa-solid fa-bolt" aria-hidden="true"></i>
+      <span>变色</span><i class="fa-solid fa-bolt" style="color:#e53e3e;" aria-hidden="true"></i>
+      <span>2 倍</span><i class="fa-solid fa-bolt fa-2x" style="color:#dd6b20;" aria-hidden="true"></i>
+      <span>旋转</span><i class="fa-solid fa-bolt fa-2x fa-rotate-90" style="color:#38a169;" aria-hidden="true"></i>
+      <span>动画</span><i class="fa-solid fa-bolt fa-2x fa-beat" style="color:#3182ce;" aria-hidden="true"></i>
+    </div>
+    <div class="cui-demo"><span class="cui-tag">&lt;i</span> <span class="cui-attr">class</span>=<span class="cui-val">"fa-solid fa-bolt fa-2x fa-rotate-90 fa-beat"</span>
+     <span class="cui-attr">style</span>=<span class="cui-val">"color:#38a169;"</span><span class="cui-tag">&gt;&lt;/i&gt;</span></div>
+
+    <p class="cui-tip">③ 字体图标的优点：体积小、可无损缩放、能用 CSS 一次性改色；缺点：一次只能显示一个字形、无法单独改某条线、必须加载字体文件（否则出现「豆腐块」）。</p>
+  </section>
+
+  <footer class="cui-footer">
+    <a href="./1-1.html">首页</a>
+  </footer>
+
+</div>
+</body>
+</html>
