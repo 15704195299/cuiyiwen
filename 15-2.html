@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <!-- 姓名：崔溢文，日期：2026-10-26，功能名称：JavaScript 条件与循环程序结构演示 -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>15-2 条件与循环</title>
+    <style>
+        body { font-family: "微软雅黑", sans-serif; max-width: 720px; margin: 40px auto; padding: 0 20px; }
+        h2 { color: #333; border-left: 4px solid #4a90e2; padding-left: 10px; }
+        h3 { color: #4a90e2; margin-top: 30px; }
+        .cyw-card { border: 1px solid #e0e0e0; border-radius: 6px; padding: 15px 20px; margin: 10px 0; background: #fafafa; }
+        .cyw-card code { background: #eee; padding: 1px 5px; border-radius: 3px; color: #d63384; }
+        .cyw-result { font-family: Consolas, monospace; font-size: 14px; color: #555; margin-top: 8px; padding: 8px 12px; background: #fff; border-left: 3px solid #4a90e2; }
+        .cyw-home { margin-top: 30px; display: inline-block; padding: 6px 18px; background: #4a90e2; color: #fff; text-decoration: none; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <h2>JavaScript 程序结构 — 崔溢文</h2>
+
+    <h3>① 条件结构（if / if-else / switch）</h3>
+
+    <div class="cyw-card">
+        <b>if — 成绩等级判断</b>
+        <div class="cyw-result" id="cyw_if"></div>
+    </div>
+
+    <div class="cyw-card">
+        <b>switch — 星期输出</b>
+        <div class="cyw-result" id="cyw_switch"></div>
+    </div>
+
+    <h3>② 循环结构（for / while / do-while）</h3>
+
+    <div class="cyw-card">
+        <b>for 循环 — 计算 1~100 的和</b>
+        <div class="cyw-result" id="cyw_for"></div>
+    </div>
+
+    <div class="cyw-card">
+        <b>while 循环 — 输出 1 到 5</b>
+        <div class="cyw-result" id="cyw_while"></div>
+    </div>
+
+    <div class="cyw-card">
+        <b>do-while 循环 — 至少执行一次</b>
+        <div class="cyw-result" id="cyw_dowhile"></div>
+    </div>
+
+    <div class="cyw-card">
+        <b>for-in — 遍历对象属性</b>
+        <div class="cyw-result" id="cyw_forin"></div>
+    </div>
+
+    <a href="./1-1.html" class="cyw-home">首页</a>
+
+    <script>
+        var cyw_score = 85;
+        var cyw_grade;
+        if (cyw_score >= 90) {
+            cyw_grade = "优秀 A";
+        } else if (cyw_score >= 80) {
+            cyw_grade = "良好 B";
+        } else if (cyw_score >= 70) {
+            cyw_grade = "中等 C";
+        } else if (cyw_score >= 60) {
+            cyw_grade = "及格 D";
+        } else {
+            cyw_grade = "不及格 E";
+        }
+        document.getElementById("cyw_if").innerHTML =
+            "分数 " + cyw_score + " → " + cyw_grade;
+
+        var cyw_day = new Date().getDay();
+        var cyw_dayname;
+        switch (cyw_day) {
+            case 0: cyw_dayname = "星期日"; break;
+            case 1: cyw_dayname = "星期一"; break;
+            case 2: cyw_dayname = "星期二"; break;
+            case 3: cyw_dayname = "星期三"; break;
+            case 4: cyw_dayname = "星期四"; break;
+            case 5: cyw_dayname = "星期五"; break;
+            case 6: cyw_dayname = "星期六"; break;
+            default: cyw_dayname = "未知";
+        }
+        document.getElementById("cyw_switch").innerHTML =
+            "今天是 " + cyw_dayname + "（数字 " + cyw_day + "）";
+
+        var cyw_sum = 0;
+        for (var cyw_i = 1; cyw_i <= 100; cyw_i++) {
+            cyw_sum += cyw_i;
+        }
+        document.getElementById("cyw_for").innerHTML =
+            "1 + 2 + 3 + ... + 100 = " + cyw_sum;
+
+        var cyw_j = 1;
+        var cyw_whileOut = "";
+        while (cyw_j <= 5) {
+            cyw_whileOut += cyw_j + " ";
+            cyw_j++;
+        }
+        document.getElementById("cyw_while").innerHTML = cyw_whileOut;
+
+        var cyw_k = 10;
+        var cyw_doOut = "";
+        do {
+            cyw_doOut += "执行了一次 ";
+            cyw_k++;
+        } while (cyw_k < 5);
+        document.getElementById("cyw_dowhile").innerHTML = cyw_doOut + "（初始 k=10 不满足条件，但 do 部分仍执行一次）";
+
+        var cyw_student = { name: "崔溢文", age: 20, major: "高级网页设计" };
+        var cyw_objOut = "";
+        for (var cyw_key in cyw_student) {
+            cyw_objOut += cyw_key + " = " + cyw_student[cyw_key] + "<br>";
+        }
+        document.getElementById("cyw_forin").innerHTML = cyw_objOut;
+    </script>
+</body>
+</html>
