@@ -25,56 +25,43 @@
             overflow: hidden;
         }
         .cyw-title {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 14px 16px 10px;
+            padding: 14px 16px 8px;
             font-size: 15px;
             color: #222;
             font-weight: 600;
         }
-        .cyw-title .cyw-icon {
-            width: 20px;
-            height: 20px;
-            background: #1fa0e0;
-            border-radius: 4px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .cyw-title .cyw-icon svg { width: 14px; height: 14px; fill: #fff; }
         .cyw-tabs {
             display: flex;
-            padding: 0 16px;
-            gap: 0;
+            padding: 4px 16px 0;
+            gap: 10px;
         }
         .cyw-tab {
             font-size: 13px;
             color: #999;
-            padding: 10px 20px;
+            padding: 6px 16px;
             cursor: pointer;
             position: relative;
             transition: color 0.15s;
-            border-radius: 6px 6px 0 0;
+            border-radius: 4px;
         }
         .cyw-tab.cyw-active {
             color: #fff;
             font-weight: 600;
-            background: linear-gradient(180deg, #1fa0e0 0%, #5ecdf3 100%);
+            background: #ff4d4f;
         }
         .cyw-tab.cyw-active::after {
             content: "";
             position: absolute;
             left: 50%;
             transform: translateX(-50%);
-            bottom: -10px;
+            bottom: -9px;
             width: 0;
             height: 0;
-            border-left: 9px solid transparent;
-            border-right: 9px solid transparent;
-            border-top: 10px solid #ffffff;
+            border-left: 7px solid transparent;
+            border-right: 7px solid transparent;
+            border-top: 9px solid #ff4d4f;
         }
-        .cyw-list { padding: 2px 0; }
+        .cyw-list { padding: 14px 0 2px; }
         .cyw-item {
             display: flex;
             align-items: center;
@@ -128,12 +115,7 @@
 </head>
 <body>
     <div class="cyw-page">
-        <div class="cyw-title">
-            <span class="cyw-icon">
-                <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17a5 5 0 110-10 5 5 0 010 10zm0-8a3 3 0 100 6 3 3 0 000-6z"/></svg>
-            </span>
-            点击排行
-        </div>
+        <div class="cyw-title">点击排行</div>
 
         <div class="cyw-tabs">
             <div class="cyw-tab" data-target="cyw-realtime">实时点击</div>
