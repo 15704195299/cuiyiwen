@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <!-- 姓名：崔溢文，日期：2026-10-29，功能名称：JavaScript 对象与字符串可视化演示 -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>16-2 JavaScript 对象与字符串</title>
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            padding: 0 0 46px;
+            min-height: 100vh;
+            color: #22304a;
+            font-family: "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", sans-serif;
+            background:
+                radial-gradient(1100px 560px at 8% -12%, #d9f5ec 0%, transparent 58%),
+                radial-gradient(900px 500px at 100% 4%, #f0e5ff 0%, transparent 58%),
+                linear-gradient(180deg, #f8fbfb 0%, #f5f7fb 100%);
+        }
+
+        .cyw-head {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 26px 18px 6px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .cyw-title {
+            margin: 0;
+            font-size: 30px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            background: linear-gradient(90deg, #0ca678, #7048e8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .cyw-sub { margin-top: 8px; font-size: 14px; color: #6b7894; line-height: 1.8; }
+
+        .cyw-tools { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+        .cyw-btn {
+            border: 1px solid #d5def7;
+            background: #fff;
+            color: #2f49a5;
+            font-family: inherit;
+            font-size: 14px;
+            padding: 9px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all .18s ease;
+        }
+
+        .cyw-btn:hover { border-color: #7048e8; box-shadow: 0 6px 16px rgba(112, 72, 232, .16); transform: translateY(-1px); }
+        .cyw-btn.cyw-green { background: linear-gradient(135deg, #12b886, #0ca678); border-color: transparent; color: #fff; }
+        .cyw-btn.cyw-purple { background: linear-gradient(135deg, #7048e8, #4263eb); border-color: transparent; color: #fff; }
+
+        .cyw-arg {
+            width: 170px;
+            padding: 8px 12px;
+            border: 1px solid #dbe3f8;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 13px;
+            color: #2f3f63;
+            outline: none;
+        }
+
+        .cyw-arg:focus { border-color: #0ca678; box-shadow: 0 0 0 3px rgba(12, 166, 120, .14); }
+
+        .cyw-wrap {
+            max-width: 1180px;
+            margin: 14px auto 0;
+            padding: 0 18px;
+            display: grid;
+            grid-template-columns: minmax(0, 1.55fr) minmax(300px, .95fr);
+            gap: 18px;
+            align-items: start;
+        }
+
+        .cyw-card {
+            background: #fff;
+            border: 1px solid #e6ecfb;
+            border-radius: 18px;
+            box-shadow: 0 10px 30px rgba(48, 72, 140, .07);
+            padding: 18px;
+        }
+
+        .cyw-card-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #2f3f63;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .cyw-card-title::before {
+            content: "";
+            width: 4px;
+            height: 16px;
+            border-radius: 3px;
+            background: linear-gradient(180deg, #4263eb, #7048e8);
+        }
+
+        .cyw-card-title.cyw-teal::before { background: linear-gradient(180deg, #0ca678, #38d9a9); }
+        .cyw-card-title.cyw-violet::before { background: linear-gradient(180deg, #7048e8, #a78bfa); }
+
+        .cyw-chip {
+            font-size: 12px;
+            color: #5a6b91;
+            background: #f2f5ff;
+            border: 1px solid #e0e7fb;
+            padding: 4px 10px;
+            border-radius: 999px;
+        }
+
+        .cyw-chip.cyw-lock { background: #e7f5ff; border-color: #a5d8ff; color: #1c7ed6; }
+
+        .cyw-str {
+            display: flex;
+            flex-wrap: wrap;
+            align-content: flex-start;
+            gap: 20px 10px;
+            min-height: 118px;
+            padding: 20px 16px 16px;
+            border-radius: 14px;
+            border: 1px dashed #bfe6d8;
+            background: linear-gradient(180deg, #fbfefd, #eefaf6);
+        }
+
+        .cyw-ch {
+            position: relative;
+            width: 54px;
+            height: 62px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            background: linear-gradient(180deg, #ffffff, #e9f9f3);
+            border: 1px solid #c9ead9;
+            box-shadow: 0 6px 14px rgba(12, 140, 105, .10);
+        }
+
+        .cyw-chv { font-size: 20px; font-weight: 800; color: #0b7a5c; font-family: Consolas, monospace; }
+        .cyw-chi { font-size: 11px; color: #8aa0b8; font-family: Consolas, monospace; }
+        .cyw-ch.cyw-space .cyw-chv { color: #b6c2d4; }
+
+        .cyw-ch.cyw-add { background: linear-gradient(180deg, #eafaf1, #d7f4e5); border-color: #86dcb4; animation: cywPop .5s cubic-bezier(.2, .9, .25, 1.2) both; }
+        .cyw-ch.cyw-chg { background: linear-gradient(180deg, #fff8e8, #ffefd2); border-color: #f5b64a; animation: cywChg .6s ease both; }
+        .cyw-ch.cyw-hit { background: linear-gradient(180deg, #fff3e9, #ffe6d4); border-color: #f08c3c; animation: cywHit .9s ease both; }
+        .cyw-ch.cyw-out { animation: cywOut .32s ease forwards; background: linear-gradient(180deg, #ffeef1, #ffdde3); border-color: #f783ac; }
+
+        .cyw-objbox {
+            padding: 16px;
+            border-radius: 14px;
+            border: 1px dashed #d8cdf7;
+            background: linear-gradient(180deg, #fcfbff, #f3efff);
+        }
+
+        .cyw-objline { font-family: Consolas, monospace; font-size: 14px; color: #7048e8; margin-bottom: 12px; }
+
+        .cyw-props { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+
+        .cyw-prop {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 14px;
+            border-radius: 12px;
+            background: #fff;
+            border: 1px solid #e7e1fb;
+            box-shadow: 0 6px 14px rgba(112, 72, 232, .07);
+        }
+
+        .cyw-pkey { font-family: Consolas, monospace; font-weight: 700; color: #7048e8; }
+        .cyw-parrow { color: #c0b2f5; font-family: Consolas, monospace; }
+        .cyw-pval { font-family: Consolas, monospace; font-weight: 700; color: #2f3f63; word-break: break-all; }
+        .cyw-ptype { margin-left: auto; font-size: 11px; color: #8a97b8; background: #f4f2ff; border-radius: 999px; padding: 2px 8px; white-space: nowrap; }
+
+        .cyw-prop.cyw-add { background: linear-gradient(180deg, #eafaf1, #dcf6e8); border-color: #86dcb4; animation: cywPop .5s cubic-bezier(.2, .9, .25, 1.2) both; }
+        .cyw-prop.cyw-chg { background: linear-gradient(180deg, #fff8e8, #ffefd2); border-color: #f5b64a; animation: cywChg .6s ease both; }
+        .cyw-prop.cyw-hit { background: linear-gradient(180deg, #fff3e9, #ffe6d4); border-color: #f08c3c; animation: cywHit .9s ease both; }
+        .cyw-prop.cyw-out { animation: cywOut .32s ease forwards; background: linear-gradient(180deg, #ffeef1, #ffdde3); border-color: #f783ac; }
+
+        @keyframes cywPop { 0% { transform: scale(.4); opacity: 0; } 65% { transform: scale(1.1); } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes cywChg { 0% { transform: scale(1); } 40% { transform: scale(1.09) rotate(-2deg); } 100% { transform: scale(1); } }
+        @keyframes cywHit { 0% { transform: translateY(0); } 30% { transform: translateY(-9px); } 100% { transform: translateY(0); } }
+        @keyframes cywOut { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(.5) translateY(12px); opacity: 0; } }
+
+        .cyw-now {
+            margin-top: 14px;
+            padding: 10px 14px;
+            border-radius: 12px;
+            background: #f7f9ff;
+            border: 1px solid #e6ecfb;
+            font-family: Consolas, monospace;
+            font-size: 14px;
+            color: #364a86;
+            word-break: break-all;
+            line-height: 1.7;
+        }
+
+        .cyw-legend { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+        .cyw-lg { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #6b7894; }
+        .cyw-dot { width: 12px; height: 12px; border-radius: 4px; border: 1px solid; }
+        .cyw-lg-add .cyw-dot { background: #d7f4e5; border-color: #86dcb4; }
+        .cyw-lg-out .cyw-dot { background: #ffdde3; border-color: #f783ac; }
+        .cyw-lg-chg .cyw-dot { background: #ffefd2; border-color: #f5b64a; }
+        .cyw-lg-hit .cyw-dot { background: #ffe6d4; border-color: #f08c3c; }
+
+        .cyw-group + .cyw-group { margin-top: 16px; }
+
+        .cyw-group-title {
+            font-size: 12px;
+            letter-spacing: 1px;
+            color: #7c89a8;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cyw-group-title::after { content: ""; flex: 1; height: 1px; background: #e8eefb; }
+
+        .cyw-mbtn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-align: left;
+            font-family: inherit;
+            border: 1px solid #e6ecfb;
+            background: #fbfcff;
+            border-radius: 12px;
+            padding: 9px 12px;
+            margin-bottom: 7px;
+            cursor: pointer;
+            transition: all .18s ease;
+        }
+
+        .cyw-mbtn:hover { border-color: #b9c8f5; background: #f2f6ff; transform: translateX(3px); }
+        .cyw-mbtn.cyw-on { border-color: #4263eb; background: #edf2ff; box-shadow: 0 0 0 3px rgba(66, 99, 235, .12); }
+        .cyw-spanel .cyw-mname { color: #0b7a5c; }
+        .cyw-spanel .cyw-mbtn.cyw-on { border-color: #0ca678; background: #e9fbf5; box-shadow: 0 0 0 3px rgba(12, 166, 120, .12); }
+        .cyw-opanel .cyw-mname { color: #5f3dc4; }
+        .cyw-opanel .cyw-mbtn.cyw-on { border-color: #7048e8; background: #f3efff; box-shadow: 0 0 0 3px rgba(112, 72, 232, .12); }
+
+        .cyw-mname { font-family: Consolas, monospace; font-weight: 700; font-size: 14px; }
+        .cyw-mdesc { flex: 1; font-size: 12px; color: #7b88a6; }
+
+        .cyw-tag { font-size: 10px; padding: 2px 7px; border-radius: 999px; white-space: nowrap; }
+        .cyw-tag.cyw-new { background: #e6fcf5; color: #0ca678; }
+        .cyw-tag.cyw-read { background: #eef2ff; color: #3b5bdb; }
+        .cyw-tag.cyw-mut { background: #ffecf0; color: #d6336c; }
+
+        .cyw-outwrap {
+            max-width: 1180px;
+            margin: 14px auto 0;
+            padding: 0 18px;
+            display: grid;
+            grid-template-columns: .85fr 1.15fr 1fr;
+            gap: 18px;
+            align-items: start;
+        }
+
+        .cyw-resval {
+            font-family: Consolas, monospace;
+            font-size: 17px;
+            font-weight: 700;
+            color: #0b7a5c;
+            word-break: break-all;
+            min-height: 30px;
+            line-height: 1.6;
+        }
+
+        .cyw-resval.cyw-violet { color: #5f3dc4; }
+        .cyw-meta { margin-top: 8px; font-size: 12px; color: #8a97b8; line-height: 1.6; }
+
+        .cyw-code {
+            margin: 0;
+            padding: 12px 14px;
+            border-radius: 12px;
+            background: #1f2a44;
+            color: #e7ecff;
+            font-family: Consolas, monospace;
+            font-size: 13px;
+            line-height: 1.7;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .cyw-log { list-style: none; margin: 0; padding: 0; max-height: 232px; overflow: auto; }
+
+        .cyw-log li {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 4px;
+            border-bottom: 1px dashed #e8eefb;
+            font-size: 12px;
+        }
+
+        .cyw-log li b { font-family: Consolas, monospace; color: #2f49a5; font-size: 13px; }
+        .cyw-log li em { margin-left: auto; font-style: normal; font-family: Consolas, monospace; color: #5f3dc4; text-align: right; }
+        .cyw-log li span { color: #8a97b8; }
+
+        .cyw-foot { max-width: 1180px; margin: 22px auto 0; padding: 0 18px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; color: #7c89a8; font-size: 13px; }
+        .cyw-foot a { color: #4263eb; text-decoration: none; font-weight: 700; }
+
+        @media (max-width: 980px) {
+            .cyw-wrap, .cyw-outwrap { grid-template-columns: minmax(0, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <header class="cyw-head">
+        <div>
+            <h1 class="cyw-title">16-2 JavaScript 对象与字符串可视化</h1>
+            <div class="cyw-sub">
+                上半部分：字符串 —— 每个字符一格，点击方法即可看到<strong>查找、截取、变换</strong>时哪些字符被命中、被改写、被删除。<br>
+                下半部分：对象 —— 每个属性一条，点击方法即可看到<strong>属性新增、修改、删除、遍历与转换</strong>的全过程。<br>
+                绿色＝新增，红色淡出＝删除，琥珀色＝被改写，橙色＝被命中/被读取。
+            </div>
+        </div>
+        <div class="cyw-tools">
+            <a class="cyw-btn" href="./1-1.html">首页</a>
+        </div>
+    </header>
+
+    <main class="cyw-wrap">
+        <section class="cyw-card">
+            <div class="cyw-card-title cyw-teal">
+                字符串舞台
+                <span class="cyw-chip">长度 <b id="cyw_slen">0</b></span>
+                <span class="cyw-chip">下标 0 ~ length-1，负数从末尾倒数</span>
+                <span style="margin-left:auto"></span>
+                <input id="cyw_sarg" class="cyw-arg" type="text" placeholder="自定义参数（如 崔）" />
+                <button id="cyw_sreset" class="cyw-btn cyw-green" type="button">重置字符串</button>
+            </div>
+
+            <div class="cyw-str" id="cyw_str"></div>
+
+            <div class="cyw-legend">
+                <span class="cyw-lg cyw-lg-add"><i class="cyw-dot"></i>新增字符 concat / padStart / repeat</span>
+                <span class="cyw-lg cyw-lg-out"><i class="cyw-dot"></i>删除字符 trim</span>
+                <span class="cyw-lg cyw-lg-chg"><i class="cyw-dot"></i>改写 toUpperCase / replace</span>
+                <span class="cyw-lg cyw-lg-hit"><i class="cyw-dot"></i>命中 charAt / indexOf / includes / slice</span>
+            </div>
+
+            <div class="cyw-now" id="cyw_snow"></div>
+        </section>
+
+        <aside class="cyw-card">
+            <div class="cyw-card-title cyw-teal">字符串方法（共 <span id="cyw_scount">0</span> 个）</div>
+            <div id="cyw_spanel" class="cyw-spanel"></div>
+        </aside>
+    </main>
+
+    <section class="cyw-outwrap">
+        <div class="cyw-card">
+            <div class="cyw-card-title cyw-teal">字符串返回值</div>
+            <div class="cyw-resval" id="cyw_sresult">—</div>
+            <div class="cyw-meta" id="cyw_stype">尚未执行任何方法</div>
+        </div>
+        <div class="cyw-card">
+            <div class="cyw-card-title cyw-teal">执行代码</div>
+            <pre class="cyw-code" id="cyw_scode">// 点击右上角方法按钮开始演示</pre>
+        </div>
+        <div class="cyw-card">
+            <div class="cyw-card-title cyw-teal">操作日志</div>
+            <ul class="cyw-log" id="cyw_slog"></ul>
+        </div>
+    </section>
+
+    <main class="cyw-wrap">
+        <section class="cyw-card">
+            <div class="cyw-card-title cyw-violet">
+                对象舞台
+                <span class="cyw-chip">属性 <b id="cyw_olen">0</b> 个</span>
+                <span class="cyw-chip" id="cyw_olock" style="display:none">❄ 已冻结 freeze</span>
+                <span style="margin-left:auto"></span>
+                <input id="cyw_oarg" class="cyw-arg" type="text" placeholder="自定义属性名/值" />
+                <button id="cyw_oreset" class="cyw-btn cyw-purple" type="button">重置对象</button>
+            </div>
+
+            <div class="cyw-objbox">
+                <div class="cyw-objline">let cyw_obj = {</div>
+                <div class="cyw-props" id="cyw_obj"></div>
+                <div class="cyw-objline" style="margin:12px 0 0">}</div>
+            </div>
+
+            <div class="cyw-legend">
+                <span class="cyw-lg cyw-lg-add"><i class="cyw-dot"></i>新增属性 赋值 / assign / 展开</span>
+                <span class="cyw-lg cyw-lg-out"><i class="cyw-dot"></i>删除属性 delete</span>
+                <span class="cyw-lg cyw-lg-chg"><i class="cyw-dot"></i>修改属性值</span>
+                <span class="cyw-lg cyw-lg-hit"><i class="cyw-dot"></i>命中 keys / values / entries / 解构</span>
+            </div>
+
+            <div class="cyw-now" id="cyw_onow"></div>
+        </section>
+
+        <aside class="cyw-card">
+            <div class="cyw-card-title cyw-violet">对象方法（共 <span id="cyw_ocount">0</span> 个）</div>
+            <div id="cyw_opanel" class="cyw-opanel"></div>
+        </aside>
+    </main>
+
+    <section class="cyw-outwrap">
+        <div class="cyw-card">
+            <div class="cyw-card-title cyw-violet">对象返回值</div>
+            <div class="cyw-resval cyw-violet" id="cyw_oresult">—</div>
+            <div class="cyw-meta" id="cyw_otype">尚未执行任何方法</div>
+        </div>
+        <div class="cyw-card">
+            <div class="cyw-card-title cyw-violet">执行代码</div>
+            <pre class="cyw-code" id="cyw_ocode">// 点击右上角方法按钮开始演示</pre>
+        </div>
+        <div class="cyw-card">
+            <div class="cyw-card-title cyw-violet">操作日志</div>
+            <ul class="cyw-log" id="cyw_olog"></ul>
+        </div>
+    </section>
+
+    <footer class="cyw-foot">
+        <span>姓名：崔溢文 · 《高级网页设计》课堂实践</span>
+        <a href="./1-1.html">返回首页</a>
+    </footer>
+
+    <script>
+        var cyw_kindText = { read: '只读取', new: '返回新值', mut: '改自身' };
+
+        function cyw_fmt(v) {
+            if (Array.isArray(v)) { return '[' + v.map(cyw_fmt).join(', ') + ']'; }
+            if (v && typeof v === 'object') {
+                return '{ ' + Object.keys(v).map(function (k) { return k + ': ' + cyw_fmt(v[k]); }).join(', ') + ' }';
+            }
+            if (typeof v === 'string') { return '"' + v + '"'; }
+            if (typeof v === 'boolean') { return v ? 'true' : 'false'; }
+            if (v === undefined) { return 'undefined'; }
+            if (v === null) { return 'null'; }
+            return String(v);
+        }
+
+        function cyw_typeOf(v) {
+            if (Array.isArray(v)) { return 'Array，长度 ' + v.length; }
+            if (v && typeof v === 'object') { return 'Object，属性 ' + Object.keys(v).length + ' 个'; }
+            return typeof v;
+        }
+
+        function cyw_range(a, b) {
+            var r = [];
+            for (var i = a; i <= b; i++) { r.push(i); }
+            return r;
+        }
+
+        function cyw_argOf(arg, def) {
+            return (arg === null || arg === undefined || arg === '') ? def : arg;
+        }
+
+        function cyw_copy(o) {
+            var r = {};
+            Object.keys(o).forEach(function (k) { r[k] = o[k]; });
+            return r;
+        }
+
+        /* ========================= 字符串部分 ========================= */
+
+        var cyw_sInit = '  Hello 崔溢文!';
+        var cyw_str = cyw_sInit;
+        var cyw_sReady = true;
+
+        var cyw_sMethods = [
+            {
+                cyw_cat: '一、长度与读取（不改变原串）', cyw_name: 'length', cyw_kind: 'read',
+                cyw_note: '字符串的长度属性（不是方法），空格、汉字、标点都各占 1 个长度。',
+                cyw_code: 'cyw_str.length',
+                cyw_run: function (s) { return { cyw_ret: s.length, cyw_hit: cyw_range(0, s.length - 1), cyw_stagger: true }; }
+            },
+            {
+                cyw_cat: '一、长度与读取（不改变原串）', cyw_name: 'charAt', cyw_kind: 'read',
+                cyw_note: '按下标取一个字符，下标越界返回空字符串 ""。',
+                cyw_code: function (a) { return 'cyw_str.charAt(' + cyw_argOf(a, 3) + ')'; },
+                cyw_run: function (s, arg) {
+                    var i = Number(cyw_argOf(arg, 3));
+                    return { cyw_ret: s.charAt(i), cyw_hit: (i >= 0 && i < s.length) ? [i] : [] };
+                }
+            },
+            {
+                cyw_cat: '一、长度与读取（不改变原串）', cyw_name: 'at', cyw_kind: 'read',
+                cyw_note: '支持负数下标：at(-1) 取最后一个字符，比 s[s.length-1] 更简洁。',
+                cyw_code: 'cyw_str.at(-1)',
+                cyw_run: function (s) {
+                    var i = s.length - 1;
+                    return { cyw_ret: s.charAt(i), cyw_hit: i >= 0 ? [i] : [] };
+                }
+            },
+            {
+                cyw_cat: '一、长度与读取（不改变原串）', cyw_name: 'charCodeAt', cyw_kind: 'read',
+                cyw_note: '返回指定位置字符的 Unicode 编码，"H" 是 72，常用来做字符判断。',
+                cyw_code: 'cyw_str.charCodeAt(2)',
+                cyw_run: function (s) { return { cyw_ret: s.charCodeAt(2), cyw_hit: [2] }; }
+            },
+            {
+                cyw_cat: '一、长度与读取（不改变原串）', cyw_name: '索引读写', cyw_kind: 'read',
+                cyw_note: '可以用 s[i] 读取字符，但不能用 s[i]="X" 修改——字符串是不可变的。',
+                cyw_code: 'cyw_str[2]        // 读到 "H"\ncyw_str[2] = "X"  // 无效，严格模式会报错',
+                cyw_run: function (s) {
+                    return { cyw_ret: 's[2] = "' + s.charAt(2) + '"，赋值修改无效（字符串不可变）', cyw_hit: [2] };
+                }
+            },
+
+            {
+                cyw_cat: '二、查找与判断（只读取）', cyw_name: 'indexOf', cyw_kind: 'read',
+                cyw_note: '查找子串第一次出现的下标，找不到返回 -1。',
+                cyw_code: function (a) { return 'cyw_str.indexOf("' + cyw_argOf(a, '崔') + '")'; },
+                cyw_run: function (s, arg) {
+                    var t = String(cyw_argOf(arg, '崔'));
+                    var i = s.indexOf(t);
+                    return { cyw_ret: i, cyw_hit: i > -1 ? cyw_range(i, i + t.length - 1) : [] };
+                }
+            },
+            {
+                cyw_cat: '二、查找与判断（只读取）', cyw_name: 'lastIndexOf', cyw_kind: 'read',
+                cyw_note: '从后往前查找子串最后一次出现的下标，找不到返回 -1。',
+                cyw_code: function (a) { return 'cyw_str.lastIndexOf("' + cyw_argOf(a, 'l') + '")'; },
+                cyw_run: function (s, arg) {
+                    var t = String(cyw_argOf(arg, 'l'));
+                    var i = s.lastIndexOf(t);
+                    return { cyw_ret: i, cyw_hit: i > -1 ? cyw_range(i, i + t.length - 1) : [] };
+                }
+            },
+            {
+                cyw_cat: '二、查找与判断（只读取）', cyw_name: 'includes', cyw_kind: 'read',
+                cyw_note: '判断是否包含某个子串，返回 true / false，比 indexOf() !== -1 更直观。',
+                cyw_code: function (a) { return 'cyw_str.includes("' + cyw_argOf(a, '崔溢文') + '")'; },
+                cyw_run: function (s, arg) {
+                    var t = String(cyw_argOf(arg, '崔溢文'));
+                    var i = s.indexOf(t);
+                    return { cyw_ret: i > -1, cyw_hit: i > -1 ? cyw_range(i, i + t.length - 1) : [] };
+                }
+            },
+            {
+                cyw_cat: '二、查找与判断（只读取）', cyw_name: 'startsWith', cyw_kind: 'read',
+                cyw_note: '判断是否以某子串开头，第二个参数可指定从哪个下标开始比较。',
+                cyw_code: 'cyw_str.startsWith("Hello", 2)',
+                cyw_run: function (s) {
+                    var t = 'Hello';
+                    var i = s.indexOf(t);
+                    return { cyw_ret: s.startsWith(t, 2), cyw_hit: i > -1 ? cyw_range(i, i + t.length - 1) : [] };
+                }
+            },
+            {
+                cyw_cat: '二、查找与判断（只读取）', cyw_name: 'endsWith', cyw_kind: 'read',
+                cyw_note: '判断是否以某子串结尾，常用来判断文件后缀名。',
+                cyw_code: function (a) { return 'cyw_str.endsWith("' + cyw_argOf(a, '!') + '")'; },
+                cyw_run: function (s, arg) {
+                    var t = String(cyw_argOf(arg, '!'));
+                    var i = s.lastIndexOf(t);
+                    return { cyw_ret: s.endsWith(t), cyw_hit: i > -1 ? cyw_range(i, i + t.length - 1) : [] };
+                }
+            },
+
+            {
+                cyw_cat: '三、截取与拆分（返回新值）', cyw_name: 'slice', cyw_kind: 'new',
+                cyw_note: '截取 [start, end) 区间的子串，支持负数下标，原串不变。',
+                cyw_code: 'cyw_str.slice(2, 7)',
+                cyw_run: function (s) { return { cyw_ret: s.slice(2, 7), cyw_hit: cyw_range(2, 6) }; }
+            },
+            {
+                cyw_cat: '三、截取与拆分（返回新值）', cyw_name: 'substring', cyw_kind: 'new',
+                cyw_note: '同样截取 [start, end)，但负数下标会被当成 0，且大数小数会自动交换。',
+                cyw_code: 'cyw_str.substring(7, 12)',
+                cyw_run: function (s) { return { cyw_ret: s.substring(7, 12), cyw_hit: cyw_range(7, Math.min(11, s.length - 1)) }; }
+            },
+            {
+                cyw_cat: '三、截取与拆分（返回新值）', cyw_name: 'split', cyw_kind: 'new',
+                cyw_note: '按分隔符把字符串切成数组，是“字符串 → 数组”的桥梁。',
+                cyw_code: 'cyw_str.trim().split(" ")',
+                cyw_run: function (s) {
+                    return { cyw_ret: s.trim().split(' '), cyw_hit: cyw_range(0, s.length - 1), cyw_stagger: true };
+                }
+            },
+
+            {
+                cyw_cat: '四、变换（返回新串，原串不变）', cyw_name: 'toUpperCase', cyw_kind: 'new',
+                cyw_note: '全部转大写后返回一个新字符串，必须重新赋值才会“改变”。',
+                cyw_code: 'cyw_str = cyw_str.toUpperCase()',
+                cyw_run: function (s) { return { cyw_ret: s.toUpperCase(), cyw_str: s.toUpperCase(), cyw_chg: 'all' }; }
+            },
+            {
+                cyw_cat: '四、变换（返回新串，原串不变）', cyw_name: 'toLowerCase', cyw_kind: 'new',
+                cyw_note: '全部转小写后返回一个新字符串，常用于忽略大小写的比较。',
+                cyw_code: 'cyw_str = cyw_str.toLowerCase()',
+                cyw_run: function (s) { return { cyw_ret: s.toLowerCase(), cyw_str: s.toLowerCase(), cyw_chg: 'all' }; }
+            },
+            {
+                cyw_cat: '四、变换（返回新串，原串不变）', cyw_name: 'trim', cyw_kind: 'new',
+                cyw_note: '去掉首尾空白字符（表单输入必用），trimStart / trimEnd 只去掉一头。',
+                cyw_code: 'cyw_str = cyw_str.trim()',
+                cyw_run: function (s) {
+                    var lead = s.length - s.replace(/^\s+/, '').length;
+                    var trail = s.length - s.replace(/\s+$/, '').length;
+                    var out = cyw_range(0, lead - 1).concat(cyw_range(s.length - trail, s.length - 1));
+                    return { cyw_ret: s.trim(), cyw_str: s.trim(), cyw_out: out, cyw_hit: cyw_range(lead, s.length - trail - 1) };
+                }
+            },
+            {
+                cyw_cat: '四、变换（返回新串，原串不变）', cyw_name: 'replace', cyw_kind: 'new',
+                cyw_note: '替换第一个匹配的子串；用正则 /g 或 replaceAll 才能全部替换。',
+                cyw_code: 'cyw_str = cyw_str.replace("崔溢文", "同学")',
+                cyw_run: function (s) {
+                    var next = s.replace('崔溢文', '同学');
+                    var i = s.indexOf('崔溢文');
+                    return { cyw_ret: next, cyw_str: next, cyw_chg: 'all', cyw_hit: i > -1 ? cyw_range(i, i + 2) : [] };
+                }
+            },
+            {
+                cyw_cat: '四、变换（返回新串，原串不变）', cyw_name: 'replaceAll', cyw_kind: 'new',
+                cyw_note: '把所有匹配的子串全部替换成新内容。',
+                cyw_code: 'cyw_str = cyw_str.replaceAll("l", "L")',
+                cyw_run: function (s) {
+                    var hit = [];
+                    for (var i = 0; i < s.length; i++) { if (s.charAt(i) === 'l') { hit.push(i); } }
+                    var next = s.split('l').join('L');
+                    return { cyw_ret: next, cyw_str: next, cyw_chg: hit };
+                }
+            },
+            {
+                cyw_cat: '四、变换（返回新串，原串不变）', cyw_name: 'padStart', cyw_kind: 'new',
+                cyw_note: '在开头补字符到指定长度，常用于编号补零 "7".padStart(3,"0")。',
+                cyw_code: 'cyw_str = cyw_str.padStart(cyw_str.length + 3, "★")',
+                cyw_run: function (s) {
+                    var next = s.padStart(s.length + 3, '★');
+                    return { cyw_ret: next, cyw_str: next, cyw_add: cyw_range(0, 2) };
+                }
+            },
+
+            {
+                cyw_cat: '五、拼接与模板', cyw_name: 'concat', cyw_kind: 'new',
+                cyw_note: '把字符串拼接起来返回一个新串，日常更常用 + 号或模板字符串。',
+                cyw_code: 'cyw_str = cyw_str.concat(" —— 2026")',
+                cyw_run: function (s) {
+                    var next = s.concat(' —— 2026');
+                    return { cyw_ret: next, cyw_str: next, cyw_add: cyw_range(s.length, next.length - 1) };
+                }
+            },
+            {
+                cyw_cat: '五、拼接与模板', cyw_name: 'repeat', cyw_kind: 'new',
+                cyw_note: '把字符串重复 n 次生成新串，n 为 0 得到空串。',
+                cyw_code: 'cyw_str = cyw_str.trim().repeat(2)',
+                cyw_run: function (s) {
+                    var next = s.trim().repeat(2);
+                    return { cyw_ret: next, cyw_str: next, cyw_chg: 'all' };
+                }
+            },
+            {
+                cyw_cat: '五、拼接与模板', cyw_name: '模板字符串', cyw_kind: 'new',
+                cyw_note: '反引号包裹，${} 里可直接写变量或表达式，还能换行，比 + 拼接更好用。',
+                cyw_code: '`你好，我是 ${cyw_str.trim()}，今年 20 岁`',
+                cyw_run: function (s) {
+                    return { cyw_ret: '你好，我是 ' + s.trim() + '，今年 20 岁', cyw_hit: cyw_range(0, s.length - 1), cyw_stagger: true };
+                }
+            }
+        ];
+
+        function cyw_sRender(fx) {
+            fx = fx || {};
+            var cyw_box = document.getElementById('cyw_str');
+            cyw_box.innerHTML = '';
+
+            for (var i = 0; i < cyw_str.length; i++) {
+                var cyw_ch = cyw_str.charAt(i);
+                var cyw_cell = document.createElement('div');
+                cyw_cell.className = 'cyw-ch';
+                cyw_cell.setAttribute('data-cy-id', i);
+                if (cyw_ch === ' ') { cyw_cell.className += ' cyw-space'; }
+                if (fx.cyw_add && fx.cyw_add.indexOf(i) > -1) { cyw_cell.className += ' cyw-add'; }
+                if (fx.cyw_chg === 'all' || (fx.cyw_chg && fx.cyw_chg.indexOf(i) > -1)) { cyw_cell.className += ' cyw-chg'; }
+                if (fx.cyw_hit && fx.cyw_hit.indexOf(i) > -1) {
+                    cyw_cell.className += ' cyw-hit';
+                    if (fx.cyw_stagger) { cyw_cell.style.animationDelay = (i * 0.05) + 's'; }
+                }
+
+                var cyw_v = document.createElement('span');
+                cyw_v.className = 'cyw-chv';
+                cyw_v.textContent = cyw_ch === ' ' ? '␣' : cyw_ch;
+
+                var cyw_k = document.createElement('span');
+                cyw_k.className = 'cyw-chi';
+                cyw_k.textContent = '[' + i + ']';
+
+                cyw_cell.appendChild(cyw_v);
+                cyw_cell.appendChild(cyw_k);
+                cyw_box.appendChild(cyw_cell);
+            }
+
+            document.getElementById('cyw_slen').textContent = cyw_str.length;
+            document.getElementById('cyw_snow').textContent = 'cyw_str = ' + cyw_fmt(cyw_str);
+        }
+
+        function cyw_sExec(m) {
+            if (!cyw_sReady) { return; }
+
+            var cyw_raw = document.getElementById('cyw_sarg').value.trim();
+            var cyw_arg = cyw_raw === '' ? null : (isNaN(Number(cyw_raw)) ? cyw_raw : Number(cyw_raw));
+
+            var cyw_out = m.cyw_run(cyw_str, cyw_arg) || {};
+            var cyw_box = document.getElementById('cyw_str');
+
+            Array.prototype.forEach.call(document.querySelectorAll('#cyw_spanel .cyw-mbtn'), function (b) {
+                b.classList.toggle('cyw-on', b.getAttribute('data-cy-name') === m.cyw_name);
+            });
+
+            document.getElementById('cyw_sresult').textContent = cyw_fmt(cyw_out.cyw_ret);
+            document.getElementById('cyw_stype').textContent = '类型：' + cyw_typeOf(cyw_out.cyw_ret) + '　|　' + m.cyw_note;
+            document.getElementById('cyw_scode').textContent = '// ' + m.cyw_note + '\n' +
+                (typeof m.cyw_code === 'function' ? m.cyw_code(cyw_arg) : m.cyw_code) + ';';
+
+            cyw_sReady = false;
+
+            (cyw_out.cyw_out || []).forEach(function (i) {
+                var cyw_el = cyw_box.querySelector('[data-cy-id="' + i + '"]');
+                if (cyw_el) { cyw_el.classList.add('cyw-out'); }
+            });
+
+            setTimeout(function () {
+                if (typeof cyw_out.cyw_str === 'string') { cyw_str = cyw_out.cyw_str; }
+                cyw_sRender(cyw_out);
+
+                var cyw_li = document.createElement('li');
+                cyw_li.innerHTML = '<b>' + m.cyw_name + '</b>' +
+                    '<span class="cyw-tag cyw-' + m.cyw_kind + '">' + cyw_kindText[m.cyw_kind] + '</span>' +
+                    '<span>长度 ' + cyw_str.length + '</span>' +
+                    '<em>' + cyw_fmt(cyw_out.cyw_ret) + '</em>';
+                var cyw_ul = document.getElementById('cyw_slog');
+                cyw_ul.insertBefore(cyw_li, cyw_ul.firstChild);
+                while (cyw_ul.children.length > 8) { cyw_ul.removeChild(cyw_ul.lastChild); }
+
+                cyw_sReady = true;
+            }, (cyw_out.cyw_out || []).length ? 320 : 0);
+        }
+
+        /* ========================= 对象部分 ========================= */
+
+        function cyw_oInit() {
+            return { 姓名: '崔溢文', 年龄: 20, 专业: '高级网页设计', 城市: '北京' };
+        }
+
+        var cyw_obj = cyw_oInit();
+        var cyw_oFrozen = false;
+        var cyw_oReady = true;
+
+        var cyw_oMethods = [
+            {
+                cyw_cat: '一、属性访问与修改', cyw_name: '点号访问', cyw_kind: 'read',
+                cyw_note: '对象.属性名 取值；属性名不存在时返回 undefined，不会报错。',
+                cyw_code: 'cyw_obj.姓名',
+                cyw_run: function (o) { return { cyw_ret: o.姓名, cyw_hit: ['姓名'] }; }
+            },
+            {
+                cyw_cat: '一、属性访问与修改', cyw_name: '中括号访问', cyw_kind: 'read',
+                cyw_note: '对象["属性名"]，属性名可以是变量或含特殊字符，更灵活。',
+                cyw_code: function (a) { return 'cyw_obj["' + cyw_argOf(a, '年龄') + '"]'; },
+                cyw_run: function (o, arg) {
+                    var k = String(cyw_argOf(arg, '年龄'));
+                    return { cyw_ret: o[k], cyw_hit: Object.prototype.hasOwnProperty.call(o, k) ? [k] : [] };
+                }
+            },
+            {
+                cyw_cat: '一、属性访问与修改', cyw_name: '新增/修改属性', cyw_kind: 'mut',
+                cyw_note: '给不存在的属性赋值＝新增，给已存在的属性赋值＝修改。',
+                cyw_code: function (a) { return 'cyw_obj.年级 = "' + cyw_argOf(a, '大二') + '"'; },
+                cyw_run: function (o, arg) {
+                    var next = cyw_copy(o);
+                    next.年级 = String(cyw_argOf(arg, '大二'));
+                    return { cyw_ret: next.年级, cyw_obj: next };
+                }
+            },
+            {
+                cyw_cat: '一、属性访问与修改', cyw_name: 'delete', cyw_kind: 'mut',
+                cyw_note: 'delete 对象.属性 删除一个属性，删除成功返回 true。',
+                cyw_code: function (a) { return 'delete cyw_obj.' + cyw_argOf(a, '城市'); },
+                cyw_run: function (o, arg) {
+                    var k = String(cyw_argOf(arg, '城市'));
+                    var next = cyw_copy(o);
+                    var ok = Object.prototype.hasOwnProperty.call(next, k);
+                    delete next[k];
+                    return { cyw_ret: ok, cyw_obj: next };
+                }
+            },
+            {
+                cyw_cat: '一、属性访问与修改', cyw_name: '解构赋值', cyw_kind: 'read',
+                cyw_note: 'const { 姓名, 年龄 } = cyw_obj 一次性把属性取成变量，还能起别名、设默认值。',
+                cyw_code: 'const { 姓名, 年龄 } = cyw_obj',
+                cyw_run: function (o) {
+                    return { cyw_ret: o.姓名 + ' / ' + o.年龄, cyw_hit: ['姓名', '年龄'] };
+                }
+            },
+
+            {
+                cyw_cat: '二、遍历与查询', cyw_name: 'Object.keys', cyw_kind: 'read',
+                cyw_note: '把全部属性名取出来组成数组，常配合 forEach / map 使用。',
+                cyw_code: 'Object.keys(cyw_obj)',
+                cyw_run: function (o) { return { cyw_ret: Object.keys(o), cyw_hit: Object.keys(o), cyw_stagger: true }; }
+            },
+            {
+                cyw_cat: '二、遍历与查询', cyw_name: 'Object.values', cyw_kind: 'read',
+                cyw_note: '把全部属性值取出来组成数组。',
+                cyw_code: 'Object.values(cyw_obj)',
+                cyw_run: function (o) { return { cyw_ret: Object.values(o), cyw_hit: Object.keys(o), cyw_stagger: true }; }
+            },
+            {
+                cyw_cat: '二、遍历与查询', cyw_name: 'Object.entries', cyw_kind: 'read',
+                cyw_note: '把对象转成 [键, 值] 的二维数组，方便用 for...of 遍历。',
+                cyw_code: 'Object.entries(cyw_obj)',
+                cyw_run: function (o) { return { cyw_ret: Object.entries(o), cyw_hit: Object.keys(o), cyw_stagger: true }; }
+            },
+            {
+                cyw_cat: '二、遍历与查询', cyw_name: 'for...in', cyw_kind: 'read',
+                cyw_note: '依次取出每个属性名（会沿原型链枚举），对象遍历的经典写法。',
+                cyw_code: 'for (let k in cyw_obj) { 输出 k + "=" + cyw_obj[k] }',
+                cyw_run: function (o) {
+                    var out = [];
+                    for (var k in o) { out.push(k + '=' + o[k]); }
+                    return { cyw_ret: out.join('，'), cyw_hit: Object.keys(o), cyw_stagger: true };
+                }
+            },
+            {
+                cyw_cat: '二、遍历与查询', cyw_name: 'in 运算符', cyw_kind: 'read',
+                cyw_note: '"属性名" in 对象 判断属性是否存在（含原型链上的属性）。',
+                cyw_code: function (a) { return '"' + cyw_argOf(a, '姓名') + '" in cyw_obj'; },
+                cyw_run: function (o, arg) {
+                    var k = String(cyw_argOf(arg, '姓名'));
+                    return { cyw_ret: k in o, cyw_hit: (k in o) ? [k] : [] };
+                }
+            },
+            {
+                cyw_cat: '二、遍历与查询', cyw_name: 'hasOwnProperty', cyw_kind: 'read',
+                cyw_note: '只判断属性是不是对象“自己”的，不看原型链。',
+                cyw_code: function (a) { return 'cyw_obj.hasOwnProperty("' + cyw_argOf(a, '姓名') + '")'; },
+                cyw_run: function (o, arg) {
+                    var k = String(cyw_argOf(arg, '姓名'));
+                    return { cyw_ret: Object.prototype.hasOwnProperty.call(o, k), cyw_hit: Object.prototype.hasOwnProperty.call(o, k) ? [k] : [] };
+                }
+            },
+
+            {
+                cyw_cat: '三、合并、复制与转换', cyw_name: 'Object.assign', cyw_kind: 'new',
+                cyw_note: '把后面的对象合并进第一个参数；第一个参数传 {} 就是浅拷贝。',
+                cyw_code: 'cyw_obj = Object.assign({}, cyw_obj, { 学院: "信息学院" })',
+                cyw_run: function (o) {
+                    var next = Object.assign({}, o, { 学院: '信息学院' });
+                    return { cyw_ret: next, cyw_obj: next };
+                }
+            },
+            {
+                cyw_cat: '三、合并、复制与转换', cyw_name: '展开运算符', cyw_kind: 'new',
+                cyw_note: '{ ...对象, 新属性 } 复制并覆盖属性，是现在最推荐的合并写法。',
+                cyw_code: 'cyw_obj = { ...cyw_obj, 学号: "2024001" }',
+                cyw_run: function (o) {
+                    var next = Object.assign({}, o, { 学号: '2024001' });
+                    return { cyw_ret: next, cyw_obj: next };
+                }
+            },
+            {
+                cyw_cat: '三、合并、复制与转换', cyw_name: 'Object.fromEntries', cyw_kind: 'new',
+                cyw_note: 'entries 的逆操作：把 [键, 值] 数组还原成对象。',
+                cyw_code: 'cyw_obj = Object.fromEntries(Object.entries(cyw_obj))',
+                cyw_run: function (o) {
+                    return { cyw_ret: Object.fromEntries(Object.entries(o)), cyw_obj: Object.fromEntries(Object.entries(o)) };
+                }
+            },
+            {
+                cyw_cat: '三、合并、复制与转换', cyw_name: 'JSON.stringify', cyw_kind: 'new',
+                cyw_note: '对象 → JSON 字符串（序列化），用于 localStorage 存储或接口提交。',
+                cyw_code: 'JSON.stringify(cyw_obj)',
+                cyw_run: function (o) { return { cyw_ret: JSON.stringify(o), cyw_hit: Object.keys(o), cyw_stagger: true }; }
+            },
+            {
+                cyw_cat: '三、合并、复制与转换', cyw_name: 'JSON.parse', cyw_kind: 'new',
+                cyw_note: 'JSON 字符串 → 对象（反序列化），字符串必须是标准双引号 JSON。',
+                cyw_code: 'cyw_obj = JSON.parse(JSON.stringify(cyw_obj))',
+                cyw_run: function (o) {
+                    var next = JSON.parse(JSON.stringify(o));
+                    return { cyw_ret: next, cyw_obj: next, cyw_hit: Object.keys(next), cyw_stagger: true };
+                }
+            },
+
+            {
+                cyw_cat: '四、对象保护', cyw_name: 'Object.freeze', cyw_kind: 'mut',
+                cyw_note: '冻结对象：不能新增、删除、修改属性（严格模式下修改会报错）。',
+                cyw_code: 'Object.freeze(cyw_obj)',
+                cyw_run: function (o) {
+                    cyw_oFrozen = true;
+                    return { cyw_ret: '对象已冻结，共 ' + Object.keys(o).length + ' 个属性', cyw_hit: Object.keys(o), cyw_stagger: true };
+                }
+            },
+            {
+                cyw_cat: '四、对象保护', cyw_name: '冻结后修改测试', cyw_kind: 'mut',
+                cyw_note: '先执行 Object.freeze，再执行本方法，可以看到修改“无效”的效果。',
+                cyw_code: 'cyw_obj.姓名 = "张三"   // 冻结后赋值静默失败',
+                cyw_run: function (o) {
+                    if (cyw_oFrozen) {
+                        return { cyw_ret: '修改失败：对象已被 freeze 冻结，姓名仍为 ' + o.姓名, cyw_hit: ['姓名'] };
+                    }
+                    var next = cyw_copy(o);
+                    next.姓名 = '张三';
+                    return { cyw_ret: '修改成功，姓名 = ' + next.姓名, cyw_obj: next };
+                }
+            }
+        ];
+
+        function cyw_oRender(fx) {
+            fx = fx || {};
+            var cyw_box = document.getElementById('cyw_obj');
+            cyw_box.innerHTML = '';
+            var cyw_keys = Object.keys(cyw_obj);
+
+            if (!cyw_keys.length) {
+                var cyw_empty = document.createElement('div');
+                cyw_empty.className = 'cyw-objline';
+                cyw_empty.textContent = '　// 空对象，没有任何属性';
+                cyw_box.appendChild(cyw_empty);
+            }
+
+            cyw_keys.forEach(function (k) {
+                var cyw_row = document.createElement('div');
+                cyw_row.className = 'cyw-prop';
+                if (fx.cyw_add && fx.cyw_add.indexOf(k) > -1) { cyw_row.className += ' cyw-add'; }
+                if (fx.cyw_chg && fx.cyw_chg.indexOf(k) > -1) { cyw_row.className += ' cyw-chg'; }
+                if (fx.cyw_hit && fx.cyw_hit.indexOf(k) > -1) {
+                    cyw_row.className += ' cyw-hit';
+                    if (fx.cyw_stagger) { cyw_row.style.animationDelay = (Object.keys(cyw_obj).indexOf(k) * 0.07) + 's'; }
+                }
+
+                var cyw_k = document.createElement('span');
+                cyw_k.className = 'cyw-pkey';
+                cyw_k.textContent = k;
+
+                var cyw_a = document.createElement('span');
+                cyw_a.className = 'cyw-parrow';
+                cyw_a.textContent = ':';
+
+                var cyw_v = document.createElement('span');
+                cyw_v.className = 'cyw-pval';
+                cyw_v.textContent = cyw_fmt(cyw_obj[k]);
+
+                var cyw_t = document.createElement('span');
+                cyw_t.className = 'cyw-ptype';
+                cyw_t.textContent = cyw_typeOf(cyw_obj[k]);
+
+                cyw_row.appendChild(cyw_k);
+                cyw_row.appendChild(cyw_a);
+                cyw_row.appendChild(cyw_v);
+                cyw_row.appendChild(cyw_t);
+                cyw_box.appendChild(cyw_row);
+            });
+
+            document.getElementById('cyw_olen').textContent = cyw_keys.length;
+            document.getElementById('cyw_olock').style.display = cyw_oFrozen ? '' : 'none';
+            document.getElementById('cyw_onow').textContent = 'cyw_obj = ' + cyw_fmt(cyw_obj);
+        }
+
+        function cyw_oExec(m) {
+            if (!cyw_oReady) { return; }
+
+            var cyw_raw = document.getElementById('cyw_oarg').value.trim();
+            var cyw_arg = cyw_raw === '' ? null : cyw_raw;
+
+            var cyw_out = m.cyw_run(cyw_obj, cyw_arg) || {};
+            var cyw_next = cyw_out.cyw_obj || cyw_obj;
+            var cyw_prev = cyw_obj;
+
+            Array.prototype.forEach.call(document.querySelectorAll('#cyw_opanel .cyw-mbtn'), function (b) {
+                b.classList.toggle('cyw-on', b.getAttribute('data-cy-name') === m.cyw_name);
+            });
+
+            document.getElementById('cyw_oresult').textContent = cyw_fmt(cyw_out.cyw_ret);
+            document.getElementById('cyw_otype').textContent = '类型：' + cyw_typeOf(cyw_out.cyw_ret) + '　|　' + m.cyw_note;
+            document.getElementById('cyw_ocode').textContent = '// ' + m.cyw_note + '\n' +
+                (typeof m.cyw_code === 'function' ? m.cyw_code(cyw_arg) : m.cyw_code) + ';';
+
+            var cyw_add = Object.keys(cyw_next).filter(function (k) { return !(k in cyw_prev); });
+            var cyw_gone = Object.keys(cyw_prev).filter(function (k) { return !(k in cyw_next); });
+            var cyw_chg = Object.keys(cyw_next).filter(function (k) {
+                return (k in cyw_prev) && JSON.stringify(cyw_prev[k]) !== JSON.stringify(cyw_next[k]);
+            });
+
+            cyw_oReady = false;
+
+            cyw_gone.forEach(function (k) {
+                Array.prototype.forEach.call(document.querySelectorAll('#cyw_obj .cyw-prop'), function (el) {
+                    if (el.querySelector('.cyw-pkey').textContent === k) { el.classList.add('cyw-out'); }
+                });
+            });
+
+            setTimeout(function () {
+                cyw_obj = cyw_next;
+                cyw_oRender({ cyw_add: cyw_add, cyw_chg: cyw_chg, cyw_hit: cyw_out.cyw_hit, cyw_stagger: cyw_out.cyw_stagger });
+
+                var cyw_li = document.createElement('li');
+                cyw_li.innerHTML = '<b>' + m.cyw_name + '</b>' +
+                    '<span class="cyw-tag cyw-' + m.cyw_kind + '">' + cyw_kindText[m.cyw_kind] + '</span>' +
+                    '<span>属性 ' + Object.keys(cyw_obj).length + ' 个</span>' +
+                    '<em>' + cyw_fmt(cyw_out.cyw_ret) + '</em>';
+                var cyw_ul = document.getElementById('cyw_olog');
+                cyw_ul.insertBefore(cyw_li, cyw_ul.firstChild);
+                while (cyw_ul.children.length > 8) { cyw_ul.removeChild(cyw_ul.lastChild); }
+
+                cyw_oReady = true;
+            }, cyw_gone.length ? 320 : 0);
+        }
+
+        /* ========================= 构建与事件 ========================= */
+
+        function cyw_build(panelId, methods, handler) {
+            var cyw_panel = document.getElementById(panelId);
+            var cyw_order = [];
+            var cyw_map = {};
+
+            methods.forEach(function (m) {
+                if (!cyw_map[m.cyw_cat]) {
+                    cyw_map[m.cyw_cat] = [];
+                    cyw_order.push(m.cyw_cat);
+                }
+                cyw_map[m.cyw_cat].push(m);
+            });
+
+            cyw_order.forEach(function (cat) {
+                var cyw_g = document.createElement('div');
+                cyw_g.className = 'cyw-group';
+
+                var cyw_t = document.createElement('div');
+                cyw_t.className = 'cyw-group-title';
+                cyw_t.textContent = cat;
+                cyw_g.appendChild(cyw_t);
+
+                cyw_map[cat].forEach(function (m) {
+                    var cyw_b = document.createElement('button');
+                    cyw_b.type = 'button';
+                    cyw_b.className = 'cyw-mbtn';
+                    cyw_b.setAttribute('data-cy-name', m.cyw_name);
+                    cyw_b.innerHTML = '<span class="cyw-mname">' + m.cyw_name + '</span>' +
+                        '<span class="cyw-mdesc">' + m.cyw_note.split('；')[0].split('，')[0] + '</span>' +
+                        '<span class="cyw-tag cyw-' + m.cyw_kind + '">' + cyw_kindText[m.cyw_kind] + '</span>';
+                    cyw_b.addEventListener('click', function () { handler(m); });
+                    cyw_g.appendChild(cyw_b);
+                });
+
+                cyw_panel.appendChild(cyw_g);
+            });
+        }
+
+        document.getElementById('cyw_sreset').addEventListener('click', function () {
+            if (!cyw_sReady) { return; }
+            cyw_str = cyw_sInit;
+            cyw_sRender();
+            document.getElementById('cyw_slog').innerHTML = '';
+            document.getElementById('cyw_sresult').textContent = '—';
+            document.getElementById('cyw_stype').textContent = '字符串已重置';
+            document.getElementById('cyw_scode').textContent = '// 点击右上角方法按钮开始演示';
+            Array.prototype.forEach.call(document.querySelectorAll('#cyw_spanel .cyw-mbtn'), function (b) {
+                b.classList.remove('cyw-on');
+            });
+        });
+
+        document.getElementById('cyw_oreset').addEventListener('click', function () {
+            if (!cyw_oReady) { return; }
+            cyw_obj = cyw_oInit();
+            cyw_oFrozen = false;
+            cyw_oRender();
+            document.getElementById('cyw_olog').innerHTML = '';
+            document.getElementById('cyw_oresult').textContent = '—';
+            document.getElementById('cyw_otype').textContent = '对象已重置';
+            document.getElementById('cyw_ocode').textContent = '// 点击右上角方法按钮开始演示';
+            Array.prototype.forEach.call(document.querySelectorAll('#cyw_opanel .cyw-mbtn'), function (b) {
+                b.classList.remove('cyw-on');
+            });
+        });
+
+        cyw_build('cyw_spanel', cyw_sMethods, cyw_sExec);
+        cyw_build('cyw_opanel', cyw_oMethods, cyw_oExec);
+        document.getElementById('cyw_scount').textContent = cyw_sMethods.length;
+        document.getElementById('cyw_ocount').textContent = cyw_oMethods.length;
+        cyw_sRender();
+        cyw_oRender();
+    </script>
+</body>
+</html>

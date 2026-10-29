@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <!-- 姓名：崔溢文，日期：2026-10-29，功能名称：JavaScript 主要数组方法可视化演示 -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>16-1 JavaScript 数组方法可视化</title>
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            padding: 0 0 46px;
+            min-height: 100vh;
+            color: #22304a;
+            font-family: "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", sans-serif;
+            background:
+                radial-gradient(1100px 560px at 10% -12%, #dde8ff 0%, transparent 60%),
+                radial-gradient(880px 480px at 100% 0%, #f1e5ff 0%, transparent 58%),
+                linear-gradient(180deg, #f8faff 0%, #f4f6fb 100%);
+        }
+
+        code, pre, .cyw-mono { font-family: Consolas, "Courier New", monospace; }
+
+        .cyw-head {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 26px 18px 6px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .cyw-title {
+            margin: 0;
+            font-size: 30px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            background: linear-gradient(90deg, #3b5bdb, #7048e8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .cyw-sub { margin-top: 8px; font-size: 14px; color: #6b7894; line-height: 1.7; }
+
+        .cyw-tools { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+        .cyw-btn {
+            border: 1px solid #d5def7;
+            background: #fff;
+            color: #2f49a5;
+            font-family: inherit;
+            font-size: 14px;
+            padding: 9px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all .18s ease;
+        }
+
+        .cyw-btn:hover { border-color: #3b5bdb; box-shadow: 0 6px 16px rgba(59, 91, 219, .16); transform: translateY(-1px); }
+
+        .cyw-btn.cyw-primary {
+            background: linear-gradient(135deg, #4263eb, #7048e8);
+            border-color: transparent;
+            color: #fff;
+        }
+
+        .cyw-home { text-decoration: none; }
+
+        .cyw-wrap {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 10px 18px 0;
+            display: grid;
+            grid-template-columns: minmax(0, 1.55fr) minmax(300px, .95fr);
+            gap: 18px;
+            align-items: start;
+        }
+
+        .cyw-card {
+            background: #fff;
+            border: 1px solid #e6ecfb;
+            border-radius: 18px;
+            box-shadow: 0 10px 30px rgba(48, 72, 140, .07);
+            padding: 18px;
+        }
+
+        .cyw-card-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #2f3f63;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .cyw-card-title::before {
+            content: "";
+            width: 4px;
+            height: 16px;
+            border-radius: 3px;
+            background: linear-gradient(180deg, #4263eb, #7048e8);
+        }
+
+        .cyw-stage-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+
+        .cyw-chip {
+            font-size: 12px;
+            color: #5a6b91;
+            background: #f2f5ff;
+            border: 1px solid #e0e7fb;
+            padding: 4px 10px;
+            border-radius: 999px;
+        }
+
+        .cyw-arg {
+            width: 190px;
+            padding: 8px 12px;
+            border: 1px solid #dbe3f8;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 13px;
+            color: #2f3f63;
+            outline: none;
+        }
+
+        .cyw-arg:focus { border-color: #4263eb; box-shadow: 0 0 0 3px rgba(66, 99, 235, .14); }
+
+        .cyw-arr {
+            display: flex;
+            flex-wrap: wrap;
+            align-content: flex-start;
+            gap: 24px 14px;
+            min-height: 122px;
+            padding: 20px 16px 16px;
+            border-radius: 14px;
+            border: 1px dashed #ccd7f5;
+            background: linear-gradient(180deg, #fbfcff, #f1f5fd);
+        }
+
+        .cyw-cell {
+            position: relative;
+            width: 76px;
+            height: 76px;
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            background: linear-gradient(180deg, #ffffff, #ecf2ff);
+            border: 1px solid #d7e0fb;
+            box-shadow: 0 6px 14px rgba(60, 90, 180, .10);
+        }
+
+        .cyw-val { font-size: 21px; font-weight: 800; color: #2f49a5; font-family: Consolas, monospace; }
+        .cyw-idx { font-size: 11px; color: #8a97b8; font-family: Consolas, monospace; }
+        .cyw-cell.cyw-nest { border-style: dashed; border-color: #b9a6f0; background: linear-gradient(180deg, #fbf9ff, #f2ecff); }
+        .cyw-cell.cyw-nest .cyw-val { color: #7048e8; font-size: 18px; }
+
+        .cyw-cell.cyw-add { background: linear-gradient(180deg, #eafaf1, #d7f4e5); border-color: #86dcb4; animation: cywPop .55s cubic-bezier(.2, .9, .25, 1.2) both; }
+        .cyw-cell.cyw-chg { background: linear-gradient(180deg, #fff8e8, #ffefd2); border-color: #f5b64a; animation: cywChg .6s ease both; }
+        .cyw-cell.cyw-hit { background: linear-gradient(180deg, #fff3e9, #ffe6d4); border-color: #f08c3c; animation: cywHit .9s ease both; }
+        .cyw-cell.cyw-move { box-shadow: 0 0 0 3px rgba(66, 99, 235, .22), 0 6px 14px rgba(60, 90, 180, .12); }
+        .cyw-cell.cyw-out { animation: cywOut .32s ease forwards; background: linear-gradient(180deg, #ffeef1, #ffdde3); border-color: #f783ac; }
+
+        @keyframes cywPop { 0% { transform: scale(.35); opacity: 0; } 65% { transform: scale(1.14); } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes cywChg { 0% { transform: scale(1); } 40% { transform: scale(1.18) rotate(-3deg); } 100% { transform: scale(1); } }
+        @keyframes cywHit { 0% { transform: translateY(0); } 30% { transform: translateY(-10px); } 60% { transform: translateY(0); } 100% { transform: translateY(0); } }
+        @keyframes cywOut { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(.45) translateY(14px); opacity: 0; } }
+
+        .cyw-legend { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+        .cyw-lg { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #6b7894; }
+        .cyw-dot { width: 12px; height: 12px; border-radius: 4px; border: 1px solid; }
+        .cyw-lg-add .cyw-dot { background: #d7f4e5; border-color: #86dcb4; }
+        .cyw-lg-out .cyw-dot { background: #ffdde3; border-color: #f783ac; }
+        .cyw-lg-chg .cyw-dot { background: #ffefd2; border-color: #f5b64a; }
+        .cyw-lg-hit .cyw-dot { background: #ffe6d4; border-color: #f08c3c; }
+        .cyw-lg-move .cyw-dot { background: #e7ecfd; border-color: #4263eb; }
+
+        .cyw-now {
+            margin-top: 14px;
+            padding: 10px 14px;
+            border-radius: 12px;
+            background: #f7f9ff;
+            border: 1px solid #e6ecfb;
+            font-family: Consolas, monospace;
+            font-size: 14px;
+            color: #364a86;
+            word-break: break-all;
+        }
+
+        .cyw-group + .cyw-group { margin-top: 16px; }
+
+        .cyw-group-title {
+            font-size: 12px;
+            letter-spacing: 1px;
+            color: #7c89a8;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cyw-group-title::after { content: ""; flex: 1; height: 1px; background: #e8eefb; }
+
+        .cyw-mbtn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-align: left;
+            font-family: inherit;
+            border: 1px solid #e6ecfb;
+            background: #fbfcff;
+            border-radius: 12px;
+            padding: 9px 12px;
+            margin-bottom: 7px;
+            cursor: pointer;
+            transition: all .18s ease;
+        }
+
+        .cyw-mbtn:hover { border-color: #b9c8f5; background: #f2f6ff; transform: translateX(3px); }
+        .cyw-mbtn.cyw-on { border-color: #4263eb; background: #edf2ff; box-shadow: 0 0 0 3px rgba(66, 99, 235, .12); }
+
+        .cyw-mname { font-family: Consolas, monospace; font-weight: 700; font-size: 14px; color: #2f49a5; }
+        .cyw-mdesc { flex: 1; font-size: 12px; color: #7b88a6; }
+
+        .cyw-tag { font-size: 10px; padding: 2px 7px; border-radius: 999px; white-space: nowrap; }
+        .cyw-tag.cyw-mut { background: #ffecf0; color: #d6336c; }
+        .cyw-tag.cyw-new { background: #e6fcf5; color: #0ca678; }
+        .cyw-tag.cyw-read { background: #eef2ff; color: #3b5bdb; }
+
+        .cyw-outwrap {
+            max-width: 1180px;
+            margin: 18px auto 0;
+            padding: 0 18px;
+            display: grid;
+            grid-template-columns: .85fr 1.15fr 1fr;
+            gap: 18px;
+            align-items: start;
+        }
+
+        .cyw-resval {
+            font-family: Consolas, monospace;
+            font-size: 18px;
+            font-weight: 700;
+            color: #7048e8;
+            word-break: break-all;
+            min-height: 30px;
+            line-height: 1.5;
+        }
+
+        .cyw-meta { margin-top: 8px; font-size: 12px; color: #8a97b8; }
+
+        .cyw-code {
+            margin: 0;
+            padding: 12px 14px;
+            border-radius: 12px;
+            background: #1f2a44;
+            color: #e7ecff;
+            font-family: Consolas, monospace;
+            font-size: 13px;
+            line-height: 1.7;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .cyw-desc { margin-top: 10px; font-size: 13px; color: #5f6d90; line-height: 1.8; }
+
+        .cyw-log { list-style: none; margin: 0; padding: 0; max-height: 250px; overflow: auto; }
+
+        .cyw-log li {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 4px;
+            border-bottom: 1px dashed #e8eefb;
+            font-size: 12px;
+        }
+
+        .cyw-log li b { font-family: Consolas, monospace; color: #2f49a5; font-size: 13px; }
+        .cyw-log li em { margin-left: auto; font-style: normal; font-family: Consolas, monospace; color: #7048e8; text-align: right; }
+        .cyw-log li span { color: #8a97b8; }
+
+        .cyw-foot { max-width: 1180px; margin: 22px auto 0; padding: 0 18px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; color: #7c89a8; font-size: 13px; }
+        .cyw-foot a { color: #4263eb; text-decoration: none; font-weight: 700; }
+
+        @media (max-width: 980px) {
+            .cyw-wrap, .cyw-outwrap { grid-template-columns: minmax(0, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <header class="cyw-head">
+        <div>
+            <h1 class="cyw-title">16-1 JavaScript 数组方法可视化</h1>
+            <div class="cyw-sub">
+                点击右侧方法按钮，观察下方数组盒子的变化：绿色＝新增元素，红色淡出＝被删除，琥珀色＝被改写，<br>
+                橙色＝被命中/遍历，蓝色描边＝位置发生移动。带 <span class="cyw-tag cyw-mut">改原数组</span>
+                <span class="cyw-tag cyw-new">返回新数组</span> <span class="cyw-tag cyw-read">只读取</span> 标签区分方法特性。
+            </div>
+        </div>
+        <div class="cyw-tools">
+            <input id="cyw_arg" class="cyw-arg" type="text" placeholder="自定义参数（如 88）" />
+            <button id="cyw_reset" class="cyw-btn cyw-primary" type="button">重置数组</button>
+            <a class="cyw-btn cyw-home" href="./1-1.html">首页</a>
+        </div>
+    </header>
+
+    <main class="cyw-wrap">
+        <section class="cyw-card">
+            <div class="cyw-stage-head">
+                <div class="cyw-card-title" style="margin-bottom:0">数组舞台 · 当前元素 <span class="cyw-chip" id="cyw_len">0</span> 个</div>
+                <span class="cyw-chip">下标从 0 开始，负值下标从末尾倒数</span>
+            </div>
+
+            <div class="cyw-arr" id="cyw_array"></div>
+
+            <div class="cyw-legend">
+                <span class="cyw-lg cyw-lg-add"><i class="cyw-dot"></i>新增 push/unshift/concat/flat</span>
+                <span class="cyw-lg cyw-lg-out"><i class="cyw-dot"></i>删除 pop/shift/splice/filter</span>
+                <span class="cyw-lg cyw-lg-chg"><i class="cyw-dot"></i>改写 map/fill</span>
+                <span class="cyw-lg cyw-lg-hit"><i class="cyw-dot"></i>命中 find/indexOf/includes/遍历</span>
+                <span class="cyw-lg cyw-lg-move"><i class="cyw-dot"></i>移动 sort/reverse</span>
+            </div>
+
+            <div class="cyw-now" id="cyw_now">[]</div>
+        </section>
+
+        <aside class="cyw-card">
+            <div class="cyw-card-title">方法列表（共 <span id="cyw_count">0</span> 个）</div>
+            <div id="cyw_panel"></div>
+        </aside>
+    </main>
+
+    <section class="cyw-outwrap">
+        <div class="cyw-card">
+            <div class="cyw-card-title">返回值</div>
+            <div class="cyw-resval" id="cyw_result">—</div>
+            <div class="cyw-meta" id="cyw_restype">尚未执行任何方法</div>
+        </div>
+
+        <div class="cyw-card">
+            <div class="cyw-card-title">执行代码</div>
+            <pre class="cyw-code" id="cyw_code">// 点击右侧方法按钮开始演示</pre>
+            <div class="cyw-desc" id="cyw_desc">数组方法分三类：改变原数组、返回新数组、只读取不修改。</div>
+        </div>
+
+        <div class="cyw-card">
+            <div class="cyw-card-title">操作日志</div>
+            <ul class="cyw-log" id="cyw_log"></ul>
+        </div>
+    </section>
+
+    <footer class="cyw-foot">
+        <span>姓名：崔溢文 · 《高级网页设计》课堂实践</span>
+        <a href="./1-1.html">返回首页</a>
+    </footer>
+
+    <script>
+        var cyw_uid = 0;
+
+        function cyw_it(v) {
+            cyw_uid += 1;
+            return { cyw_id: cyw_uid, cyw_v: v };
+        }
+
+        function cyw_seed() {
+            return [12, 45, 8, 33, [3, 6], 70, 21, 5].map(function (v) { return cyw_it(v); });
+        }
+
+        function cyw_vals(a) {
+            return a.map(function (x) { return x.cyw_v; });
+        }
+
+        function cyw_isNum(x) {
+            return typeof x.cyw_v === 'number';
+        }
+
+        function cyw_key(x) {
+            return cyw_isNum(x) ? x.cyw_v : Number.MAX_VALUE;
+        }
+
+        function cyw_argOf(arg, def) {
+            return (arg === null || arg === undefined || arg === '') ? def : arg;
+        }
+
+        var cyw_items = cyw_seed();
+        var cyw_ready = true;
+
+        var cyw_methods = [
+            {
+                cyw_cat: '一、增删元素（改变原数组）', cyw_name: 'push', cyw_kind: 'mut',
+                cyw_note: '在数组末尾添加一个或多个元素，返回添加后的新长度。',
+                cyw_code: function (a) { return 'cyw_arr.push(' + cyw_argOf(a, 66) + ')'; },
+                cyw_run: function (a, arg) {
+                    var r = a.concat([cyw_it(cyw_argOf(arg, 66))]);
+                    return { cyw_items: r, cyw_ret: r.length };
+                }
+            },
+            {
+                cyw_cat: '一、增删元素（改变原数组）', cyw_name: 'pop', cyw_kind: 'mut',
+                cyw_note: '删除并返回数组的最后一个元素，长度减 1。',
+                cyw_code: function () { return 'cyw_arr.pop()'; },
+                cyw_run: function (a) {
+                    if (!a.length) { return { cyw_items: a, cyw_ret: undefined }; }
+                    return { cyw_items: a.slice(0, a.length - 1), cyw_ret: a[a.length - 1].cyw_v };
+                }
+            },
+            {
+                cyw_cat: '一、增删元素（改变原数组）', cyw_name: 'unshift', cyw_kind: 'mut',
+                cyw_note: '在数组开头添加一个或多个元素，返回添加后的新长度。',
+                cyw_code: function (a) { return 'cyw_arr.unshift(' + cyw_argOf(a, 15) + ')'; },
+                cyw_run: function (a, arg) {
+                    var r = [cyw_it(cyw_argOf(arg, 15))].concat(a);
+                    return { cyw_items: r, cyw_ret: r.length };
+                }
+            },
+            {
+                cyw_cat: '一、增删元素（改变原数组）', cyw_name: 'shift', cyw_kind: 'mut',
+                cyw_note: '删除并返回数组的第一个元素，其余元素整体前移。',
+                cyw_code: function () { return 'cyw_arr.shift()'; },
+                cyw_run: function (a) {
+                    if (!a.length) { return { cyw_items: a, cyw_ret: undefined }; }
+                    return { cyw_items: a.slice(1), cyw_ret: a[0].cyw_v };
+                }
+            },
+            {
+                cyw_cat: '一、增删元素（改变原数组）', cyw_name: 'splice', cyw_kind: 'mut',
+                cyw_note: '从指定下标开始删除若干元素并插入新元素，返回被删除的元素数组（万能增删改）。',
+                cyw_code: function () { return "cyw_arr.splice(2, 2, '新1', '新2')"; },
+                cyw_run: function (a) {
+                    var cut = a.slice(2, 4);
+                    var r = a.slice(0, 2).concat([cyw_it('新1'), cyw_it('新2')]).concat(a.slice(4));
+                    return { cyw_items: r, cyw_ret: cyw_vals(cut) };
+                }
+            },
+            {
+                cyw_cat: '一、增删元素（改变原数组）', cyw_name: 'fill', cyw_kind: 'mut',
+                cyw_note: '用固定值填充 [start, end) 区间的元素，返回填充后的数组。',
+                cyw_code: function () { return "cyw_arr.fill('★', 2, 5)"; },
+                cyw_run: function (a) {
+                    var r = a.map(function (x, i) {
+                        return (i >= 2 && i < 5) ? { cyw_id: x.cyw_id, cyw_v: '★' } : x;
+                    });
+                    return { cyw_items: r, cyw_ret: cyw_vals(r) };
+                }
+            },
+
+            {
+                cyw_cat: '二、拼接与截取（返回新结果）', cyw_name: 'concat', cyw_kind: 'new',
+                cyw_note: '把多个数组/值合并成一个新数组，原数组不变。',
+                cyw_code: function () { return 'cyw_arr = cyw_arr.concat([88, 99])'; },
+                cyw_run: function (a) {
+                    var r = a.concat([cyw_it(88), cyw_it(99)]);
+                    return { cyw_items: r, cyw_ret: cyw_vals(r) };
+                }
+            },
+            {
+                cyw_cat: '二、拼接与截取（返回新结果）', cyw_name: 'slice', cyw_kind: 'new',
+                cyw_note: '截取 [start, end) 区间生成新数组，原数组不变，常用来复制数组。',
+                cyw_code: function () { return 'cyw_arr = cyw_arr.slice(1, 5)'; },
+                cyw_run: function (a) {
+                    var r = a.slice(1, 5);
+                    return { cyw_items: r, cyw_ret: cyw_vals(r) };
+                }
+            },
+            {
+                cyw_cat: '二、拼接与截取（返回新结果）', cyw_name: 'join', cyw_kind: 'new',
+                cyw_note: '用指定分隔符把全部元素连接成一个字符串，默认分隔符是逗号。',
+                cyw_code: function () { return "cyw_arr.join(' - ')"; },
+                cyw_run: function (a) {
+                    return { cyw_items: a, cyw_ret: cyw_vals(a).join(' - '), cyw_hit: a.map(function (x, i) { return i; }), cyw_stagger: true };
+                }
+            },
+            {
+                cyw_cat: '二、拼接与截取（返回新结果）', cyw_name: 'toString', cyw_kind: 'new',
+                cyw_note: '把数组转成逗号分隔的字符串，等价于 join(",")。',
+                cyw_code: function () { return 'cyw_arr.toString()'; },
+                cyw_run: function (a) {
+                    return { cyw_items: a, cyw_ret: cyw_vals(a).join(','), cyw_hit: a.map(function (x, i) { return i; }), cyw_stagger: true };
+                }
+            },
+            {
+                cyw_cat: '二、拼接与截取（返回新结果）', cyw_name: 'flat', cyw_kind: 'new',
+                cyw_note: '按指定深度把嵌套数组拉平成一维数组，默认深度为 1。',
+                cyw_code: function () { return 'cyw_arr = cyw_arr.flat()'; },
+                cyw_run: function (a) {
+                    var r = [];
+                    a.forEach(function (x) {
+                        if (Array.isArray(x.cyw_v)) {
+                            x.cyw_v.forEach(function (v) { r.push(cyw_it(v)); });
+                        } else {
+                            r.push(x);
+                        }
+                    });
+                    return { cyw_items: r, cyw_ret: cyw_vals(r) };
+                }
+            },
+
+            {
+                cyw_cat: '三、查找与判断（只读取）', cyw_name: 'indexOf', cyw_kind: 'read',
+                cyw_note: '从头查找指定值首次出现的下标，找不到返回 -1（严格相等比较）。',
+                cyw_code: function (a) { return 'cyw_arr.indexOf(' + cyw_argOf(a, 70) + ')'; },
+                cyw_run: function (a, arg) {
+                    var t = cyw_argOf(arg, 70);
+                    var i = cyw_vals(a).indexOf(t);
+                    return { cyw_items: a, cyw_ret: i, cyw_hit: i > -1 ? [i] : [] };
+                }
+            },
+            {
+                cyw_cat: '三、查找与判断（只读取）', cyw_name: 'lastIndexOf', cyw_kind: 'read',
+                cyw_note: '从末尾开始查找指定值最后一次出现的下标，找不到返回 -1。',
+                cyw_code: function (a) { return 'cyw_arr.lastIndexOf(' + cyw_argOf(a, 8) + ')'; },
+                cyw_run: function (a, arg) {
+                    var t = cyw_argOf(arg, 8);
+                    var i = cyw_vals(a).lastIndexOf(t);
+                    return { cyw_items: a, cyw_ret: i, cyw_hit: i > -1 ? [i] : [] };
+                }
+            },
+            {
+                cyw_cat: '三、查找与判断（只读取）', cyw_name: 'includes', cyw_kind: 'read',
+                cyw_note: '判断数组是否包含某个值，返回布尔值 true / false。',
+                cyw_code: function (a) { return 'cyw_arr.includes(' + cyw_argOf(a, 70) + ')'; },
+                cyw_run: function (a, arg) {
+                    var t = cyw_argOf(arg, 70);
+                    var i = cyw_vals(a).indexOf(t);
+                    return { cyw_items: a, cyw_ret: i > -1, cyw_hit: i > -1 ? [i] : [] };
+                }
+            },
+            {
+                cyw_cat: '三、查找与判断（只读取）', cyw_name: 'find', cyw_kind: 'read',
+                cyw_note: '返回第一个满足回调函数条件的元素值，找不到返回 undefined。',
+                cyw_code: function () { return 'cyw_arr.find(v => v > 30)'; },
+                cyw_run: function (a) {
+                    var i = -1;
+                    a.forEach(function (x, k) { if (i === -1 && cyw_isNum(x) && x.cyw_v > 30) { i = k; } });
+                    return { cyw_items: a, cyw_ret: i > -1 ? a[i].cyw_v : undefined, cyw_hit: i > -1 ? [i] : [] };
+                }
+            },
+            {
+                cyw_cat: '三、查找与判断（只读取）', cyw_name: 'findIndex', cyw_kind: 'read',
+                cyw_note: '返回第一个满足条件的元素下标，找不到返回 -1。',
+                cyw_code: function () { return 'cyw_arr.findIndex(v => v > 30)'; },
+                cyw_run: function (a) {
+                    var i = -1;
+                    a.forEach(function (x, k) { if (i === -1 && cyw_isNum(x) && x.cyw_v > 30) { i = k; } });
+                    return { cyw_items: a, cyw_ret: i, cyw_hit: i > -1 ? [i] : [] };
+                }
+            },
+            {
+                cyw_cat: '三、查找与判断（只读取）', cyw_name: 'some', cyw_kind: 'read',
+                cyw_note: '只要有任意一个元素满足条件就返回 true（一真即真）。',
+                cyw_code: function () { return 'cyw_arr.some(v => v > 50)'; },
+                cyw_run: function (a) {
+                    var hit = [];
+                    a.forEach(function (x, k) { if (cyw_isNum(x) && x.cyw_v > 50) { hit.push(k); } });
+                    return { cyw_items: a, cyw_ret: hit.length > 0, cyw_hit: hit, cyw_stagger: true };
+                }
+            },
+            {
+                cyw_cat: '三、查找与判断（只读取）', cyw_name: 'every', cyw_kind: 'read',
+                cyw_note: '必须全部元素都满足条件才返回 true（一假即假）。',
+                cyw_code: function () { return 'cyw_arr.every(v => v > 0)'; },
+                cyw_run: function (a) {
+                    var hit = [];
+                    a.forEach(function (x, k) { if (cyw_isNum(x) && x.cyw_v > 0) { hit.push(k); } });
+                    return { cyw_items: a, cyw_ret: hit.length === a.length, cyw_hit: hit, cyw_stagger: true };
+                }
+            },
+            {
+                cyw_cat: '三、查找与判断（只读取）', cyw_name: 'at', cyw_kind: 'read',
+                cyw_note: '按下标取元素，支持负数下标，at(-1) 即最后一个元素。',
+                cyw_code: function () { return 'cyw_arr.at(-2)'; },
+                cyw_run: function (a) {
+                    var i = a.length - 2;
+                    if (i < 0) { return { cyw_items: a, cyw_ret: undefined }; }
+                    return { cyw_items: a, cyw_ret: a[i].cyw_v, cyw_hit: [i] };
+                }
+            },
+
+            {
+                cyw_cat: '四、遍历与计算', cyw_name: 'forEach', cyw_kind: 'read',
+                cyw_note: '依次把每个元素交给回调函数处理，没有返回值（undefined），常用于渲染列表。',
+                cyw_code: function () { return 'cyw_arr.forEach((v, i) => 输出 v)'; },
+                cyw_run: function (a) {
+                    return {
+                        cyw_items: a,
+                        cyw_ret: '遍历了 ' + a.length + ' 个元素，无返回值',
+                        cyw_hit: a.map(function (x, i) { return i; }),
+                        cyw_stagger: true
+                    };
+                }
+            },
+            {
+                cyw_cat: '四、遍历与计算', cyw_name: 'map', cyw_kind: 'new',
+                cyw_note: '把每个元素按规则加工后组成新数组，长度不变，原数组不变。',
+                cyw_code: function () { return 'cyw_arr = cyw_arr.map(v => v * 2)'; },
+                cyw_run: function (a) {
+                    var r = a.map(function (x) {
+                        return { cyw_id: x.cyw_id, cyw_v: cyw_isNum(x) ? x.cyw_v * 2 : x.cyw_v };
+                    });
+                    return { cyw_items: r, cyw_ret: cyw_vals(r) };
+                }
+            },
+            {
+                cyw_cat: '四、遍历与计算', cyw_name: 'filter', cyw_kind: 'new',
+                cyw_note: '筛选出满足条件的元素组成新数组，原数组不变。',
+                cyw_code: function () { return 'cyw_arr = cyw_arr.filter(v => v >= 20)'; },
+                cyw_run: function (a) {
+                    var r = a.filter(function (x) { return cyw_isNum(x) && x.cyw_v >= 20; });
+                    return { cyw_items: r, cyw_ret: cyw_vals(r) };
+                }
+            },
+            {
+                cyw_cat: '四、遍历与计算', cyw_name: 'reduce', cyw_kind: 'read',
+                cyw_note: '从左到右把元素累积成一个值（求和、求积、统计、分组都靠它）。',
+                cyw_code: function () { return 'cyw_arr.reduce((s, v) => s + v, 0)'; },
+                cyw_run: function (a) {
+                    var s = 0;
+                    a.forEach(function (x) { if (cyw_isNum(x)) { s += x.cyw_v; } });
+                    return {
+                        cyw_items: a, cyw_ret: s,
+                        cyw_hit: a.map(function (x, i) { return i; }),
+                        cyw_stagger: true
+                    };
+                }
+            },
+
+            {
+                cyw_cat: '五、排序与反转（改变原数组）', cyw_name: 'sort', cyw_kind: 'mut',
+                cyw_note: '就地对元素排序，默认按字符串比较，排数字必须写比较函数 (a,b)=>a-b。',
+                cyw_code: function () { return 'cyw_arr.sort((a, b) => a - b)'; },
+                cyw_run: function (a) {
+                    var r = a.slice().sort(function (x, y) { return cyw_key(x) - cyw_key(y); });
+                    return { cyw_items: r, cyw_ret: cyw_vals(r) };
+                }
+            },
+            {
+                cyw_cat: '五、排序与反转（改变原数组）', cyw_name: 'reverse', cyw_kind: 'mut',
+                cyw_note: '把数组元素顺序原地颠倒，返回同一个数组。',
+                cyw_code: function () { return 'cyw_arr.reverse()'; },
+                cyw_run: function (a) {
+                    var r = a.slice().reverse();
+                    return { cyw_items: r, cyw_ret: cyw_vals(r) };
+                }
+            },
+            {
+                cyw_cat: '五、排序与反转（改变原数组）', cyw_name: 'isArray', cyw_kind: 'read',
+                cyw_note: 'Array.isArray() 判断一个值是不是真正的数组（typeof 数组得到的是 object）。',
+                cyw_code: function () { return 'Array.isArray(cyw_arr)'; },
+                cyw_run: function (a) {
+                    return {
+                        cyw_items: a, cyw_ret: true,
+                        cyw_hit: a.map(function (x, i) { return i; }),
+                        cyw_stagger: true
+                    };
+                }
+            }
+        ];
+
+        var cyw_kindText = { mut: '改原数组', new: '返回新数组', read: '只读取' };
+        var cyw_kindTip = {
+            mut: '会直接修改原数组本身',
+            new: '原数组不变，返回一个新数组/新值',
+            read: '只读取元素，不修改数组'
+        };
+
+        function cyw_fmt(v) {
+            if (Array.isArray(v)) { return '[' + v.map(cyw_fmt).join(', ') + ']'; }
+            if (typeof v === 'string') { return '"' + v + '"'; }
+            if (typeof v === 'boolean') { return v ? 'true' : 'false'; }
+            if (v === undefined) { return 'undefined'; }
+            if (v === null) { return 'null'; }
+            return String(v);
+        }
+
+        function cyw_typeOf(v) {
+            if (Array.isArray(v)) { return 'Array，长度 ' + v.length; }
+            return typeof v;
+        }
+
+        function cyw_text(v) {
+            return Array.isArray(v) ? '[' + v.join(',') + ']' : String(v);
+        }
+
+        function cyw_render(fx) {
+            fx = fx || {};
+            var cyw_box = document.getElementById('cyw_array');
+            var cyw_old = {};
+
+            Array.prototype.forEach.call(cyw_box.querySelectorAll('.cyw-cell'), function (el) {
+                cyw_old[el.getAttribute('data-cy-id')] = el.getBoundingClientRect();
+            });
+
+            cyw_box.innerHTML = '';
+
+            cyw_items.forEach(function (item, i) {
+                var cyw_cell = document.createElement('div');
+                cyw_cell.className = 'cyw-cell';
+                cyw_cell.setAttribute('data-cy-id', item.cyw_id);
+
+                if (Array.isArray(item.cyw_v)) { cyw_cell.className += ' cyw-nest'; }
+                if (fx.cyw_add && fx.cyw_add.indexOf(item.cyw_id) > -1) { cyw_cell.className += ' cyw-add'; }
+                else if (fx.cyw_chg && fx.cyw_chg.indexOf(item.cyw_id) > -1) { cyw_cell.className += ' cyw-chg'; }
+                if (fx.cyw_hit && fx.cyw_hit.indexOf(i) > -1) {
+                    cyw_cell.className += ' cyw-hit';
+                    if (fx.cyw_stagger) { cyw_cell.style.animationDelay = (i * 0.07) + 's'; }
+                }
+
+                var cyw_v = document.createElement('span');
+                cyw_v.className = 'cyw-val';
+                cyw_v.textContent = cyw_text(item.cyw_v);
+
+                var cyw_i = document.createElement('span');
+                cyw_i.className = 'cyw-idx';
+                cyw_i.textContent = '[' + i + ']';
+
+                cyw_cell.appendChild(cyw_v);
+                cyw_cell.appendChild(cyw_i);
+                cyw_box.appendChild(cyw_cell);
+            });
+
+            Array.prototype.forEach.call(cyw_box.querySelectorAll('.cyw-cell'), function (cyw_cell) {
+                var cyw_r = cyw_old[cyw_cell.getAttribute('data-cy-id')];
+                if (!cyw_r) { return; }
+                var cyw_n = cyw_cell.getBoundingClientRect();
+                var cyw_dx = cyw_r.left - cyw_n.left;
+                var cyw_dy = cyw_r.top - cyw_n.top;
+                if (Math.abs(cyw_dx) < 1 && Math.abs(cyw_dy) < 1) { return; }
+
+                cyw_cell.classList.add('cyw-move');
+                cyw_cell.style.transition = 'none';
+                cyw_cell.style.transform = 'translate(' + cyw_dx + 'px,' + cyw_dy + 'px)';
+                requestAnimationFrame(function () {
+                    requestAnimationFrame(function () {
+                        cyw_cell.style.transition = 'transform .5s cubic-bezier(.2,.8,.25,1)';
+                        cyw_cell.style.transform = 'translate(0,0)';
+                    });
+                });
+            });
+
+            document.getElementById('cyw_len').textContent = cyw_items.length;
+            document.getElementById('cyw_now').textContent = 'cyw_arr = ' + cyw_fmt(cyw_vals(cyw_items));
+        }
+
+        function cyw_log(cyw_name, cyw_kind, cyw_ret, cyw_lenLog) {
+            var cyw_ul = document.getElementById('cyw_log');
+            var cyw_li = document.createElement('li');
+            cyw_li.innerHTML = '<b>' + cyw_name + '</b>' +
+                '<span class="cyw-tag cyw-' + cyw_kind + '">' + cyw_kindText[cyw_kind] + '</span>' +
+                '<span>' + cyw_lenLog + '</span>' +
+                '<em>' + cyw_fmt(cyw_ret) + '</em>';
+            cyw_ul.insertBefore(cyw_li, cyw_ul.firstChild);
+            while (cyw_ul.children.length > 8) { cyw_ul.removeChild(cyw_ul.lastChild); }
+        }
+
+        function cyw_exec(cyw_m) {
+            if (!cyw_ready) { return; }
+
+            var cyw_raw = document.getElementById('cyw_arg').value.trim();
+            var cyw_arg = cyw_raw === '' ? null : (isNaN(Number(cyw_raw)) ? cyw_raw : Number(cyw_raw));
+
+            var cyw_out = cyw_m.cyw_run(cyw_items, cyw_arg) || {};
+            var cyw_next = cyw_out.cyw_items || cyw_items;
+
+            var cyw_oldIds = {};
+            var cyw_newIds = {};
+            cyw_items.forEach(function (x) { cyw_oldIds[x.cyw_id] = x; });
+            cyw_next.forEach(function (x) { cyw_newIds[x.cyw_id] = 1; });
+
+            var cyw_gone = cyw_items.filter(function (x) { return !cyw_newIds[x.cyw_id]; });
+            var cyw_added = cyw_next.filter(function (x) { return !cyw_oldIds[x.cyw_id]; }).map(function (x) { return x.cyw_id; });
+            var cyw_changed = cyw_next.filter(function (x) {
+                var o = cyw_oldIds[x.cyw_id];
+                return o && JSON.stringify(o.cyw_v) !== JSON.stringify(x.cyw_v);
+            }).map(function (x) { return x.cyw_id; });
+
+            var cyw_box = document.getElementById('cyw_array');
+            var cyw_lenBefore = cyw_items.length;
+
+            Array.prototype.forEach.call(document.querySelectorAll('.cyw-mbtn'), function (b) {
+                b.classList.remove('cyw-on');
+                if (b.getAttribute('data-cy-name') === cyw_m.cyw_name) { b.classList.add('cyw-on'); }
+            });
+
+            document.getElementById('cyw_result').textContent = cyw_fmt(cyw_out.cyw_ret);
+            document.getElementById('cyw_restype').textContent =
+                '类型：' + cyw_typeOf(cyw_out.cyw_ret) + '　|　' + cyw_kindTip[cyw_m.cyw_kind];
+            document.getElementById('cyw_code').textContent =
+                '// ' + cyw_m.cyw_note + '\n' + cyw_m.cyw_code(cyw_arg) + ';';
+            document.getElementById('cyw_desc').innerHTML =
+                '<b>' + cyw_m.cyw_name + '()</b>：' + cyw_m.cyw_note +
+                '<br>该方法<b>' + cyw_kindTip[cyw_m.cyw_kind] + '</b>，返回值见左侧。';
+
+            cyw_ready = false;
+
+            cyw_gone.forEach(function (x) {
+                var cyw_el = cyw_box.querySelector('[data-cy-id="' + x.cyw_id + '"]');
+                if (cyw_el) { cyw_el.classList.add('cyw-out'); }
+            });
+
+            setTimeout(function () {
+                cyw_items = cyw_next;
+                cyw_render({
+                    cyw_add: cyw_added,
+                    cyw_chg: cyw_changed,
+                    cyw_hit: cyw_out.cyw_hit,
+                    cyw_stagger: cyw_out.cyw_stagger
+                });
+                cyw_log(cyw_m.cyw_name, cyw_m.cyw_kind, cyw_out.cyw_ret,
+                    '长度 ' + cyw_lenBefore + ' → ' + cyw_items.length);
+                cyw_ready = true;
+            }, cyw_gone.length ? 320 : 0);
+        }
+
+        function cyw_build() {
+            var cyw_panel = document.getElementById('cyw_panel');
+            var cyw_groups = [];
+            var cyw_map = {};
+
+            cyw_methods.forEach(function (m) {
+                if (!cyw_map[m.cyw_cat]) {
+                    cyw_map[m.cyw_cat] = [];
+                    cyw_groups.push(m.cyw_cat);
+                }
+                cyw_map[m.cyw_cat].push(m);
+            });
+
+            cyw_groups.forEach(function (cat) {
+                var cyw_g = document.createElement('div');
+                cyw_g.className = 'cyw-group';
+
+                var cyw_t = document.createElement('div');
+                cyw_t.className = 'cyw-group-title';
+                cyw_t.textContent = cat;
+                cyw_g.appendChild(cyw_t);
+
+                cyw_map[cat].forEach(function (m) {
+                    var cyw_b = document.createElement('button');
+                    cyw_b.type = 'button';
+                    cyw_b.className = 'cyw-mbtn';
+                    cyw_b.setAttribute('data-cy-name', m.cyw_name);
+                    cyw_b.innerHTML = '<span class="cyw-mname">' + m.cyw_name + '</span>' +
+                        '<span class="cyw-mdesc">' + m.cyw_note.split('，')[0] + '</span>' +
+                        '<span class="cyw-tag cyw-' + m.cyw_kind + '">' + cyw_kindText[m.cyw_kind] + '</span>';
+                    cyw_b.addEventListener('click', function () { cyw_exec(m); });
+                    cyw_g.appendChild(cyw_b);
+                });
+
+                cyw_panel.appendChild(cyw_g);
+            });
+
+            document.getElementById('cyw_count').textContent = cyw_methods.length;
+        }
+
+        document.getElementById('cyw_reset').addEventListener('click', function () {
+            if (!cyw_ready) { return; }
+            cyw_items = cyw_seed();
+            cyw_render();
+            document.getElementById('cyw_log').innerHTML = '';
+            document.getElementById('cyw_result').textContent = '—';
+            document.getElementById('cyw_restype').textContent = '数组已重置为初始值';
+            document.getElementById('cyw_code').textContent = '// 点击右侧方法按钮开始演示';
+            document.getElementById('cyw_desc').textContent = '数组方法分三类：改变原数组、返回新数组、只读取不修改。';
+            Array.prototype.forEach.call(document.querySelectorAll('.cyw-mbtn'), function (b) {
+                b.classList.remove('cyw-on');
+            });
+        });
+
+        cyw_build();
+        cyw_render();
+    </script>
+</body>
+</html>
