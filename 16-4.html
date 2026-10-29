@@ -46,29 +46,33 @@
         .cyw-tabs {
             display: flex;
             padding: 0 16px;
-            gap: 20px;
-            border-bottom: 1px solid #eee;
+            gap: 0;
         }
         .cyw-tab {
             font-size: 13px;
             color: #999;
-            padding: 8px 0;
+            padding: 10px 20px;
             cursor: pointer;
             position: relative;
             transition: color 0.15s;
+            border-radius: 6px 6px 0 0;
         }
         .cyw-tab.cyw-active {
-            color: #333;
+            color: #fff;
             font-weight: 600;
+            background: linear-gradient(180deg, #1fa0e0 0%, #5ecdf3 100%);
         }
         .cyw-tab.cyw-active::after {
             content: "";
             position: absolute;
-            left: 0;
-            right: 0;
-            bottom: -1px;
-            height: 2px;
-            background: #1fa0e0;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: -10px;
+            width: 0;
+            height: 0;
+            border-left: 9px solid transparent;
+            border-right: 9px solid transparent;
+            border-top: 10px solid #ffffff;
         }
         .cyw-list { padding: 2px 0; }
         .cyw-item {
