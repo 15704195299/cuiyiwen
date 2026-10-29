@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <!-- 姓名：崔溢文，日期：2026-10-29，功能名称：新闻排行 Tab 切换 -->
+    <!-- 姓名：崔溢文，日期：2026-10-29，功能名称：新闻点击排行列表 -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>16-4 新闻排行</title>
+    <title>16-4 点击排行</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
             background: #f4f6f9;
-            color: #22304a;
+            color: #333;
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -18,94 +18,104 @@
         }
         .cyw-page {
             width: 100%;
-            max-width: 380px;
+            max-width: 320px;
             background: #ffffff;
-            border-radius: 14px;
-            box-shadow: 0 4px 18px rgba(0,0,0,0.07);
+            border-radius: 6px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
             overflow: hidden;
         }
-        .cyw-header {
+        .cyw-title {
             display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 16px 10px;
+            font-size: 15px;
+            color: #222;
+            font-weight: 600;
+        }
+        .cyw-title .cyw-icon {
+            width: 20px;
+            height: 20px;
+            background: #1fa0e0;
+            border-radius: 4px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .cyw-title .cyw-icon svg { width: 14px; height: 14px; fill: #fff; }
+        .cyw-tabs {
+            display: flex;
+            padding: 0 16px;
+            gap: 20px;
             border-bottom: 1px solid #eee;
         }
         .cyw-tab {
-            flex: 1;
-            text-align: center;
-            padding: 16px 0;
-            font-size: 16px;
-            color: #666;
+            font-size: 13px;
+            color: #999;
+            padding: 8px 0;
             cursor: pointer;
             position: relative;
-            transition: color 0.2s ease;
-            user-select: none;
+            transition: color 0.15s;
         }
         .cyw-tab.cyw-active {
-            color: #1fa0e0;
+            color: #333;
             font-weight: 600;
         }
         .cyw-tab.cyw-active::after {
             content: "";
             position: absolute;
-            left: 50%;
-            bottom: 0;
-            transform: translateX(-50%);
-            width: 40px;
-            height: 3px;
+            left: 0;
+            right: 0;
+            bottom: -1px;
+            height: 2px;
             background: #1fa0e0;
-            border-radius: 2px;
         }
-        .cyw-panel {
-            display: none;
-            padding: 4px 0;
-        }
-        .cyw-panel.cyw-show {
-            display: block;
-        }
+        .cyw-list { padding: 2px 0; }
         .cyw-item {
             display: flex;
             align-items: center;
-            gap: 14px;
-            padding: 14px 20px;
-            border-bottom: 1px solid #f5f5f5;
+            gap: 10px;
+            padding: 10px 16px;
             cursor: pointer;
-            transition: background 0.15s ease;
-        }
-        .cyw-item:last-child {
-            border-bottom: none;
-        }
-        .cyw-item:hover {
-            background: #fafbfd;
         }
         .cyw-num {
-            width: 22px;
-            height: 22px;
-            border-radius: 4px;
-            background: #d9d9d9;
-            color: #fff;
-            font-size: 12px;
-            font-weight: 600;
+            width: 20px;
+            height: 20px;
+            border: 1px solid #d9d9d9;
+            border-radius: 2px;
+            font-size: 11px;
+            color: #999;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
+            font-weight: 600;
         }
-        .cyw-item:nth-child(1) .cyw-num { background: #ff4d4f; }
-        .cyw-item:nth-child(2) .cyw-num { background: #ff7a45; }
-        .cyw-item:nth-child(3) .cyw-num { background: #ffa940; }
-        .cyw-info {
+        .cyw-item:nth-child(1) .cyw-num {
+            background: #ff4d4f;
+            border-color: #ff4d4f;
+            color: #fff;
+        }
+        .cyw-item:nth-child(2) .cyw-num {
+            background: #ff7a45;
+            border-color: #ff7a45;
+            color: #fff;
+        }
+        .cyw-item:nth-child(3) .cyw-num {
+            background: #ffa940;
+            border-color: #ffa940;
+            color: #fff;
+        }
+        .cyw-title-text {
             flex: 1;
-            min-width: 0;
-        }
-        .cyw-title {
-            font-size: 14px;
-            color: #1a1a1a;
-            line-height: 1.4;
+            font-size: 13px;
+            color: #666;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
         }
         .cyw-count {
-            font-size: 13px;
+            font-size: 12px;
             color: #999;
             flex-shrink: 0;
             font-variant-numeric: tabular-nums;
@@ -114,45 +124,51 @@
 </head>
 <body>
     <div class="cyw-page">
-        <div class="cyw-header">
-            <div class="cyw-tab cyw-active" data-target="cyw-click">点击排行</div>
-            <div class="cyw-tab" data-target="cyw-comment">评论排行</div>
+        <div class="cyw-title">
+            <span class="cyw-icon">
+                <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17a5 5 0 110-10 5 5 0 010 10zm0-8a3 3 0 100 6 3 3 0 000-6z"/></svg>
+            </span>
+            点击排行
         </div>
 
-        <div class="cyw-panel cyw-show" id="cyw-click">
-            <div class="cyw-item"><span class="cyw-num">1</span><div class="cyw-info"><div class="cyw-title">灯塔水母：地球上唯一不死生物</div></div><span class="cyw-count">356322</span></div>
-            <div class="cyw-item"><span class="cyw-num">2</span><div class="cyw-info"><div class="cyw-title">阿里巴巴全资收购UC 俞永福称U</div></div><span class="cyw-count">311246</span></div>
-            <div class="cyw-item"><span class="cyw-num">3</span><div class="cyw-info"><div class="cyw-title">亚马逊惊现三米长巨滑舌鱼用肺</div></div><span class="cyw-count">295883</span></div>
-            <div class="cyw-item"><span class="cyw-num">4</span><div class="cyw-info"><div class="cyw-title">奉化男子上山抓野味 遭遇覆颈窝</div></div><span class="cyw-count">286061</span></div>
-            <div class="cyw-item"><span class="cyw-num">5</span><div class="cyw-info"><div class="cyw-title">大白鲨深海失踪 或被大型生物</div></div><span class="cyw-count">243936</span></div>
-            <div class="cyw-item"><span class="cyw-num">6</span><div class="cyw-info"><div class="cyw-title">南非小牛目睹母亲被猎杀不肯离</div></div><span class="cyw-count">224346</span></div>
-            <div class="cyw-item"><span class="cyw-num">7</span><div class="cyw-info"><div class="cyw-title">余额宝周岁：收益率"过山车"</div></div><span class="cyw-count">172694</span></div>
-            <div class="cyw-item"><span class="cyw-num">8</span><div class="cyw-info"><div class="cyw-title">"尸油入餐桌"纯属无稽之谈</div></div><span class="cyw-count">128789</span></div>
+        <div class="cyw-tabs">
+            <div class="cyw-tab" data-target="cyw-realtime">实时点击</div>
+            <div class="cyw-tab cyw-active" data-target="cyw-24h">24小时排行</div>
         </div>
 
-        <div class="cyw-panel" id="cyw-comment">
-            <div class="cyw-item"><span class="cyw-num">1</span><div class="cyw-info"><div class="cyw-title">小米SU7 Ultra正式发布 售价52.99万起</div></div><span class="cyw-count">18326</span></div>
-            <div class="cyw-item"><span class="cyw-num">2</span><div class="cyw-info"><div class="cyw-title">国家队0-1不敌中国香港 球迷怒砸电视</div></div><span class="cyw-count">15420</span></div>
-            <div class="cyw-item"><span class="cyw-num">3</span><div class="cyw-info"><div class="cyw-title">95后姑娘辞职回乡养小龙虾 年入百万</div></div><span class="cyw-count">12988</span></div>
-            <div class="cyw-item"><span class="cyw-num">4</span><div class="cyw-info"><div class="cyw-title">专家建议春节放9天长假 除夕不调休</div></div><span class="cyw-count">11507</span></div>
-            <div class="cyw-item"><span class="cyw-num">5</span><div class="cyw-info"><div class="cyw-title">程序员晒工资条引热议 网友：酸了</div></div><span class="cyw-count">9842</span></div>
-            <div class="cyw-item"><span class="cyw-num">6</span><div class="cyw-info"><div class="cyw-title">00后整顿职场 下班直接拉黑领导</div></div><span class="cyw-count">8336</span></div>
-            <div class="cyw-item"><span class="cyw-num">7</span><div class="cyw-info"><div class="cyw-title">网红天价雪糕遭吐槽 成本仅几毛</div></div><span class="cyw-count">7105</span></div>
-            <div class="cyw-item"><span class="cyw-num">8</span><div class="cyw-info"><div class="cyw-title">大熊猫"丫丫"回国后首次公开亮相</div></div><span class="cyw-count">6024</span></div>
+        <div class="cyw-list" id="cyw-24h">
+            <div class="cyw-item"><span class="cyw-num">1</span><span class="cyw-title-text">灯塔水母：地球上唯一不死生物</span><span class="cyw-count">356322</span></div>
+            <div class="cyw-item"><span class="cyw-num">2</span><span class="cyw-title-text">阿里巴巴全资收购UC 俞永福称U</span><span class="cyw-count">311246</span></div>
+            <div class="cyw-item"><span class="cyw-num">3</span><span class="cyw-title-text">亚马逊惊现三米长巨滑舌鱼用肺</span><span class="cyw-count">295883</span></div>
+            <div class="cyw-item"><span class="cyw-num">4</span><span class="cyw-title-text">奉化男子上山抓野味 遭遇覆颈窝</span><span class="cyw-count">286061</span></div>
+            <div class="cyw-item"><span class="cyw-num">5</span><span class="cyw-title-text">大白鲨深海失踪 或被大型生物</span><span class="cyw-count">243936</span></div>
+            <div class="cyw-item"><span class="cyw-num">6</span><span class="cyw-title-text">南非小牛目睹母亲被猎杀不肯离</span><span class="cyw-count">224346</span></div>
+            <div class="cyw-item"><span class="cyw-num">7</span><span class="cyw-title-text">余额宝周岁：收益率"过山车"</span><span class="cyw-count">172694</span></div>
+            <div class="cyw-item"><span class="cyw-num">8</span><span class="cyw-title-text">"尸油入餐桌"纯属无稽之谈</span><span class="cyw-count">128789</span></div>
+        </div>
+
+        <div class="cyw-list" id="cyw-realtime" style="display:none">
+            <div class="cyw-item"><span class="cyw-num">1</span><span class="cyw-title-text">我国成功发射新一代通信卫星</span><span class="cyw-count">15820</span></div>
+            <div class="cyw-item"><span class="cyw-num">2</span><span class="cyw-title-text">多地气温骤降 局地降温超10℃</span><span class="cyw-count">12346</span></div>
+            <div class="cyw-item"><span class="cyw-num">3</span><span class="cyw-title-text">国产大飞机C919再获新订单</span><span class="cyw-count">9872</span></div>
+            <div class="cyw-item"><span class="cyw-num">4</span><span class="cyw-title-text">知名导演新片上映首日票房破亿</span><span class="cyw-count">8215</span></div>
+            <div class="cyw-item"><span class="cyw-num">5</span><span class="cyw-title-text">新能源汽车销量再创新高</span><span class="cyw-count">7103</span></div>
+            <div class="cyw-item"><span class="cyw-num">6</span><span class="cyw-title-text">科学家发现新型超导材料</span><span class="cyw-count">5924</span></div>
+            <div class="cyw-item"><span class="cyw-num">7</span><span class="cyw-title-text">故宫博物院推出数字文物展</span><span class="cyw-count">4681</span></div>
+            <div class="cyw-item"><span class="cyw-num">8</span><span class="cyw-title-text">全国铁路今日起实行新运行图</span><span class="cyw-count">3526</span></div>
         </div>
     </div>
 
     <script>
         (function () {
-            var cyw_tabs = document.querySelectorAll(".cyw-tab");
-            var cyw_panels = document.querySelectorAll(".cyw-panel");
-            cyw_tabs.forEach(function (tab) {
+            var cywTabs = document.querySelectorAll(".cyw-tab");
+            cywTabs.forEach(function (tab) {
                 tab.addEventListener("click", function () {
-                    var cyw_target = tab.getAttribute("data-target");
-                    cyw_tabs.forEach(function (t) { t.classList.remove("cyw-active"); });
-                    cyw_panels.forEach(function (p) { p.classList.remove("cyw-show"); });
+                    var cywTarget = tab.getAttribute("data-target");
+                    cywTabs.forEach(function (t) { t.classList.remove("cyw-active"); });
+                    document.querySelectorAll(".cyw-list").forEach(function (p) { p.style.display = "none"; });
                     tab.classList.add("cyw-active");
-                    document.getElementById(cyw_target).classList.add("cyw-show");
+                    document.getElementById(cywTarget).style.display = "block";
                 });
             });
         })();
