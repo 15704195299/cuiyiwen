@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <!-- 姓名：崔溢文，日期：2026-10-29，功能名称：携程旅行 App 首页导航九宫格复刻 -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>16-3 携程旅行导航</title>
+    <link rel="stylesheet" href="./font/iconfont.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            background: #f4f6f9;
+            color: #22304a;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 40px 16px;
+        }
+        .cyw-page {
+            width: 100%;
+            max-width: 420px;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        .cyw-topbar {
+            height: 48px;
+            background: linear-gradient(90deg, #1fa0e0 0%, #18b5e8 100%);
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        .cyw-topbar .cyw-back {
+            font-size: 20px;
+            margin-right: 12px;
+        }
+        .cyw-header {
+            background: linear-gradient(180deg, #1fa0e0 0%, #1fa0e0 55%, #f4f6f9 55%, #f4f6f9 100%);
+            padding: 0 16px 24px;
+        }
+        .cyw-search {
+            display: flex;
+            align-items: center;
+            background: #fff;
+            border-radius: 24px;
+            height: 40px;
+            padding: 0 14px;
+            box-shadow: 0 4px 14px rgba(31,160,224,0.22);
+        }
+        .cyw-search i {
+            color: #1fa0e0;
+            font-size: 16px;
+            margin-right: 8px;
+        }
+        .cyw-search input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 14px;
+            color: #666;
+            background: transparent;
+        }
+        .cyw-grid-wrap {
+            padding: 0 12px 20px;
+            margin-top: -2px;
+        }
+        .cyw-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px 8px;
+            padding: 18px 6px;
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+        }
+        .cyw-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: transform 0.15s ease;
+        }
+        .cyw-item:active { transform: scale(0.94); }
+        .cyw-icon-circle {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #fff;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+        }
+        .cyw-item:nth-child(1) .cyw-icon-circle { background: #1fa0e0; }
+        .cyw-item:nth-child(2) .cyw-icon-circle { background: #2ab1ec; }
+        .cyw-item:nth-child(3) .cyw-icon-circle { background: #38bef0; }
+        .cyw-item:nth-child(4) .cyw-icon-circle { background: #4ec6f1; }
+        .cyw-item:nth-child(5) .cyw-icon-circle { background: #5ecdf3; }
+        .cyw-item:nth-child(6) .cyw-icon-circle { background: #72d4f5; }
+        .cyw-item:nth-child(7) .cyw-icon-circle { background: #87dbf7; }
+        .cyw-label {
+            font-size: 13px;
+            color: #333;
+            text-align: center;
+            line-height: 1.2;
+        }
+        .cyw-home {
+            margin-top: 28px;
+            text-align: center;
+        }
+        .cyw-home a {
+            display: inline-block;
+            padding: 8px 24px;
+            background: #1fa0e0;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="cyw-page">
+        <div class="cyw-topbar">
+            <span class="cyw-back">‹</span>
+            携程旅行
+        </div>
+
+        <div class="cyw-header">
+            <div class="cyw-search">
+                <i class="iconfont icon-sousuo"></i>
+                <input type="text" placeholder="搜索酒店、机票、景点…">
+            </div>
+        </div>
+
+        <div class="cyw-grid-wrap">
+            <div class="cyw-grid">
+                <div class="cyw-item">
+                    <div class="cyw-icon-circle">
+                        <i class="iconfont icon-shouye"></i>
+                    </div>
+                    <div class="cyw-label">酒店</div>
+                </div>
+                <div class="cyw-item">
+                    <div class="cyw-icon-circle">
+                        <i class="iconfont icon-dingwei"></i>
+                    </div>
+                    <div class="cyw-label">机票</div>
+                </div>
+                <div class="cyw-item">
+                    <div class="cyw-icon-circle">
+                        <i class="iconfont icon-sousuo"></i>
+                    </div>
+                    <div class="cyw-label">火车票</div>
+                </div>
+                <div class="cyw-item">
+                    <div class="cyw-icon-circle">
+                        <i class="iconfont icon-shouye1"></i>
+                    </div>
+                    <div class="cyw-label">旅游</div>
+                </div>
+                <div class="cyw-item">
+                    <div class="cyw-icon-circle">
+                        <i class="iconfont icon-gouwuchekong"></i>
+                    </div>
+                    <div class="cyw-label">门票 · 活动</div>
+                </div>
+                <div class="cyw-item">
+                    <div class="cyw-icon-circle">
+                        <i class="iconfont icon-gouwuche"></i>
+                    </div>
+                    <div class="cyw-label">汽车 · 船票</div>
+                </div>
+                <div class="cyw-item">
+                    <div class="cyw-icon-circle">
+                        <i class="iconfont icon-shucheng"></i>
+                    </div>
+                    <div class="cyw-label">用车</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="cyw-home">
+        <a href="./1-1.html">首页</a>
+    </div>
+</body>
+</html>
