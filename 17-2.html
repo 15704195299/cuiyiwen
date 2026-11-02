@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <!-- 姓名：崔溢文，日期：2026-11-02，功能名称：fetch 获取远程 JSON 数据并展示 -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>17-2 fetch 远程数据</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            background: #f4f6f9;
+            color: #22304a;
+            min-height: 100vh;
+            padding: 24px 16px;
+        }
+        .cyw-wrap {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .cyw-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1fa0e0;
+            margin-bottom: 14px;
+            text-align: center;
+        }
+        .cyw-toolbar {
+            text-align: center;
+            margin-bottom: 14px;
+        }
+        .cyw-btn {
+            padding: 8px 22px;
+            background: #1fa0e0;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .cyw-btn:hover { background: #1890cc; }
+        .cyw-btn.cyw-sec { background: #999; }
+        .cyw-btn.cyw-sec:hover { background: #777; }
+        .cyw-meta {
+            text-align: center;
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 12px;
+        }
+        .cyw-status {
+            padding: 10px 14px;
+            border-radius: 4px;
+            font-size: 13px;
+            margin-bottom: 12px;
+            text-align: center;
+            display: none;
+        }
+        .cyw-status.cyw-loading { background: #e6f7ff; color: #1890ff; display: block; }
+        .cyw-status.cyw-error   { background: #fff1f0; color: #cf1322; display: block; }
+        .cyw-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            background: #fff;
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .cyw-table th, .cyw-table td {
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .cyw-table th {
+            background: #1fa0e0;
+            color: #fff;
+            font-weight: 600;
+            font-size: 12px;
+        }
+        .cyw-table tr:hover td { background: #f9fcff; }
+        .cyw-avatar {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1fa0e0, #5ecdf3);
+            color: #fff;
+            font-weight: 600;
+            font-size: 13px;
+            flex-shrink: 0;
+            margin-right: 8px;
+        }
+        .cyw-name-cell {
+            display: flex;
+            align-items: center;
+        }
+        .cyw-company { font-size: 12px; color: #888; }
+        .cyw-link { color: #1fa0e0; text-decoration: none; }
+        .cyw-link:hover { text-decoration: underline; }
+        .cyw-empty {
+            text-align: center;
+            color: #aaa;
+            padding: 40px 0;
+            font-size: 14px;
+        }
+        .cyw-home { text-align: center; margin-top: 20px; }
+        .cyw-home a {
+            display: inline-block;
+            padding: 8px 24px;
+            background: #1fa0e0;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="cyw-wrap">
+        <div class="cyw-title">fetch 获取远程 JSON 数据</div>
+        <div class="cyw-meta">接口：http://jsonplaceholder.typicode.com/users（10 个用户）</div>
+
+        <div class="cyw-toolbar">
+            <button class="cyw-btn" onclick="cyw_load()">获取数据</button>
+            <button class="cyw-btn cyw-sec" onclick="cyw_clear()">清空</button>
+        </div>
+
+        <div id="cyw_status" class="cyw-status"></div>
+
+        <div id="cyw_result">
+            <div class="cyw-empty">点击「获取数据」按钮发起 fetch 请求</div>
+        </div>
+
+        <div class="cyw-home"><a href="./1-1.html">首页</a></div>
+    </div>
+
+    <script>
+        (function () {
+            var cywUrl = "https://jsonplaceholder.typicode.com/users";
+            var cywStatus = document.getElementById("cyw_status");
+            var cywResult = document.getElementById("cyw_result");
+
+            function cyw_setStatus(type, msg) {
+                cywStatus.className = "cyw-status cyw-" + type;
+                cywStatus.textContent = msg;
+            }
+
+            function cyw_render(list) {
+                var cywHtml = '<table class="cyw-table"><thead><tr>' +
+                    '<th>ID</th><th>姓名</th><th>用户名</th><th>邮箱</th>' +
+                    '<th>电话</th><th>城市</th><th>公司</th>' +
+                    '</tr></thead><tbody>';
+                list.forEach(function (u) {
+                    var cywInitial = u.name.charAt(0).toUpperCase();
+                    cywHtml +=
+                        '<tr>' +
+                        '<td>' + u.id + '</td>' +
+                        '<td><div class="cyw-name-cell">' +
+                            '<span class="cyw-avatar">' + cywInitial + '</span>' +
+                            '<div><div>' + u.name + '</div>' +
+                            '<div class="cyw-company">' + u.username + '</div></div></div></td>' +
+                        '<td>' + u.username + '</td>' +
+                        '<td><a class="cyw-link" href="mailto:' + u.email + '">' + u.email + '</a></td>' +
+                        '<td>' + u.phone + '</td>' +
+                        '<td>' + u.address.city + '</td>' +
+                        '<td>' + u.company.name + '<div class="cyw-company">"' + u.company.catchPhrase + '"</div></td>' +
+                        '</tr>';
+                });
+                cywHtml += '</tbody></table>';
+                cywResult.innerHTML = cywHtml;
+            }
+
+            function cyw_load() {
+                cyw_setStatus("loading", "⏳ fetching " + cywUrl + " ...");
+                cywResult.innerHTML = "";
+
+                fetch(cywUrl)
+                    .then(function (res) {
+                        if (!res.ok) {
+                            throw new Error("HTTP " + res.status + " " + res.statusText);
+                        }
+                        return res.json();
+                    })
+                    .then(function (data) {
+                        cyw_setStatus("loading", "✅ 获取成功，共 " + data.length + " 条数据");
+                        cyw_render(data);
+                    })
+                    .catch(function (err) {
+                        cyw_setStatus("error", "❌ 请求失败：" + err.message);
+                    });
+            }
+
+            function cyw_clear() {
+                cywStatus.className = "cyw-status";
+                cywStatus.textContent = "";
+                cywResult.innerHTML = '<div class="cyw-empty">点击「获取数据」按钮发起 fetch 请求</div>';
+            }
+
+            window.cyw_load = cyw_load;
+            window.cyw_clear = cyw_clear;
+        })();
+    </script>
+</body>
+</html>

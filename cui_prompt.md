@@ -168,3 +168,8 @@
 
 - model: opencode/mimo
 - prompt: 完成17-1.html,展示json
+
+## 2026-11-02-15-43
+
+- model: opencode/mimo
+- prompt: 完成17-2.html 获取 http://jsonplaceholder.typicode.com/users 的数据并展示。接口可以跨域访问。使用fetch和原生代码实现。
