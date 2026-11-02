@@ -188,3 +188,8 @@
 
 - model: opencode/mimo
 - prompt: 完成 17-5.html，展示 javascript 的两种定时器。
+
+## 2026-11-02-16-32
+
+- model: opencode/mimo
+- prompt: 完成17-6.html,使用promise和async完成异步操作的演示包饺子的流程。先买原料(线上线下同时购买,完成任何一个即可进行下一步)，取原料，买完原料之后同时和面、和馅，两个活动都完成之后包饺子，包完饺子煮饺子，然后吃饺子。使用 settimeout模拟每一个流程。

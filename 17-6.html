@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <!-- 姓名：崔溢文，日期：2026-11-02，功能名称：Promise + async/await 包饺子流程演示 -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>17-6 包饺子异步流程</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            background: #f4f6f9;
+            color: #22304a;
+            min-height: 100vh;
+            padding: 24px 16px;
+        }
+        .cyw-wrap { max-width: 880px; margin: 0 auto; }
+        .cyw-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1fa0e0;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        .cyw-desc {
+            background: #fff;
+            border-radius: 8px;
+            padding: 14px 18px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+            margin-bottom: 14px;
+            font-size: 13px;
+            line-height: 1.9;
+            color: #555;
+        }
+        .cyw-desc code {
+            background: #e6f7ff;
+            color: #1fa0e0;
+            padding: 1px 6px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-family: Consolas, "Courier New", monospace;
+        }
+        .cyw-controls {
+            text-align: center;
+            margin-bottom: 14px;
+        }
+        .cyw-btn {
+            padding: 9px 28px;
+            background: #1fa0e0;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .cyw-btn:hover { background: #1890cc; }
+        .cyw-btn:disabled { background: #91d5ff; cursor: not-allowed; }
+
+        .cyw-flow {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+            position: relative;
+        }
+        .cyw-row {
+            display: flex;
+            gap: 40px;
+            justify-content: center;
+            width: 100%;
+        }
+        .cyw-step {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+            padding: 16px 22px;
+            width: 220px;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s;
+            border-top: 3px solid #e0e0e0;
+        }
+        .cyw-step.cyw-wait   { border-top-color: #d9d9d9; opacity: 0.55; }
+        .cyw-step.cyw-run    { border-top-color: #1fa0e0; box-shadow: 0 4px 16px rgba(31,160,224,0.25); }
+        .cyw-step.cyw-done   { border-top-color: #52c41a; }
+
+        .cyw-step .cyw-emoji {
+            font-size: 32px;
+            margin-bottom: 6px;
+        }
+        .cyw-step .cyw-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+        }
+        .cyw-step .cyw-sub {
+            font-size: 11px;
+            color: #aaa;
+        }
+        .cyw-step .cyw-time {
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            font-size: 11px;
+            color: #999;
+            font-family: Consolas, "Courier New", monospace;
+        }
+        .cyw-step.cyw-run .cyw-time { color: #1fa0e0; font-weight: 600; }
+        .cyw-step.cyw-done .cyw-time { color: #52c41a; }
+
+        .cyw-arrow {
+            font-size: 20px;
+            color: #bbb;
+            margin: 6px 0;
+            text-align: center;
+            font-weight: 700;
+        }
+        .cyw-arrow.cyw-active { color: #1fa0e0; animation: cyw-blink 0.6s infinite; }
+        @keyframes cyw-blink { 50% { opacity: 0.3; } }
+        .cyw-arrow.cyw-done { color: #52c41a; }
+
+        .cyw-branch {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+            position: relative;
+        }
+        .cyw-merge {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+        }
+
+        .cyw-log {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            border-radius: 6px;
+            padding: 12px 14px;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 12px;
+            line-height: 1.7;
+            margin-top: 18px;
+            max-height: 220px;
+            overflow-y: auto;
+        }
+        .cyw-log-line { white-space: pre-wrap; word-break: break-all; }
+        .cyw-log-line span { color: #75715e; }
+        .cyw-log-line.cyw-info { color: #8be9fd; }
+        .cyw-log-line.cyw-ok { color: #a6e22e; }
+
+        .cyw-home { text-align: center; margin-top: 18px; }
+        .cyw-home a {
+            display: inline-block;
+            padding: 8px 24px;
+            background: #1fa0e0;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="cyw-wrap">
+        <div class="cyw-title">🥟 包饺子异步流程演示</div>
+
+        <div class="cyw-desc">
+            流程：<br>
+            ① <b>买原料</b>：线上 + 线下 <code>Promise.race</code> 并行，<b>任一完成</b>即可进入下一步（6s）<br>
+            ② <b>取原料</b>（3s）<br>
+            ③ <b>和面 + 和馅</b>：<code>Promise.all</code> 并行，<b>两个都完成</b>才能进入下一步（各 4s）<br>
+            ④ <b>包饺子</b>（5s）→ ⑤ <b>煮饺子</b>（3s）→ ⑥ <b>吃饺子</b>（2s）<br>
+            <code>setTimeout</code> 模拟耗时，<code>async / await</code> 串联整条链。
+        </div>
+
+        <div class="cyw-controls">
+            <button id="cyw_start" class="cyw-btn">开始包饺子 🥟</button>
+        </div>
+
+        <div class="cyw-flow" id="cyw_flow">
+            <!-- ① 并行买原料 -->
+            <div class="cyw-row">
+                <div class="cyw-step cyw-wait" id="cyw_online">
+                    <div class="cyw-time">—</div>
+                    <div class="cyw-emoji">🛒</div>
+                    <div class="cyw-name">线上买原料</div>
+                    <div class="cyw-sub">京东下单 · 6s</div>
+                </div>
+                <div class="cyw-step cyw-wait" id="cyw_offline">
+                    <div class="cyw-time">—</div>
+                    <div class="cyw-emoji">🏪</div>
+                    <div class="cyw-name">线下买原料</div>
+                    <div class="cyw-sub">菜市场 · 6s</div>
+                </div>
+            </div>
+            <div class="cyw-arrow" id="cyw_arr1">▼ race：谁先完算谁</div>
+
+            <!-- ② 取原料 -->
+            <div class="cyw-step cyw-wait" id="cyw_pickup">
+                <div class="cyw-time">—</div>
+                <div class="cyw-emoji">📦</div>
+                <div class="cyw-name">取原料</div>
+                <div class="cyw-sub">3s</div>
+            </div>
+            <div class="cyw-arrow" id="cyw_arr2">▼</div>
+
+            <!-- ③ 并行和面 + 和馅 -->
+            <div class="cyw-row">
+                <div class="cyw-step cyw-wait" id="cyw_dough">
+                    <div class="cyw-time">—</div>
+                    <div class="cyw-emoji">🥣</div>
+                    <div class="cyw-name">和面</div>
+                    <div class="cyw-sub">4s</div>
+                </div>
+                <div class="cyw-step cyw-wait" id="cyw_filling">
+                    <div class="cyw-time">—</div>
+                    <div class="cyw-emoji">🥬</div>
+                    <div class="cyw-name">和馅</div>
+                    <div class="cyw-sub">4s</div>
+                </div>
+            </div>
+            <div class="cyw-arrow" id="cyw_arr3">▼ all：两个都要完</div>
+
+            <!-- ④ 包饺子 -->
+            <div class="cyw-step cyw-wait" id="cyw_wrap">
+                <div class="cyw-time">—</div>
+                <div class="cyw-emoji">🥟</div>
+                <div class="cyw-name">包饺子</div>
+                <div class="cyw-sub">5s</div>
+            </div>
+            <div class="cyw-arrow" id="cyw_arr4">▼</div>
+
+            <!-- ⑤ 煮饺子 -->
+            <div class="cyw-step cyw-wait" id="cyw_boil">
+                <div class="cyw-time">—</div>
+                <div class="cyw-emoji">🍲</div>
+                <div class="cyw-name">煮饺子</div>
+                <div class="cyw-sub">3s</div>
+            </div>
+            <div class="cyw-arrow" id="cyw_arr5">▼</div>
+
+            <!-- ⑥ 吃饺子 -->
+            <div class="cyw-step cyw-wait" id="cyw_eat">
+                <div class="cyw-time">—</div>
+                <div class="cyw-emoji">😋</div>
+                <div class="cyw-name">吃饺子</div>
+                <div class="cyw-sub">2s</div>
+            </div>
+        </div>
+
+        <div id="cyw_log" class="cyw-log"></div>
+
+        <div class="cyw-home"><a href="./1-1.html">首页</a></div>
+    </div>
+
+    <script>
+        (function () {
+            function cyw_timeStr() {
+                var d = new Date();
+                var pad = function (n) { return n < 10 ? "0" + n : n; };
+                return pad(d.getHours()) + ":" + pad(d.getMinutes()) + ":" + pad(d.getSeconds());
+            }
+            function cyw_log(text, cls) {
+                var el = document.getElementById("cyw_log");
+                el.innerHTML += '<div class="cyw-log-line ' + (cls || "") + '"><span>[' + cyw_timeStr() + ']</span> ' + text + '</div>';
+                el.scrollTop = el.scrollHeight;
+            }
+            function cyw_set(id, state, timeText) {
+                var el = document.getElementById(id);
+                if (!el) return;
+                el.className = "cyw-step cyw-" + state;
+                if (timeText !== undefined) el.querySelector(".cyw-time").textContent = timeText;
+            }
+            function cyw_arr(id, state) {
+                var el = document.getElementById(id);
+                if (!el) return;
+                el.className = "cyw-arrow" + (state === "run" ? " cyw-active" : state === "done" ? " cyw-done" : "");
+            }
+
+            function cyw_stepPromise(id, ms, label) {
+                return new Promise(function (resolve) {
+                    cyw_set(id, "run", "0/" + ms + "ms");
+                    cyw_log("⏳ 开始：" + label + "（" + ms + "ms）", "info");
+                    var cywStart = performance.now();
+                    var cywTimer = setInterval(function () {
+                        var cywElapsed = Math.round(performance.now() - cywStart);
+                        document.querySelector("#" + id + " .cyw-time").textContent = cywElapsed + "/" + ms + "ms";
+                    }, 50);
+                    setTimeout(function () {
+                        clearInterval(cywTimer);
+                        var cywElapsed = Math.round(performance.now() - cywStart);
+                        cyw_set(id, "done", "✓ " + cywElapsed + "ms");
+                        cyw_log("✅ 完成：" + label + "（耗时 " + cywElapsed + "ms）", "ok");
+                        resolve(cywElapsed);
+                    }, ms);
+                });
+            }
+
+            async function cyw_main() {
+                document.getElementById("cyw_start").disabled = true;
+                document.getElementById("cyw_log").innerHTML = "";
+                cyw_log("=== 🥟 包饺子流程 START ===");
+
+                // ① Promise.race：线上 + 线下，任一完成即可
+                cyw_arr("cyw_arr1", "run");
+                cyw_log("【阶段1】Promise.race：线上 vs 线下，谁先买完算谁", "info");
+
+                var cyw_onlineP = cyw_stepPromise("cyw_online", 6000, "线上买原料（京东）");
+                var cyw_offlineP = cyw_stepPromise("cyw_offline", 6000, "线下买原料（菜市场）");
+
+                var cyw_first = await Promise.race([cyw_onlineP, cyw_offlineP]);
+                cyw_arr("cyw_arr1", "done");
+                cyw_log("🏁 race 胜者出现！第一个完成耗时 " + cyw_first + "ms，进入下一阶段", "ok");
+
+                // ② 取原料
+                cyw_arr("cyw_arr2", "run");
+                await cyw_stepPromise("cyw_pickup", 3000, "取原料");
+                cyw_arr("cyw_arr2", "done");
+
+                // ③ Promise.all：和面 + 和馅，两个都要
+                cyw_arr("cyw_arr3", "run");
+                cyw_log("【阶段3】Promise.all：和面 + 和馅，必须两个都完成", "info");
+
+                await Promise.all([
+                    cyw_stepPromise("cyw_dough", 4000, "和面"),
+                    cyw_stepPromise("cyw_filling", 4000, "和馅")
+                ]);
+                cyw_arr("cyw_arr3", "done");
+                cyw_log("🎯 all 完成！和面和馅都 OK 了", "ok");
+
+                // ④ 包饺子
+                cyw_arr("cyw_arr4", "run");
+                await cyw_stepPromise("cyw_wrap", 5000, "包饺子");
+                cyw_arr("cyw_arr4", "done");
+
+                // ⑤ 煮饺子
+                cyw_arr("cyw_arr5", "run");
+                await cyw_stepPromise("cyw_boil", 3000, "煮饺子");
+                cyw_arr("cyw_arr5", "done");
+
+                // ⑥ 吃饺子
+                await cyw_stepPromise("cyw_eat", 2000, "吃饺子");
+
+                cyw_log("=== 🥟 全部完成！饺子真香！===", "ok");
+                document.getElementById("cyw_start").disabled = false;
+            }
+
+            document.getElementById("cyw_start").addEventListener("click", function () {
+                ["cyw_online","cyw_offline","cyw_pickup","cyw_dough","cyw_filling","cyw_wrap","cyw_boil","cyw_eat"]
+                    .forEach(function (id) { cyw_set(id, "wait", "—"); });
+                ["cyw_arr1","cyw_arr2","cyw_arr3","cyw_arr4","cyw_arr5"]
+                    .forEach(function (id) { cyw_arr(id, ""); });
+                cyw_main();
+            });
+        })();
+    </script>
+</body>
+</html>
