@@ -178,3 +178,8 @@
 
 - model: opencode/mimo
 - prompt: 完成17-3.html 和17-3-detail.html,显示列表和列表详情，数据来源于接口，使用fetch 列表：https://dummyjson.com/products?limit=8 详情：https://dummyjson.com/products/{id}
+
+## 2026-11-02-16-20
+
+- model: opencode/mimo
+- prompt: 完成 17-4.html，对远程数据接口进行测试，支持 get、post 等，显示返回的数据和错误提示信息，示例接口：https://jsonplaceholder.typicode.com/posts

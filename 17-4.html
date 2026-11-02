@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <!-- 姓名：崔溢文，日期：2026-11-02，功能名称：REST API 接口测试工具 -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>17-4 API 测试</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            background: #f4f6f9;
+            color: #22304a;
+            min-height: 100vh;
+            padding: 24px 16px;
+        }
+        .cyw-wrap { max-width: 960px; margin: 0 auto; }
+        .cyw-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1fa0e0;
+            margin-bottom: 14px;
+            text-align: center;
+        }
+        .cyw-panel {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+            padding: 16px 18px;
+            margin-bottom: 14px;
+        }
+        .cyw-row {
+            display: flex;
+            gap: 8px;
+            align-items: stretch;
+        }
+        .cyw-method {
+            padding: 0 12px;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+            font-size: 13px;
+            background: #fafafa;
+            min-width: 90px;
+        }
+        .cyw-url {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+            font-size: 13px;
+            font-family: Consolas, "Courier New", monospace;
+        }
+        .cyw-url:focus, .cyw-method:focus, .cyw-body:focus {
+            outline: none;
+            border-color: #1fa0e0;
+            box-shadow: 0 0 0 2px rgba(31,160,224,0.15);
+        }
+        .cyw-send {
+            padding: 0 22px;
+            background: #1fa0e0;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .cyw-send:hover { background: #1890cc; }
+        .cyw-send:disabled { background: #91d5ff; cursor: not-allowed; }
+        .cyw-label {
+            font-size: 12px;
+            color: #888;
+            margin: 10px 0 6px;
+        }
+        .cyw-body {
+            width: 100%;
+            min-height: 110px;
+            padding: 10px 12px;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 12px;
+            resize: vertical;
+        }
+        .cyw-presets {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-top: 6px;
+        }
+        .cyw-preset {
+            padding: 3px 10px;
+            background: #e6f7ff;
+            color: #1fa0e0;
+            border: none;
+            border-radius: 12px;
+            font-size: 11px;
+            cursor: pointer;
+        }
+        .cyw-preset:hover { background: #bae7ff; }
+
+        .cyw-resp-head {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+        .cyw-status {
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .cyw-status.cyw-ok { background: #f6ffed; color: #52c41a; border: 1px solid #b7eb8f; }
+        .cyw-status.cyw-err { background: #fff1f0; color: #cf1322; border: 1px solid #ffa39e; }
+        .cyw-time { font-size: 12px; color: #888; }
+        .cyw-size { font-size: 12px; color: #888; }
+        .cyw-tabs {
+            display: flex;
+            gap: 0;
+            border-bottom: 1px solid #f0f0f0;
+            margin-bottom: 10px;
+        }
+        .cyw-tab {
+            padding: 8px 16px;
+            font-size: 12px;
+            color: #888;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            background: none;
+            border-top: none;
+            border-left: none;
+            border-right: none;
+        }
+        .cyw-tab.cyw-active { color: #1fa0e0; border-bottom-color: #1fa0e0; }
+        .cyw-resp-box {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            border-radius: 6px;
+            padding: 12px 14px;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 12px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-break: break-all;
+            max-height: 420px;
+            overflow-y: auto;
+        }
+        .cyw-resp-box .cyw-key { color: #f92672; }
+        .cyw-resp-box .cyw-str { color: #e6db74; }
+        .cyw-resp-box .cyw-num { color: #ae81ff; }
+        .cyw-resp-box .cyw-bool { color: #66d9ef; }
+        .cyw-resp-box .cyw-null { color: #75715e; }
+        .cyw-resp-box.cyw-err-box {
+            background: #fff1f0;
+            color: #cf1322;
+            border: 1px solid #ffa39e;
+            white-space: pre-wrap;
+        }
+        .cyw-empty {
+            text-align: center;
+            color: #aaa;
+            padding: 40px 0;
+            font-size: 13px;
+        }
+        .cyw-home { text-align: center; margin-top: 20px; }
+        .cyw-home a {
+            display: inline-block;
+            padding: 8px 24px;
+            background: #1fa0e0;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="cyw-wrap">
+        <div class="cyw-title">REST API 接口测试工具</div>
+
+        <div class="cyw-panel">
+            <div class="cyw-row">
+                <select id="cyw_method" class="cyw-method">
+                    <option value="GET">GET</option>
+                    <option value="POST">POST</option>
+                    <option value="PUT">PUT</option>
+                    <option value="DELETE">DELETE</option>
+                    <option value="PATCH">PATCH</option>
+                </select>
+                <input id="cyw_url" class="cyw-url" type="text" value="https://jsonplaceholder.typicode.com/posts">
+                <button id="cyw_send" class="cyw-send">发送</button>
+            </div>
+
+            <div class="cyw-label">快捷示例（点击填入 URL）</div>
+            <div class="cyw-presets">
+                <button class="cyw-preset" onclick="cyw_preset('GET', 'https://jsonplaceholder.typicode.com/posts')">GET 文章列表</button>
+                <button class="cyw-preset" onclick="cyw_preset('GET', 'https://jsonplaceholder.typicode.com/users/1')">GET 用户详情</button>
+                <button class="cyw-preset" onclick="cyw_preset('POST', 'https://jsonplaceholder.typicode.com/posts')">POST 新建文章</button>
+                <button class="cyw-preset" onclick="cyw_preset('PUT', 'https://jsonplaceholder.typicode.com/posts/1')">PUT 更新文章</button>
+                <button class="cyw-preset" onclick="cyw_preset('DELETE', 'https://jsonplaceholder.typicode.com/posts/1')">DELETE 删除</button>
+                <button class="cyw-preset" onclick="cyw_preset('GET', 'https://dummyjson.com/products/1')">GET 商品详情</button>
+            </div>
+
+            <div id="cyw_bodyGroup" style="display:none">
+                <div class="cyw-label">Request Body（JSON）</div>
+                <textarea id="cyw_body" class="cyw-body" placeholder='{"title":"...","body":"...","userId":1}'></textarea>
+            </div>
+        </div>
+
+        <div class="cyw-panel">
+            <div id="cyw_respArea">
+                <div class="cyw-empty">点击「发送」查看响应结果</div>
+            </div>
+        </div>
+
+        <div class="cyw-home"><a href="./1-1.html">首页</a></div>
+    </div>
+
+    <script>
+        (function () {
+            var cywMethod = document.getElementById("cyw_method");
+            var cywUrl = document.getElementById("cyw_url");
+            var cywBody = document.getElementById("cyw_body");
+            var cywBodyGroup = document.getElementById("cyw_bodyGroup");
+            var cywSend = document.getElementById("cyw_send");
+            var cywRespArea = document.getElementById("cyw_respArea");
+
+            function cyw_toggleBody() {
+                var cywNeedBody = cywMethod.value !== "GET" && cywMethod.value !== "DELETE";
+                cywBodyGroup.style.display = cywNeedBody ? "block" : "none";
+            }
+            cywMethod.addEventListener("change", cyw_toggleBody);
+            cyw_toggleBody();
+
+            function cyw_preset(method, url) {
+                cywMethod.value = method;
+                cywUrl.value = url;
+                cyw_toggleBody();
+                if (method === "POST" && url.indexOf("posts") !== -1) {
+                    cywBody.value = '{\n  "title": "新文章",\n  "body": "这是文章内容",\n  "userId": 1\n}';
+                } else if (method === "PUT" && url.indexOf("posts") !== -1) {
+                    cywBody.value = '{\n  "id": 1,\n  "title": "更新后的标题",\n  "body": "更新后的内容",\n  "userId": 1\n}';
+                } else {
+                    cywBody.value = "";
+                }
+            }
+            window.cyw_preset = cyw_preset;
+
+            function cyw_highlight(str) {
+                return str
+                    .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?)/g, function (m, p1) {
+                        var cls = p1.endsWith(":") ? "cyw-key" : "cyw-str";
+                        return '<span class="' + cls + '">' + p1 + '</span>';
+                    })
+                    .replace(/\b(true|false)\b/g, '<span class="cyw-bool">$1</span>')
+                    .replace(/\bnull\b/g, '<span class="cyw-null">null</span>')
+                    .replace(/\b(-?\d+\.?\d*)\b/g, '<span class="cyw-num">$1</span>');
+            }
+
+            function cyw_formatSize(bytes) {
+                if (bytes < 1024) return bytes + " B";
+                if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
+                return (bytes / 1024 / 1024).toFixed(2) + " MB";
+            }
+
+            function cyw_render(resp) {
+                var cywOk = resp.ok;
+                var cywStatusCls = cywOk ? "cyw-ok" : "cyw-err";
+                var cywStatusText = cywOk ? "成功" : "失败";
+
+                var cywHtml =
+                    '<div class="cyw-resp-head">' +
+                        '<span class="cyw-status ' + cywStatusCls + '">HTTP ' + resp.status + ' ' + resp.statusText + ' · ' + cywStatusText + '</span>' +
+                        '<span class="cyw-time">⏱ ' + resp.time + 'ms</span>' +
+                        '<span class="cyw-size">📦 ' + cyw_formatSize(resp.size) + '</span>' +
+                    '</div>';
+
+                if (cywOk) {
+                    cywHtml +=
+                        '<div class="cyw-tabs">' +
+                            '<button class="cyw-tab cyw-active" data-tab="body">Body</button>' +
+                            '<button class="cyw-tab" data-tab="headers">Headers</button>' +
+                        '</div>' +
+                        '<div id="cyw_tab_body"><pre class="cyw-resp-box">' + cyw_highlight(resp.body) + '</pre></div>' +
+                        '<div id="cyw_tab_headers" style="display:none"><pre class="cyw-resp-box">' + resp.headers + '</pre></div>';
+
+                    setTimeout(function () {
+                        document.querySelectorAll(".cyw-tab").forEach(function (tab) {
+                            tab.addEventListener("click", function () {
+                                document.querySelectorAll(".cyw-tab").forEach(function (t) { t.classList.remove("cyw-active"); });
+                                tab.classList.add("cyw-active");
+                                var cywTarget = tab.getAttribute("data-tab");
+                                document.getElementById("cyw_tab_body").style.display = cywTarget === "body" ? "block" : "none";
+                                document.getElementById("cyw_tab_headers").style.display = cywTarget === "headers" ? "block" : "none";
+                            });
+                        });
+                    }, 0);
+                } else {
+                    cywHtml += '<pre class="cyw-resp-box cyw-err-box">' + resp.body + '</pre>';
+                }
+
+                cywRespArea.innerHTML = cywHtml;
+            }
+
+            cywSend.addEventListener("click", function () {
+                var cywUrlVal = cywUrl.value.trim();
+                if (!cywUrlVal) {
+                    cywRespArea.innerHTML = '<div class="cyw-empty">❌ 请输入请求 URL</div>';
+                    return;
+                }
+                var cywMethodVal = cywMethod.value;
+                var cywBodyVal = cywBody.value.trim();
+
+                cywSend.disabled = true;
+                cywSend.textContent = "请求中...";
+                cywRespArea.innerHTML = '<div class="cyw-empty">⏳ 正在请求 ' + cywMethodVal + ' ' + cywUrlVal + '</div>';
+
+                var cywOpts = { method: cywMethodVal, headers: {} };
+                if (cywBodyVal && cywMethodVal !== "GET" && cywMethodVal !== "DELETE") {
+                    try {
+                        JSON.parse(cywBodyVal);
+                        cywOpts.headers["Content-Type"] = "application/json";
+                        cywOpts.body = cywBodyVal;
+                    } catch (cywE) {
+                        cywRespArea.innerHTML = '<pre class="cyw-resp-box cyw-err-box">❌ JSON 格式错误：' + cywE.message + '</pre>';
+                        cywSend.disabled = false;
+                        cywSend.textContent = "发送";
+                        return;
+                    }
+                }
+
+                var cywStart = performance.now();
+                fetch(cywUrlVal, cywOpts)
+                    .then(function (res) {
+                        var cywTime = Math.round(performance.now() - cywStart);
+                        var cywHeaderText = "";
+                        res.headers.forEach(function (v, k) { cywHeaderText += k + ": " + v + "\n"; });
+                        cywHeaderText = cywHeaderText.trim();
+                        return res.text().then(function (txt) {
+                            var cywBodyStr = txt;
+                            try {
+                                cywBodyStr = JSON.stringify(JSON.parse(txt), null, 2);
+                            } catch (e) {}
+                            cyw_render({
+                                ok: res.ok,
+                                status: res.status,
+                                statusText: res.statusText,
+                                time: cywTime,
+                                size: txt.length,
+                                body: cywBodyStr,
+                                headers: cywHeaderText
+                            });
+                        });
+                    })
+                    .catch(function (err) {
+                        var cywTime = Math.round(performance.now() - cywStart);
+                        cywRespArea.innerHTML =
+                            '<div class="cyw-resp-head">' +
+                                '<span class="cyw-status cyw-err">请求失败</span>' +
+                                '<span class="cyw-time">⏱ ' + cywTime + 'ms</span>' +
+                            '</div>' +
+                            '<pre class="cyw-resp-box cyw-err-box">' +
+                                '错误信息：' + err.message + '\n\n' +
+                                '可能原因：\n' +
+                                '  1. 网络不可达（检查代理/VPN）\n' +
+                                '  2. CORS 跨域被拦截（浏览器控制台看报错）\n' +
+                                '  3. URL 拼写错误\n' +
+                                '  4. 目标服务器宕机' +
+                            '</pre>';
+                    })
+                    .then(function () {
+                        cywSend.disabled = false;
+                        cywSend.textContent = "发送";
+                    });
+            });
+        })();
+    </script>
+</body>
+</html>
