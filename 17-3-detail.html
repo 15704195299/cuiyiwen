@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <!-- 姓名：崔溢文，日期：2026-11-02，功能名称：fetch 获取单个商品详情并展示 -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>17-3 商品详情</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            background: #f4f6f9;
+            color: #22304a;
+            min-height: 100vh;
+            padding: 24px 16px;
+        }
+        .cyw-wrap { max-width: 960px; margin: 0 auto; }
+        .cyw-back {
+            display: inline-block;
+            color: #1fa0e0;
+            text-decoration: none;
+            font-size: 13px;
+            margin-bottom: 14px;
+        }
+        .cyw-back:hover { text-decoration: underline; }
+        .cyw-status {
+            padding: 10px 14px;
+            border-radius: 4px;
+            font-size: 13px;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+        .cyw-status.cyw-loading { background: #e6f7ff; color: #1890ff; }
+        .cyw-status.cyw-error   { background: #fff1f0; color: #cf1322; }
+
+        .cyw-detail {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            overflow: hidden;
+        }
+        .cyw-main {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            padding: 24px;
+        }
+        .cyw-gallery { flex: 1; min-width: 280px; max-width: 420px; }
+        .cyw-gallery img {
+            width: 100%;
+            border-radius: 6px;
+            background: #f9f9f9;
+            display: block;
+        }
+        .cyw-thumbs {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        .cyw-thumb {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 4px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: border-color 0.15s;
+        }
+        .cyw-thumb.cyw-active { border-color: #1fa0e0; }
+
+        .cyw-info { flex: 1; min-width: 280px; }
+        .cyw-brand {
+            font-size: 12px;
+            color: #aaa;
+            margin-bottom: 4px;
+        }
+        .cyw-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #222;
+            margin-bottom: 10px;
+        }
+        .cyw-cat {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 10px;
+            font-size: 11px;
+            background: #e6f7ff;
+            color: #1fa0e0;
+            margin-bottom: 12px;
+        }
+        .cyw-price-row {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+        .cyw-now {
+            font-size: 26px;
+            font-weight: 700;
+            color: #ff4d4f;
+        }
+        .cyw-origin {
+            font-size: 14px;
+            color: #aaa;
+            text-decoration: line-through;
+        }
+        .cyw-discount {
+            background: #fff1f0;
+            color: #ff4d4f;
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+        .cyw-meta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px 16px;
+            font-size: 12px;
+            color: #555;
+            padding-top: 12px;
+            border-top: 1px dashed #eee;
+        }
+        .cyw-meta div span:first-child { color: #999; margin-right: 4px; }
+        .cyw-meta .cyw-instock { color: #52c41a; }
+        .cyw-meta .cyw-outstock { color: #ff4d4f; }
+
+        .cyw-section {
+            padding: 0 24px 20px;
+        }
+        .cyw-section h3 {
+            font-size: 15px;
+            color: #1fa0e0;
+            margin-bottom: 10px;
+            padding-left: 10px;
+            border-left: 3px solid #1fa0e0;
+        }
+        .cyw-desc {
+            font-size: 13px;
+            color: #555;
+            line-height: 1.8;
+            padding: 12px 14px;
+            background: #fafbfc;
+            border-radius: 6px;
+        }
+
+        .cyw-review {
+            padding: 10px 14px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .cyw-review:last-child { border-bottom: none; }
+        .cyw-review-head {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 4px;
+        }
+        .cyw-review-name { color: #333; font-weight: 600; }
+        .cyw-review-star { color: #faad14; }
+        .cyw-review-cmt { font-size: 13px; color: #555; }
+
+        .cyw-home { text-align: center; margin-top: 20px; }
+        .cyw-home a {
+            display: inline-block;
+            padding: 8px 24px;
+            background: #1fa0e0;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        .cyw-home .cyw-list-link { margin-right: 10px; }
+    </style>
+</head>
+<body>
+    <div class="cyw-wrap">
+        <a class="cyw-back" href="17-3.html">← 返回商品列表</a>
+
+        <div id="cyw_status" class="cyw-status cyw-loading">⏳ 加载中...</div>
+
+        <div id="cyw_detail"></div>
+
+        <div class="cyw-home">
+            <a class="cyw-list-link" href="./17-3.html">商品列表</a>
+            <a href="./1-1.html">首页</a>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            var cywDetail = document.getElementById("cyw_detail");
+            var cywStatus = document.getElementById("cyw_status");
+
+            function cyw_getId() {
+                var cywSearch = location.search.substring(1);
+                var cywParams = cywSearch.split("&");
+                for (var i = 0; i < cywParams.length; i++) {
+                    var cywPair = cywParams[i].split("=");
+                    if (cywPair[0] === "id") return cywPair[1];
+                }
+                return null;
+            }
+
+            function cyw_render(p) {
+                var cywDiscountPrice = (p.price * (1 - p.discountPercentage / 100)).toFixed(2);
+                var cywStockCls = p.availabilityStatus === "In Stock" ? "cyw-instock" : "cyw-outstock";
+                var cywStockTxt = p.availabilityStatus === "In Stock" ? "有货 (库存 " + p.stock + ")" : "缺货";
+
+                var cywImages = p.images && p.images.length ? p.images : [p.thumbnail];
+
+                var cywReviewHtml = "";
+                if (p.reviews && p.reviews.length) {
+                    cywReviewHtml = '<div class="cyw-section"><h3>用户评价（' + p.reviews.length + '）</h3>';
+                    p.reviews.forEach(function (r) {
+                        cywReviewHtml +=
+                            '<div class="cyw-review">' +
+                                '<div class="cyw-review-head">' +
+                                    '<span><span class="cyw-review-name">' + r.reviewerName + '</span> <span class="cyw-review-star">★ ' + r.rating + '</span></span>' +
+                                    '<span>' + (r.date || "").substring(0, 10) + '</span>' +
+                                '</div>' +
+                                '<div class="cyw-review-cmt">' + r.comment + '</div>' +
+                            '</div>';
+                    });
+                    cywReviewHtml += "</div>";
+                }
+
+                var cywHtml =
+                    '<div class="cyw-detail">' +
+                        '<div class="cyw-main">' +
+                            '<div class="cyw-gallery">' +
+                                '<img id="cyw_mainImg" src="' + cywImages[0] + '" alt="' + p.title + '">' +
+                                (cywImages.length > 1 ? '<div class="cyw-thumbs">' +
+                                    cywImages.map(function (src, idx) {
+                                        return '<img class="cyw-thumb' + (idx === 0 ? ' cyw-active' : '') + '" src="' + src + '" onclick="document.getElementById(\'cyw_mainImg\').src=this.src;document.querySelectorAll(\'.cyw-thumb\').forEach(function(t){t.classList.remove(\'cyw-active\')});this.classList.add(\'cyw-active\')">';
+                                    }).join("") + '</div>' : '') +
+                            '</div>' +
+                            '<div class="cyw-info">' +
+                                (p.brand ? '<div class="cyw-brand">' + p.brand + '</div>' : '') +
+                                '<div class="cyw-title">' + p.title + '</div>' +
+                                '<span class="cyw-cat">' + p.category + '</span>' +
+                                '<div class="cyw-price-row">' +
+                                    '<span class="cyw-now">¥' + cywDiscountPrice + '</span>' +
+                                    '<span class="cyw-origin">¥' + p.price + '</span>' +
+                                    '<span class="cyw-discount">- ' + p.discountPercentage.toFixed(1) + '%</span>' +
+                                '</div>' +
+                                '<div class="cyw-meta">' +
+                                    '<div><span>SKU:</span>' + p.sku + '</div>' +
+                                    '<div><span>重量:</span>' + p.weight + ' g</div>' +
+                                    '<div><span>评分:</span>★ ' + p.rating.toFixed(1) + '</div>' +
+                                    '<div><span>状态:</span><span class="' + cywStockCls + '">' + cywStockTxt + '</span></div>' +
+                                    '<div><span>发货:</span>' + p.shippingInformation + '</div>' +
+                                    '<div><span>质保:</span>' + p.warrantyInformation + '</div>' +
+                                '</div>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="cyw-section"><h3>商品描述</h3><div class="cyw-desc">' + p.description + '</div></div>' +
+                        cywReviewHtml +
+                    '</div>';
+
+                cywDetail.innerHTML = cywHtml;
+            }
+
+            var cywId = cyw_getId();
+            if (!cywId) {
+                cywStatus.className = "cyw-status cyw-error";
+                cywStatus.textContent = "❌ 缺少商品 ID 参数（?id=N）";
+                return;
+            }
+
+            fetch("https://dummyjson.com/products/" + cywId)
+                .then(function (res) {
+                    if (!res.ok) throw new Error("HTTP " + res.status);
+                    return res.json();
+                })
+                .then(function (p) {
+                    cywStatus.style.display = "none";
+                    cyw_render(p);
+                })
+                .catch(function (err) {
+                    cywStatus.className = "cyw-status cyw-error";
+                    cywStatus.textContent = "❌ 请求失败：" + err.message;
+                });
+        })();
+    </script>
+</body>
+</html>

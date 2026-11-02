@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <!-- 姓名：崔溢文，日期：2026-11-02，功能名称：fetch 获取商品列表并展示卡片 -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>17-3 商品列表</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            background: #f4f6f9;
+            color: #22304a;
+            min-height: 100vh;
+            padding: 24px 16px;
+        }
+        .cyw-wrap { max-width: 1100px; margin: 0 auto; }
+        .cyw-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: #1fa0e0;
+            margin-bottom: 6px;
+            text-align: center;
+        }
+        .cyw-sub {
+            text-align: center;
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 18px;
+        }
+        .cyw-status {
+            padding: 10px 14px;
+            border-radius: 4px;
+            font-size: 13px;
+            margin-bottom: 12px;
+            text-align: center;
+            display: none;
+        }
+        .cyw-status.cyw-loading { background: #e6f7ff; color: #1890ff; display: block; }
+        .cyw-status.cyw-error   { background: #fff1f0; color: #cf1322; display: block; }
+
+        .cyw-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 16px;
+        }
+        .cyw-card {
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+        .cyw-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 18px rgba(31,160,224,0.18);
+        }
+        .cyw-img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            background: #f9f9f9;
+            display: block;
+        }
+        .cyw-info { padding: 12px 14px 14px; }
+        .cyw-cat {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            background: #e6f7ff;
+            color: #1fa0e0;
+            margin-bottom: 6px;
+        }
+        .cyw-brand {
+            font-size: 11px;
+            color: #aaa;
+            margin-bottom: 4px;
+        }
+        .cyw-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .cyw-bottom {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .cyw-price {
+            font-size: 17px;
+            font-weight: 700;
+            color: #ff4d4f;
+        }
+        .cyw-price small {
+            font-size: 12px;
+            color: #999;
+            text-decoration: line-through;
+            font-weight: 400;
+            margin-left: 6px;
+        }
+        .cyw-rating {
+            font-size: 12px;
+            color: #faad14;
+        }
+        .cyw-home { text-align: center; margin-top: 22px; }
+        .cyw-home a {
+            display: inline-block;
+            padding: 8px 24px;
+            background: #1fa0e0;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        .cyw-empty {
+            text-align: center;
+            color: #aaa;
+            padding: 60px 0;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="cyw-wrap">
+        <div class="cyw-title">商品列表</div>
+        <div class="cyw-sub">接口：https://dummyjson.com/products?limit=8</div>
+
+        <div id="cyw_status" class="cyw-status"></div>
+
+        <div id="cyw_list">
+            <div class="cyw-empty">页面加载中...</div>
+        </div>
+
+        <div class="cyw-home"><a href="./1-1.html">首页</a></div>
+    </div>
+
+    <script>
+        (function () {
+            var cywStatus = document.getElementById("cyw_status");
+            var cywList = document.getElementById("cyw_list");
+
+            function cyw_setStatus(type, msg) {
+                cywStatus.className = "cyw-status cyw-" + type;
+                cywStatus.textContent = msg;
+            }
+
+            function cyw_render(list) {
+                if (!list || list.length === 0) {
+                    cywList.innerHTML = '<div class="cyw-empty">暂无数据</div>';
+                    return;
+                }
+                var cywHtml = '<div class="cyw-grid">';
+                list.forEach(function (p) {
+                    var cywDiscountPrice = (p.price * (1 - p.discountPercentage / 100)).toFixed(2);
+                    cywHtml +=
+                        '<div class="cyw-card" onclick="location.href=\'17-3-detail.html?id=' + p.id + '\'">' +
+                        '<img class="cyw-img" src="' + p.thumbnail + '" alt="' + p.title + '" onerror="this.src=\'data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22240%22 height=%22180%22><rect width=%22100%22 height=%22100%22 fill=%22%23eee%22/><text x=%2250%25%22 y=%2250%25%22 fill=%22%23999%22 font-size=%2214%22 text-anchor=%22middle%22 dy=%22.3em%22>暂无图片</text></svg>\'">' +
+                        '<div class="cyw-info">' +
+                            '<span class="cyw-cat">' + p.category + '</span>' +
+                            '<div class="cyw-brand">' + (p.brand || "") + '</div>' +
+                            '<div class="cyw-name">' + p.title + '</div>' +
+                            '<div class="cyw-bottom">' +
+                                '<span class="cyw-price">¥' + cywDiscountPrice + '<small>¥' + p.price + '</small></span>' +
+                                '<span class="cyw-rating">★ ' + p.rating.toFixed(1) + '</span>' +
+                            '</div>' +
+                        '</div>' +
+                        '</div>';
+                });
+                cywHtml += '</div>';
+                cywList.innerHTML = cywHtml;
+            }
+
+            fetch("https://dummyjson.com/products?limit=8")
+                .then(function (res) {
+                    if (!res.ok) throw new Error("HTTP " + res.status);
+                    return res.json();
+                })
+                .then(function (data) {
+                    cyw_setStatus("loading", "✅ 获取成功，共 " + data.products.length + " 件商品");
+                    cyw_render(data.products);
+                })
+                .catch(function (err) {
+                    cyw_setStatus("error", "❌ 请求失败：" + err.message);
+                    cywList.innerHTML = '<div class="cyw-empty">加载失败，请检查网络</div>';
+                });
+        })();
+    </script>
+</body>
+</html>
