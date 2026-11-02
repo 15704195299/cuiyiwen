@@ -183,3 +183,8 @@
 
 - model: opencode/mimo
 - prompt: 完成 17-4.html，对远程数据接口进行测试，支持 get、post 等，显示返回的数据和错误提示信息，示例接口：https://jsonplaceholder.typicode.com/posts
+
+## 2026-11-02-16-24
+
+- model: opencode/mimo
+- prompt: 完成 17-5.html，展示 javascript 的两种定时器。

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <!-- 姓名：崔溢文，日期：2026-11-02，功能名称：JavaScript 两种定时器演示 -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>17-5 定时器</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            background: #f4f6f9;
+            color: #22304a;
+            min-height: 100vh;
+            padding: 24px 16px;
+        }
+        .cyw-wrap { max-width: 860px; margin: 0 auto; }
+        .cyw-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1fa0e0;
+            margin-bottom: 14px;
+            text-align: center;
+        }
+        .cyw-demo {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+            padding: 18px 20px;
+            margin-bottom: 14px;
+        }
+        .cyw-demo h2 {
+            font-size: 15px;
+            color: #1fa0e0;
+            margin-bottom: 6px;
+            padding-left: 10px;
+            border-left: 3px solid #1fa0e0;
+        }
+        .cyw-demo .cyw-def {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 12px;
+            padding: 8px 12px;
+            background: #f9fafc;
+            border-radius: 4px;
+            line-height: 1.7;
+        }
+        .cyw-demo .cyw-def code {
+            font-family: Consolas, "Courier New", monospace;
+            background: #e6f7ff;
+            color: #1fa0e0;
+            padding: 1px 6px;
+            border-radius: 3px;
+        }
+        .cyw-controls {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .cyw-btn {
+            padding: 7px 18px;
+            background: #1fa0e0;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .cyw-btn:hover { background: #1890cc; }
+        .cyw-btn.cyw-stop { background: #ff4d4f; }
+        .cyw-btn.cyw-stop:hover { background: #d9363e; }
+        .cyw-btn.cyw-clear { background: #999; }
+        .cyw-btn.cyw-clear:hover { background: #777; }
+        .cyw-btn:disabled { background: #d9d9d9; cursor: not-allowed; }
+        .cyw-input {
+            width: 100px;
+            padding: 6px 10px;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+        .cyw-input:focus {
+            outline: none;
+            border-color: #1fa0e0;
+            box-shadow: 0 0 0 2px rgba(31,160,224,0.15);
+        }
+        .cyw-label { font-size: 12px; color: #888; }
+        .cyw-log {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            border-radius: 6px;
+            padding: 12px 14px;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 12px;
+            line-height: 1.7;
+            max-height: 180px;
+            overflow-y: auto;
+        }
+        .cyw-log-line { white-space: pre-wrap; word-break: break-all; }
+        .cyw-log-line span { color: #75715e; }
+        .cyw-count {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1fa0e0;
+            text-align: center;
+            padding: 10px 0;
+            font-variant-numeric: tabular-nums;
+        }
+        .cyw-home { text-align: center; margin-top: 20px; }
+        .cyw-home a {
+            display: inline-block;
+            padding: 8px 24px;
+            background: #1fa0e0;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="cyw-wrap">
+        <div class="cyw-title">JavaScript 定时器演示</div>
+
+        <div class="cyw-demo">
+            <h2>一、setTimeout —— 一次性延迟执行</h2>
+            <div class="cyw-def">
+                格式：<code>setTimeout(callback, delay)</code><br>
+                含义：延迟指定毫秒数后，执行一次回调函数（只执行一次）。返回一个定时器 ID，可用 <code>clearTimeout(id)</code> 取消。
+            </div>
+            <div class="cyw-controls">
+                <span class="cyw-label">延迟 (ms):</span>
+                <input id="cyw_stDelay" class="cyw-input" type="number" value="2000" min="100" step="100">
+                <button id="cyw_stStart" class="cyw-btn">开始倒计时</button>
+                <button id="cyw_stStop" class="cyw-btn cyw-stop" disabled>取消</button>
+                <button id="cyw_stClear" class="cyw-btn cyw-clear">清空日志</button>
+            </div>
+            <div id="cyw_stLog" class="cyw-log">等待开始...</div>
+        </div>
+
+        <div class="cyw-demo">
+            <h2>二、setInterval —— 周期性循环执行</h2>
+            <div class="cyw-def">
+                格式：<code>setInterval(callback, interval)</code><br>
+                含义：每隔指定毫秒数，循环执行回调函数。返回一个定时器 ID，可用 <code>clearInterval(id)</code> 取消。常用于时钟、轮播图、动画等。
+            </div>
+            <div class="cyw-controls">
+                <span class="cyw-label">间隔 (ms):</span>
+                <input id="cyw_siDelay" class="cyw-input" type="number" value="1000" min="100" step="100">
+                <button id="cyw_siStart" class="cyw-btn">开始</button>
+                <button id="cyw_siStop" class="cyw-btn cyw-stop" disabled>停止</button>
+                <button id="cyw_siClear" class="cyw-btn cyw-clear">重置</button>
+            </div>
+            <div id="cyw_siCount" class="cyw-count">0</div>
+            <div id="cyw_siLog" class="cyw-log">等待开始...</div>
+        </div>
+
+        <div class="cyw-demo">
+            <h2>三、对比总结</h2>
+            <div class="cyw-def" style="background: #fff">
+                <b>setTimeout vs setInterval</b><br><br>
+                · setTimeout：<b>延迟一次</b> → 适合延时提示、弹窗、跳转等<br>
+                · setInterval：<b>循环执行</b> → 适合计时器、轮询、动画帧推进等<br><br>
+                <b>⚠️ 注意事项</b>：<br>
+                · 定时器 ID 必须保存，才能用 <code>clearTimeout</code> / <code>clearInterval</code> 取消<br>
+                · 页面关闭或切换标签时，浏览器可能会自动降频，回调不会严格按间隔执行<br>
+                · JS 是单线程，定时器回调要等当前任务队列执行完才会触发，实际延迟 ≥ 设定值
+            </div>
+        </div>
+
+        <div class="cyw-home"><a href="./1-1.html">首页</a></div>
+    </div>
+
+    <script>
+        (function () {
+            function cyw_timeStr() {
+                var d = new Date();
+                var pad = function (n) { return n < 10 ? "0" + n : n; };
+                return pad(d.getHours()) + ":" + pad(d.getMinutes()) + ":" + pad(d.getSeconds()) + "." + d.getMilliseconds();
+            }
+
+            function cyw_log(el, text, isInfo) {
+                var cywTime = cyw_timeStr();
+                var cywHtml = el.innerHTML === "等待开始..." ? "" : el.innerHTML;
+                cywHtml += '<div class="cyw-log-line"><span>[' + cywTime + ']</span> ' + text + '</div>';
+                el.innerHTML = cywHtml;
+                el.scrollTop = el.scrollHeight;
+            }
+
+            // ========== setTimeout ==========
+            var cyw_stId = null;
+            var cyw_stLog = document.getElementById("cyw_stLog");
+            var cyw_stStart = document.getElementById("cyw_stStart");
+            var cyw_stStop = document.getElementById("cyw_stStop");
+
+            cyw_stStart.addEventListener("click", function () {
+                if (cyw_stId) return;
+                var cywDelay = parseInt(document.getElementById("cyw_stDelay").value, 10) || 2000;
+                var cywRemain = cywDelay / 1000;
+                cyw_log(cyw_stLog, "⏳ setTimeout 已启动，" + cywDelay + "ms 后执行（倒计时 " + cywRemain + "s）");
+                cyw_stStart.disabled = true;
+                cyw_stStop.disabled = false;
+
+                cyw_stId = setTimeout(function () {
+                    cyw_log(cyw_stLog, "✅ setTimeout 触发！延迟 " + cywDelay + "ms 后执行了一次回调。");
+                    cyw_stId = null;
+                    cyw_stStart.disabled = false;
+                    cyw_stStop.disabled = true;
+                }, cywDelay);
+            });
+
+            cyw_stStop.addEventListener("click", function () {
+                if (cyw_stId !== null) {
+                    clearTimeout(cyw_stId);
+                    cyw_log(cyw_stLog, "🛑 clearTimeout 取消了定时器 ID=" + cyw_stId);
+                    cyw_stId = null;
+                    cyw_stStart.disabled = false;
+                    cyw_stStop.disabled = true;
+                }
+            });
+
+            document.getElementById("cyw_stClear").addEventListener("click", function () {
+                cyw_stLog.innerHTML = "等待开始...";
+            });
+
+            // ========== setInterval ==========
+            var cyw_siId = null;
+            var cyw_siCount = 0;
+            var cyw_siCountEl = document.getElementById("cyw_siCount");
+            var cyw_siLog = document.getElementById("cyw_siLog");
+            var cyw_siStart = document.getElementById("cyw_siStart");
+            var cyw_siStop = document.getElementById("cyw_siStop");
+
+            cyw_siStart.addEventListener("click", function () {
+                if (cyw_siId) return;
+                var cywInterval = parseInt(document.getElementById("cyw_siDelay").value, 10) || 1000;
+                cyw_log(cyw_siLog, "▶️ setInterval 已启动，每 " + cywInterval + "ms 执行一次回调");
+                cyw_siStart.disabled = true;
+                cyw_siStop.disabled = false;
+
+                cyw_siId = setInterval(function () {
+                    cyw_siCount++;
+                    cyw_siCountEl.textContent = cyw_siCount;
+                    cyw_log(cyw_siLog, "🔁 第 " + cyw_siCount + " 次触发");
+                }, cywInterval);
+            });
+
+            cyw_siStop.addEventListener("click", function () {
+                if (cyw_siId !== null) {
+                    clearInterval(cyw_siId);
+                    cyw_log(cyw_siLog, "🛑 clearInterval 停止，共触发 " + cyw_siCount + " 次");
+                    cyw_siId = null;
+                    cyw_siStart.disabled = false;
+                    cyw_siStop.disabled = true;
+                }
+            });
+
+            document.getElementById("cyw_siClear").addEventListener("click", function () {
+                if (cyw_siId !== null) {
+                    clearInterval(cyw_siId);
+                    cyw_siId = null;
+                    cyw_siStart.disabled = false;
+                    cyw_siStop.disabled = true;
+                }
+                cyw_siCount = 0;
+                cyw_siCountEl.textContent = "0";
+                cyw_siLog.innerHTML = "等待开始...";
+            });
+        })();
+    </script>
+</body>
+</html>
