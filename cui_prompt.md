@@ -233,3 +233,8 @@
 
 - model: opencode/mimo
 - prompt: 实现 18-7.html，three.js 两个 3D 图表，cdn 文件下载到 cdn 目录。
+
+## 2026-11-05-16-33
+
+- model: opencode/mimo
+- prompt: 实现 18-8.html，three.js/echarts 数据大屏，三列布局，中间上面是地理信息图，cdn 文件下载到 cdn 目录。

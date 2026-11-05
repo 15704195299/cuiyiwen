@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <!-- 姓名：崔溢文，日期：2026-11-05，功能名称：ECharts 数据大屏（三列 + 中国地图 + 6 个图表） -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>18-8 智能客服系统数据大屏</title>
+    <script src="./cdn/echarts.min.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { height: 100%; overflow: hidden; }
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            background: #04080f;
+            color: #cfe8ff;
+        }
+
+        .cyw-screen {
+            width: 100vw; height: 100vh;
+            display: flex; flex-direction: column;
+            padding: 10px 14px; gap: 10px;
+            background:
+                radial-gradient(ellipse at 50% 0%, rgba(0,120,255,0.12), transparent 60%),
+                radial-gradient(ellipse at 50% 100%, rgba(0,180,255,0.06), transparent 50%),
+                #04080f;
+        }
+
+        /* ======== 顶部标题 ======== */
+        .cyw-header {
+            height: 54px;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 20px;
+            background: linear-gradient(180deg, rgba(0,150,255,0.12), transparent);
+            border-bottom: 1px solid rgba(0,180,255,0.25);
+            position: relative;
+        }
+        .cyw-header::before, .cyw-header::after {
+            content: ""; position: absolute; top: -1px; width: 120px; height: 2px;
+            background: linear-gradient(90deg, transparent, #00b4ff);
+        }
+        .cyw-header::before { left: 0; }
+        .cyw-header::after { right: 0; transform: scaleX(-1); }
+        .cyw-title {
+            font-size: 22px; font-weight: 700; letter-spacing: 6px;
+            background: linear-gradient(180deg, #ffffff, #00b4ff);
+            -webkit-background-clip: text; background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 18px rgba(0,180,255,0.5);
+        }
+        .cyw-header .cyw-side {
+            font-size: 12px; color: #7ab8d6; letter-spacing: 1px;
+            font-family: "Consolas", monospace;
+        }
+
+        /* ======== 主体三列 ======== */
+        .cyw-body {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1.6fr 1fr;
+            gap: 10px;
+            min-height: 0;
+        }
+        .cyw-col {
+            display: grid;
+            gap: 10px;
+            min-height: 0;
+        }
+        .cyw-col-left { grid-template-rows: 1.2fr 1fr 1fr; }
+        .cyw-col-mid { grid-template-rows: 2fr 1fr; }
+        .cyw-col-right { grid-template-rows: 1fr 1.2fr 1fr; }
+
+        /* ======== 卡片 ======== */
+        .cyw-panel {
+            background: linear-gradient(135deg, rgba(10,30,60,0.7), rgba(5,15,35,0.85));
+            border: 1px solid rgba(0,180,255,0.22);
+            border-radius: 4px;
+            position: relative;
+            padding: 10px 12px 6px;
+            box-shadow: inset 0 0 30px rgba(0,120,255,0.06);
+            min-height: 0;
+            display: flex; flex-direction: column;
+        }
+        .cyw-panel::before, .cyw-panel::after {
+            content: ""; position: absolute; width: 10px; height: 10px;
+            border-color: #00b4ff; border-style: solid; border-width: 0;
+        }
+        .cyw-panel::before { top: -1px; left: -1px; border-top-width: 2px; border-left-width: 2px; }
+        .cyw-panel::after  { bottom: -1px; right: -1px; border-bottom-width: 2px; border-right-width: 2px; }
+
+        .cyw-panel-title {
+            display: flex; align-items: center; justify-content: space-between;
+            padding-bottom: 6px; margin-bottom: 4px;
+            border-bottom: 1px solid rgba(0,180,255,0.15);
+        }
+        .cyw-panel-title h3 {
+            font-size: 13px; font-weight: 600; color: #b8e4ff;
+            letter-spacing: 2px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .cyw-panel-title h3::before {
+            content: ""; width: 3px; height: 13px;
+            background: linear-gradient(180deg, #00b4ff, #0078ff);
+            border-radius: 2px;
+        }
+        .cyw-panel-title .cyw-tag {
+            font-size: 10px; color: #00b4ff; padding: 1px 6px;
+            border: 1px solid rgba(0,180,255,0.3); border-radius: 2px;
+        }
+        .cyw-chart { flex: 1; width: 100%; min-height: 0; }
+
+        /* ======== 顶部指标条 ======== */
+        .cyw-kpi {
+            display: grid; grid-template-columns: repeat(4, 1fr);
+            gap: 10px; padding: 0 14px;
+            height: 72px;
+        }
+        .cyw-kpi-item {
+            background: linear-gradient(135deg, rgba(0,100,180,0.2), rgba(0,40,90,0.3));
+            border: 1px solid rgba(0,180,255,0.25);
+            border-radius: 4px;
+            display: flex; align-items: center; gap: 12px;
+            padding: 0 16px;
+            position: relative; overflow: hidden;
+        }
+        .cyw-kpi-item::before {
+            content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+            background: linear-gradient(180deg, #00b4ff, #0078ff);
+        }
+        .cyw-kpi-icon {
+            width: 40px; height: 40px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; flex-shrink: 0;
+        }
+        .cyw-kpi-icon.a { background: rgba(0,180,255,0.15); color: #00b4ff; border: 1px solid rgba(0,180,255,0.3); }
+        .cyw-kpi-icon.b { background: rgba(0,220,180,0.12); color: #00dcb4; border: 1px solid rgba(0,220,180,0.3); }
+        .cyw-kpi-icon.c { background: rgba(255,180,0,0.12);  color: #ffb400; border: 1px solid rgba(255,180,0,0.3); }
+        .cyw-kpi-icon.d { background: rgba(255,80,130,0.12); color: #ff5082; border: 1px solid rgba(255,80,130,0.3); }
+        .cyw-kpi-value { font-size: 22px; font-weight: 700; color: #fff; font-family: "Consolas", monospace; letter-spacing: 1px; }
+        .cyw-kpi-label { font-size: 11px; color: #7ab8d6; letter-spacing: 1px; margin-top: 2px; }
+        .cyw-kpi-trend { font-size: 11px; color: #00dcb4; margin-left: 6px; font-family: "Consolas", monospace; }
+
+        .cyw-mid-lower {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+            min-height: 0;
+        }
+
+        .cyw-home-link {
+            position: fixed; top: 12px; left: 12px; z-index: 99;
+        }
+        .cyw-home-link a {
+            font-size: 11px; color: #7ab8d6; text-decoration: none;
+            border: 1px solid rgba(0,180,255,0.3); padding: 3px 10px; border-radius: 3px;
+            background: rgba(5,15,35,0.8); letter-spacing: 1px;
+        }
+        .cyw-home-link a:hover { color: #fff; border-color: #00b4ff; }
+    </style>
+</head>
+<body>
+    <div class="cyw-home-link"><a href="./1-1.html">← 首页</a></div>
+
+    <div class="cyw-screen">
+        <!-- 顶部标题 -->
+        <div class="cyw-header">
+            <div class="cyw-side" id="cyw_time">2026-11-05 00:00:00</div>
+            <div class="cyw-title">智 能 客 服 系 统 运 营 数 据 大 屏</div>
+            <div class="cyw-side">REALTIME · DASHBOARD · V1.0</div>
+        </div>
+
+        <!-- KPI 条 -->
+        <div class="cyw-kpi">
+            <div class="cyw-kpi-item">
+                <div class="cyw-kpi-icon a">💬</div>
+                <div>
+                    <div><span class="cyw-kpi-value" id="cyw_kpi1">12,386</span><span class="cyw-kpi-trend">↑ 8.2%</span></div>
+                    <div class="cyw-kpi-label">今日会话总数</div>
+                </div>
+            </div>
+            <div class="cyw-kpi-item">
+                <div class="cyw-kpi-icon b">🤖</div>
+                <div>
+                    <div><span class="cyw-kpi-value" id="cyw_kpi2">94.7%</span><span class="cyw-kpi-trend">↑ 1.3%</span></div>
+                    <div class="cyw-kpi-label">机器人解决率</div>
+                </div>
+            </div>
+            <div class="cyw-kpi-item">
+                <div class="cyw-kpi-icon c">⏱</div>
+                <div>
+                    <div><span class="cyw-kpi-value" id="cyw_kpi3">0.82s</span><span class="cyw-kpi-trend">↓ 0.05s</span></div>
+                    <div class="cyw-kpi-label">平均响应耗时</div>
+                </div>
+            </div>
+            <div class="cyw-kpi-item">
+                <div class="cyw-kpi-icon d">😊</div>
+                <div>
+                    <div><span class="cyw-kpi-value" id="cyw_kpi4">4.68</span><span class="cyw-kpi-trend">↑ 0.03</span></div>
+                    <div class="cyw-kpi-label">用户满意度 (5分制)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主体三列 -->
+        <div class="cyw-body">
+            <!-- ====== 左列 ====== -->
+            <div class="cyw-col cyw-col-left">
+                <div class="cyw-panel">
+                    <div class="cyw-panel-title"><h3>会话趋势</h3><span class="cyw-tag">近 7 日</span></div>
+                    <div id="cyw_c1" class="cyw-chart"></div>
+                </div>
+                <div class="cyw-panel">
+                    <div class="cyw-panel-title"><h3>意图识别分布</h3><span class="cyw-tag">TODAY</span></div>
+                    <div id="cyw_c2" class="cyw-chart"></div>
+                </div>
+                <div class="cyw-panel">
+                    <div class="cyw-panel-title"><h3>渠道占比</h3><span class="cyw-tag">WEB/APP/小程序</span></div>
+                    <div id="cyw_c3" class="cyw-chart"></div>
+                </div>
+            </div>
+
+            <!-- ====== 中列 ====== -->
+            <div class="cyw-col cyw-col-mid">
+                <div class="cyw-panel">
+                    <div class="cyw-panel-title"><h3>全国会话地理分布</h3><span class="cyw-tag">GEO · CHINA</span></div>
+                    <div id="cyw_map" class="cyw-chart"></div>
+                </div>
+                <div class="cyw-mid-lower">
+                    <div class="cyw-panel">
+                        <div class="cyw-panel-title"><h3>TOP 热门问题</h3><span class="cyw-tag">RANKING</span></div>
+                        <div id="cyw_c4" class="cyw-chart"></div>
+                    </div>
+                    <div class="cyw-panel">
+                        <div class="cyw-panel-title"><h3>实时消息流转</h3><span class="cyw-tag">STREAM</span></div>
+                        <div id="cyw_c5" class="cyw-chart"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ====== 右列 ====== -->
+            <div class="cyw-col cyw-col-right">
+                <div class="cyw-panel">
+                    <div class="cyw-panel-title"><h3>情感倾向分析</h3><span class="cyw-tag">SENTIMENT</span></div>
+                    <div id="cyw_c6" class="cyw-chart"></div>
+                </div>
+                <div class="cyw-panel">
+                    <div class="cyw-panel-title"><h3>时段活跃度</h3><span class="cyw-tag">24H</span></div>
+                    <div id="cyw_c7" class="cyw-chart"></div>
+                </div>
+                <div class="cyw-panel">
+                    <div class="cyw-panel-title"><h3>转人工工单</h3><span class="cyw-tag">QUEUE</span></div>
+                    <div id="cyw_c8" class="cyw-chart"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    (function () {
+
+        var cywBlue = "#00b4ff";
+        var cywBlue2 = "#0078ff";
+        var cywCyan = "#00dcb4";
+        var cywGold = "#ffb400";
+        var cywPink = "#ff5082";
+
+        // ======= 时间更新 =======
+        function cyw_updateTime() {
+            var d = new Date();
+            var s = d.getFullYear() + "-" +
+                String(d.getMonth() + 1).padStart(2, "0") + "-" +
+                String(d.getDate()).padStart(2, "0") + " " +
+                String(d.getHours()).padStart(2, "0") + ":" +
+                String(d.getMinutes()).padStart(2, "0") + ":" +
+                String(d.getSeconds()).padStart(2, "0");
+            document.getElementById("cyw_time").textContent = s;
+        }
+        cyw_updateTime();
+        setInterval(cyw_updateTime, 1000);
+
+        // ======= 通用样式 =======
+        var cyw_axStyle = {
+            axisLine: { lineStyle: { color: "rgba(0,180,255,0.3)" } },
+            axisTick: { lineStyle: { color: "rgba(0,180,255,0.2)" } },
+            axisLabel: { color: "#7ab8d6", fontSize: 10 },
+            splitLine: { lineStyle: { color: "rgba(0,180,255,0.08)" } }
+        };
+
+        // ======= 加载中国地图 =======
+        fetch("./cdn/china.json")
+            .then(function (r) { return r.json(); })
+            .then(function (geo) {
+                echarts.registerMap("china", geo);
+                cyw_initCharts();
+            })
+            .catch(function (e) {
+                console.error("地图加载失败", e);
+            });
+
+        function cyw_initCharts() {
+
+            // ============ 中列上方：中国地图散点 ============
+            var cyw_map = echarts.init(document.getElementById("cyw_map"));
+            var cyw_provinces = [
+                { name: "北京", value: [116.46, 39.92, 1823] },
+                { name: "上海", value: [121.48, 31.22, 2105] },
+                { name: "广州", value: [113.23, 23.16, 1678] },
+                { name: "深圳", value: [114.07, 22.62, 1532] },
+                { name: "杭州", value: [120.19, 30.26, 1123] },
+                { name: "成都", value: [104.06, 30.67, 986] },
+                { name: "武汉", value: [114.31, 30.52, 872] },
+                { name: "西安", value: [108.95, 34.27, 745] },
+                { name: "南京", value: [118.78, 32.04, 891] },
+                { name: "重庆", value: [106.54, 29.59, 756] },
+                { name: "天津", value: [117.2, 39.13, 645] },
+                { name: "苏州", value: [120.62, 31.32, 534] },
+                { name: "郑州", value: [113.65, 34.76, 512] },
+                { name: "长沙", value: [112.94, 28.23, 498] },
+                { name: "青岛", value: [120.33, 36.07, 456] },
+                { name: "厦门", value: [118.1, 24.46, 389] },
+                { name: "昆明", value: [102.73, 25.04, 312] },
+                { name: "哈尔滨", value: [126.63, 45.75, 278] },
+                { name: "乌鲁木齐", value: [87.68, 43.77, 189] },
+                { name: "拉萨", value: [91.11, 29.97, 87] }
+            ];
+            cyw_map.setOption({
+                backgroundColor: "transparent",
+                tooltip: {
+                    trigger: "item",
+                    backgroundColor: "rgba(5,20,50,0.9)",
+                    borderColor: cywBlue,
+                    textStyle: { color: "#cfe8ff", fontSize: 12 },
+                    formatter: function (p) {
+                        if (p.seriesType === "effectScatter") {
+                            return "<b>" + p.data.name + "</b><br/>会话量：" + p.data.value[2];
+                        }
+                        return p.name;
+                    }
+                },
+                visualMap: {
+                    show: true,
+                    right: 12, bottom: 12,
+                    text: ["高", "低"],
+                    textStyle: { color: "#7ab8d6" },
+                    inRange: { color: ["#0078ff", "#00b4ff", "#00dcb4", "#ffb400", "#ff5082"] },
+                    calculable: true,
+                    min: 50, max: 2200
+                },
+                geo: {
+                    map: "china",
+                    roam: true,
+                    zoom: 1.15,
+                    itemStyle: {
+                        areaColor: "rgba(0,50,120,0.35)",
+                        borderColor: "rgba(0,180,255,0.5)",
+                        borderWidth: 0.8
+                    },
+                    emphasis: {
+                        itemStyle: { areaColor: "rgba(0,120,220,0.55)" },
+                        label: { show: true, color: "#fff" }
+                    },
+                    label: { show: false }
+                },
+                series: [
+                    {
+                        name: "会话量",
+                        type: "effectScatter",
+                        coordinateSystem: "geo",
+                        data: cyw_provinces,
+                        symbolSize: function (val) { return Math.max(4, Math.sqrt(val[2]) * 0.6); },
+                        showEffectOn: "render",
+                        rippleEffect: { brushType: "stroke", scale: 3, period: 4 },
+                        hoverAnimation: true,
+                        itemStyle: { shadowBlur: 10, shadowColor: cywBlue },
+                        zlevel: 2
+                    },
+                    {
+                        name: "热点连线",
+                        type: "lines",
+                        coordinateSystem: "geo",
+                        zlevel: 1,
+                        effect: { show: true, period: 6, trailLength: 0.3, symbol: "arrow", symbolSize: 6 },
+                        lineStyle: { color: cywCyan, width: 1, opacity: 0.4, curveness: 0.2 },
+                        data: [
+                            [{ name: "北京", value: [116.46, 39.92] }, { name: "上海", value: [121.48, 31.22] }],
+                            [{ name: "上海", value: [121.48, 31.22] }, { name: "广州", value: [113.23, 23.16] }],
+                            [{ name: "广州", value: [113.23, 23.16] }, { name: "深圳", value: [114.07, 22.62] }],
+                            [{ name: "北京", value: [116.46, 39.92] }, { name: "成都", value: [104.06, 30.67] }],
+                            [{ name: "杭州", value: [120.19, 30.26] }, { name: "上海", value: [121.48, 31.22] }]
+                        ]
+                    }
+                ]
+            });
+
+            // ============ C1: 会话趋势（折线图） ============
+            var cyw_c1 = echarts.init(document.getElementById("cyw_c1"));
+            cyw_c1.setOption({
+                backgroundColor: "transparent",
+                grid: { left: 36, right: 14, top: 18, bottom: 24 },
+                tooltip: { trigger: "axis", backgroundColor: "rgba(5,20,50,0.9)", borderColor: cywBlue, textStyle: { color: "#cfe8ff" } },
+                xAxis: { type: "category", data: ["周一","周二","周三","周四","周五","周六","周日"], ...cyw_axStyle },
+                yAxis: { type: "value", ...cyw_axStyle },
+                series: [{
+                    type: "line", smooth: true, symbol: "circle", symbolSize: 6,
+                    lineStyle: { color: cywBlue, width: 2 },
+                    itemStyle: { color: cywBlue },
+                    areaStyle: {
+                        color: new echarts.graphic.LinearGradient(0,0,0,1,[
+                            { offset: 0, color: "rgba(0,180,255,0.45)" },
+                            { offset: 1, color: "rgba(0,180,255,0.02)" }
+                        ])
+                    },
+                    data: [9800, 11200, 10500, 12300, 13800, 15200, 12386]
+                }]
+            });
+
+            // ============ C2: 意图识别分布（玫瑰饼图） ============
+            var cyw_c2 = echarts.init(document.getElementById("cyw_c2"));
+            cyw_c2.setOption({
+                backgroundColor: "transparent",
+                tooltip: { trigger: "item", backgroundColor: "rgba(5,20,50,0.9)", borderColor: cywBlue, textStyle: { color: "#cfe8ff" } },
+                legend: { bottom: 0, textStyle: { color: "#7ab8d6", fontSize: 10 }, itemWidth: 10, itemHeight: 10 },
+                series: [{
+                    type: "pie", radius: ["35%", "70%"], center: ["50%", "45%"], roseType: "area",
+                    label: { show: false }, labelLine: { show: false },
+                    itemStyle: { borderColor: "#04080f", borderWidth: 2 },
+                    color: [cywBlue, cywCyan, cywGold, cywPink, "#9370db", "#2ecc71"],
+                    data: [
+                        { value: 3820, name: "业务咨询" },
+                        { value: 2910, name: "售后退换" },
+                        { value: 2450, name: "物流查询" },
+                        { value: 1680, name: "账号问题" },
+                        { value: 980, name: "闲聊互动" },
+                        { value: 546, name: "其他" }
+                    ]
+                }]
+            });
+
+            // ============ C3: 渠道占比（环形图） ============
+            var cyw_c3 = echarts.init(document.getElementById("cyw_c3"));
+            cyw_c3.setOption({
+                backgroundColor: "transparent",
+                tooltip: { trigger: "item", backgroundColor: "rgba(5,20,50,0.9)", borderColor: cywBlue, textStyle: { color: "#cfe8ff" }, formatter: "{b}<br/>{d}%" },
+                legend: { bottom: 0, textStyle: { color: "#7ab8d6", fontSize: 10 } },
+                series: [{
+                    type: "pie", radius: ["40%", "65%"], center: ["50%", "42%"],
+                    avoidLabelOverlap: true,
+                    label: { color: "#cfe8ff", fontSize: 11, formatter: "{b}\n{d}%" },
+                    itemStyle: { borderColor: "#04080f", borderWidth: 2 },
+                    color: [cywBlue, cywCyan, cywGold, cywPink],
+                    data: [
+                        { value: 5230, name: "Web 端" },
+                        { value: 4120, name: "APP" },
+                        { value: 2680, name: "微信小程序" },
+                        { value: 356,  name: "开放 API" }
+                    ]
+                }]
+            });
+
+            // ============ C4: TOP 热门问题（横向柱状图） ============
+            var cyw_c4 = echarts.init(document.getElementById("cyw_c4"));
+            cyw_c4.setOption({
+                backgroundColor: "transparent",
+                grid: { left: 110, right: 40, top: 6, bottom: 10 },
+                tooltip: { trigger: "axis", axisPointer: { type: "shadow" }, backgroundColor: "rgba(5,20,50,0.9)", borderColor: cywBlue, textStyle: { color: "#cfe8ff" } },
+                xAxis: { type: "value", ...cyw_axStyle, max: 100 },
+                yAxis: {
+                    type: "category",
+                    data: ["怎么退款","优惠能用吗","订单在哪","怎么改地址","余额怎么查"],
+                    ...cyw_axStyle,
+                    axisLabel: { color: "#cfe8ff", fontSize: 11 }
+                },
+                series: [{
+                    type: "bar", barWidth: 14,
+                    itemStyle: {
+                        borderRadius: [0, 3, 3, 0],
+                        color: new echarts.graphic.LinearGradient(0,0,1,0,[
+                            { offset: 0, color: "rgba(0,120,255,0.3)" },
+                            { offset: 1, color: cywBlue }
+                        ])
+                    },
+                    label: { show: true, position: "right", color: "#cfe8ff", fontSize: 10 },
+                    data: [92, 78, 65, 54, 43]
+                }]
+            });
+
+            // ============ C5: 实时消息流转（仪表盘 + 进度条） ============
+            var cyw_c5 = echarts.init(document.getElementById("cyw_c5"));
+            cyw_c5.setOption({
+                backgroundColor: "transparent",
+                series: [
+                    {
+                        type: "gauge", startAngle: 220, endAngle: -40,
+                        center: ["50%", "55%"], radius: "70%",
+                        progress: { show: true, width: 14, itemStyle: { color: cywCyan } },
+                        axisLine: { lineStyle: { width: 14, color: [[1, "rgba(0,180,255,0.15)"]] } },
+                        pointer: { show: false },
+                        axisTick: { show: false },
+                        splitLine: { length: 8, lineStyle: { color: cywBlue, width: 1 } },
+                        axisLabel: { distance: 18, color: "#7ab8d6", fontSize: 10 },
+                        detail: {
+                            formatter: "{value}/s",
+                            color: cywCyan, fontSize: 22, fontWeight: 700,
+                            offsetCenter: [0, "0%"]
+                        },
+                        title: { offsetCenter: [0, "40%"], color: "#7ab8d6", fontSize: 11 },
+                        data: [{ value: 842, name: "消息吞吐" }]
+                    }
+                ]
+            });
+
+            // ============ C6: 情感倾向（漏斗图） ============
+            var cyw_c6 = echarts.init(document.getElementById("cyw_c6"));
+            cyw_c6.setOption({
+                backgroundColor: "transparent",
+                tooltip: { trigger: "item", backgroundColor: "rgba(5,20,50,0.9)", borderColor: cywBlue, textStyle: { color: "#cfe8ff" } },
+                legend: { bottom: 0, textStyle: { color: "#7ab8d6", fontSize: 10 } },
+                series: [{
+                    type: "funnel", left: "10%", top: 20, bottom: 40,
+                    width: "80%", min: 0, max: 100,
+                    minSize: "0%", maxSize: "100%",
+                    sort: "descending", gap: 3,
+                    label: { show: true, position: "inside", color: "#fff", fontSize: 11 },
+                    itemStyle: { borderColor: "#04080f", borderWidth: 1 },
+                    color: [cywCyan, cywBlue, cywGold, cywPink, "#9370db"],
+                    data: [
+                        { value: 58, name: "😊 积极" },
+                        { value: 26, name: "😐 中性" },
+                        { value: 10, name: "😟 消极" },
+                        { value: 4,  name: "😠 投诉" },
+                        { value: 2,  name: "😡 暴怒" }
+                    ]
+                }]
+            });
+
+            // ============ C7: 时段活跃度（堆叠面积/热力图式折线） ============
+            var cyw_c7 = echarts.init(document.getElementById("cyw_c7"));
+            var cyw_hours = [];
+            for (var h = 0; h < 24; h++) cyw_hours.push(String(h).padStart(2, "0") + ":00");
+            cyw_c7.setOption({
+                backgroundColor: "transparent",
+                grid: { left: 36, right: 14, top: 22, bottom: 24 },
+                tooltip: { trigger: "axis", backgroundColor: "rgba(5,20,50,0.9)", borderColor: cywBlue, textStyle: { color: "#cfe8ff" } },
+                legend: { data: ["工作日","周末"], top: 0, textStyle: { color: "#7ab8d6", fontSize: 10 } },
+                xAxis: { type: "category", data: cyw_hours, ...cyw_axStyle, axisLabel: { interval: 2, color: "#7ab8d6", fontSize: 9 } },
+                yAxis: { type: "value", ...cyw_axStyle },
+                series: [
+                    {
+                        name: "工作日", type: "line", smooth: true, showSymbol: false,
+                        lineStyle: { color: cywBlue, width: 2 },
+                        areaStyle: {
+                            color: new echarts.graphic.LinearGradient(0,0,0,1,[
+                                { offset: 0, color: "rgba(0,180,255,0.3)" },
+                                { offset: 1, color: "rgba(0,180,255,0.02)" }
+                            ])
+                        },
+                        data: [120,80,60,50,55,90,220,480,780,920,850,720,680,820,880,830,650,420,280,220,180,160,150,130]
+                    },
+                    {
+                        name: "周末", type: "line", smooth: true, showSymbol: false,
+                        lineStyle: { color: cywGold, width: 2 },
+                        areaStyle: {
+                            color: new echarts.graphic.LinearGradient(0,0,0,1,[
+                                { offset: 0, color: "rgba(255,180,0,0.25)" },
+                                { offset: 1, color: "rgba(255,180,0,0.02)" }
+                            ])
+                        },
+                        data: [200,140,100,80,75,85,140,280,460,620,720,780,820,880,900,860,720,540,380,300,260,240,230,210]
+                    }
+                ]
+            });
+
+            // ============ C8: 转人工工单（柱状 + 数字滚动感） ============
+            var cyw_c8 = echarts.init(document.getElementById("cyw_c8"));
+            cyw_c8.setOption({
+                backgroundColor: "transparent",
+                grid: { left: 50, right: 14, top: 18, bottom: 24 },
+                tooltip: { trigger: "axis", backgroundColor: "rgba(5,20,50,0.9)", borderColor: cywBlue, textStyle: { color: "#cfe8ff" } },
+                xAxis: { type: "category", data: ["等待中","处理中","已完成","超时"], ...cyw_axStyle },
+                yAxis: { type: "value", ...cyw_axStyle },
+                series: [{
+                    type: "bar", barWidth: 22,
+                    itemStyle: {
+                        borderRadius: [3,3,0,0],
+                        color: function (p) {
+                            var cs = [cywGold, cywBlue, cywCyan, cywPink];
+                            return cs[p.dataIndex];
+                        }
+                    },
+                    label: { show: true, position: "top", color: "#cfe8ff", fontSize: 11, fontWeight: 600 },
+                    data: [23, 87, 512, 14]
+                }]
+            });
+
+            // ======= 响应式 =======
+            window.addEventListener("resize", function () {
+                cyw_map.resize(); cyw_c1.resize(); cyw_c2.resize(); cyw_c3.resize();
+                cyw_c4.resize(); cyw_c5.resize(); cyw_c6.resize(); cyw_c7.resize(); cyw_c8.resize();
+            });
+
+            // ======= 数据模拟：随机更新 KPI 和地图散点 =======
+            setInterval(function () {
+                var k1 = 12000 + Math.floor(Math.random() * 800);
+                var k2 = (93 + Math.random() * 3).toFixed(1);
+                var k3 = (0.75 + Math.random() * 0.15).toFixed(2);
+                var k4 = (4.6 + Math.random() * 0.15).toFixed(2);
+                document.getElementById("cyw_kpi1").textContent = k1.toLocaleString();
+                document.getElementById("cyw_kpi2").textContent = k2 + "%";
+                document.getElementById("cyw_kpi3").textContent = k3 + "s";
+                document.getElementById("cyw_kpi4").textContent = k4;
+
+                cyw_provinces.forEach(function (p) {
+                    p.value[2] = Math.max(50, p.value[2] + (Math.random() - 0.5) * 50);
+                });
+                cyw_map.setOption({ series: [{ data: cyw_provinces }] });
+
+                cyw_c5.setOption({ series: [{ data: [{ value: Math.floor(700 + Math.random() * 400) }] }] });
+            }, 3000);
+        }
+
+    })();
+    </script>
+</body>
+</html>
