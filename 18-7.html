@@ -2,10 +2,10 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <!-- 姓名：陈曦，日期：2026-11-05，功能：Three.js 3D 散点粒子云 + 3D 柱状图 -->
+    <!-- 姓名：崔溢文，日期：2026-11-05，功能名称：Three.js 两个 3D 图表（粒子云 + 柱状图） -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>18-7 Three.js 3D 图表 - 崔溢文</title>
-    <script src="cdn/three/three.min.js"></script>
+    <script src="./cdn/three.min.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -87,12 +87,12 @@
     </style>
 </head>
 <body>
-    <h1>[表情] Three.js 3D 可视化图表</h1>
-    <p class="cyw_subtitle">Three.js 0.160 本地 CDN · 原生实现 · 姓名：崔溢文 · 18-7</p>
+    <h1>🌐 Three.js 3D 可视化图表</h1>
+    <p class="cyw_subtitle">three.js r149 · 本地 CDN · 原生实现 · 姓名：崔溢文 · 18-7</p>
 
     <div class="cyw_grid">
         <div class="cyw_card">
-            <h2>[表情] 3D 散点粒子云（N 体动态）</h2>
+            <h2>💠 3D 散点粒子云（N 体动态）</h2>
             <p class="cyw_desc">1200 粒子 + 近邻连线 + 鼠标拖拽旋转，模拟 NPM 依赖关系图</p>
             <div class="cyw_canvas" id="cyw_canvas1"></div>
             <div class="cyw_legend">
@@ -103,7 +103,7 @@
         </div>
 
         <div class="cyw_card">
-            <h2>[表情] 3D 柱状图（季度销售矩阵）</h2>
+            <h2>📊 3D 柱状图（季度销售矩阵）</h2>
             <p class="cyw_desc">6 产品线 × 4 季度数据，高度映射 Y 轴，颜色按季度区分</p>
             <div class="cyw_canvas" id="cyw_canvas2"></div>
             <div class="cyw_legend">
@@ -351,5 +351,9 @@
         })();
     })();
     </script>
+
+    <footer style="text-align:center;margin:30px 0 0;padding-top:20px;border-top:1px solid rgba(0,212,255,0.15)">
+        <a href="./1-1.html" style="color:#00d4ff;text-decoration:none;font-size:13px;letter-spacing:1px">← 返回首页</a>
+    </footer>
 </body>
 </html>
