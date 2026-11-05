@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <!-- 姓名：崔溢文，日期：2026-11-05，功能名称：SVG 知识库智能客服系统架构图 -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>18-3 知识库智能客服系统架构图</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", "Helvetica Neue", sans-serif;
+            background: #f7f8fa;
+            color: #1f2937;
+            min-height: 100vh;
+            padding: 28px 20px 40px;
+        }
+        .cyw-wrap { max-width: 1280px; margin: 0 auto; }
+        .cyw-title {
+            text-align: center;
+            margin-bottom: 4px;
+        }
+        .cyw-title h1 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #0f172a;
+            letter-spacing: 2px;
+        }
+        .cyw-title .cyw-en {
+            font-size: 12px;
+            color: #64748b;
+            letter-spacing: 3px;
+            margin-top: 4px;
+            text-transform: uppercase;
+        }
+        .cyw-divider {
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #1e40af, transparent);
+            margin: 14px auto 22px;
+        }
+        .cyw-meta {
+            text-align: center;
+            font-size: 12px;
+            color: #94a3b8;
+            margin-bottom: 24px;
+        }
+        .cyw-svg-box {
+            background: #ffffff;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.04);
+            border: 1px solid #e2e8f0;
+            padding: 32px;
+            overflow-x: auto;
+        }
+        svg { display: block; margin: 0 auto; min-width: 900px; }
+        .cyw-legend {
+            margin-top: 20px;
+            padding: 14px 22px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+        .cyw-legend h3 {
+            font-size: 13px;
+            color: #334155;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        .cyw-legend-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 24px;
+        }
+        .cyw-legend-item {
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+            color: #475569;
+        }
+        .cyw-legend-swatch {
+            width: 22px;
+            height: 12px;
+            border-radius: 2px;
+            margin-right: 8px;
+            border: 1px solid rgba(0,0,0,0.08);
+        }
+        .cyw-ref {
+            margin-top: 18px;
+            padding: 14px 18px;
+            background: #f1f5f9;
+            border-left: 3px solid #1e40af;
+            border-radius: 0 4px 4px 0;
+            font-size: 12px;
+            color: #475569;
+            line-height: 1.8;
+        }
+        .cyw-ref b { color: #1e40af; }
+        .cyw-home { text-align: center; margin-top: 22px; }
+        .cyw-home a {
+            display: inline-block;
+            padding: 8px 26px;
+            background: #1e40af;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 20px;
+            font-size: 13px;
+            letter-spacing: 1px;
+            transition: background 0.15s;
+        }
+        .cyw-home a:hover { background: #1e3a8a; }
+    </style>
+</head>
+<body>
+    <div class="cyw-wrap">
+        <div class="cyw-title">
+            <h1>知识库智能客服系统架构</h1>
+            <div class="cyw-en">Knowledge-Base Intelligent Customer Service Architecture</div>
+        </div>
+        <div class="cyw-divider"></div>
+        <div class="cyw-meta">Research-Oriented · RAG + LLM · Multi-Turn Dialogue · SVG Visualization</div>
+
+        <div class="cyw-svg-box">
+<svg viewBox="0 0 1100 820" xmlns="http://www.w3.org/2000/svg" font-family="'Microsoft YaHei','Helvetica Neue',sans-serif">
+
+    <defs>
+        <marker id="cyw_arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#1e40af"/>
+        </marker>
+        <marker id="cyw_arrow_gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+        </marker>
+        <marker id="cyw_arrow_dashed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#6366f1"/>
+        </marker>
+
+        <linearGradient id="cyw_grad_client" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#eff6ff"/>
+            <stop offset="100%" stop-color="#dbeafe"/>
+        </linearGradient>
+        <linearGradient id="cyw_grad_gateway" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#f0fdf4"/>
+            <stop offset="100%" stop-color="#dcfce7"/>
+        </linearGradient>
+        <linearGradient id="cyw_grad_nlu" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#fefce8"/>
+            <stop offset="100%" stop-color="#fef9c3"/>
+        </linearGradient>
+        <linearGradient id="cyw_grad_rag" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#faf5ff"/>
+            <stop offset="100%" stop-color="#f3e8ff"/>
+        </linearGradient>
+        <linearGradient id="cyw_grad_llm" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#fff7ed"/>
+            <stop offset="100%" stop-color="#ffedd5"/>
+        </linearGradient>
+        <linearGradient id="cyw_grad_kb" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#f1f5f9"/>
+            <stop offset="100%" stop-color="#e2e8f0"/>
+        </linearGradient>
+        <linearGradient id="cyw_grad_ops" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#fdf2f8"/>
+            <stop offset="100%" stop-color="#fce7f3"/>
+        </linearGradient>
+    </defs>
+
+    <!-- ==================== LAYER 1: 客户端接入层 ==================== -->
+    <g id="cyw_layer1">
+        <rect x="40" y="30" width="1020" height="90" rx="8" fill="url(#cyw_grad_client)" stroke="#93c5fd" stroke-width="1" stroke-dasharray="4,3"/>
+        <text x="58" y="52" font-size="12" font-weight="700" fill="#1e40af" letter-spacing="1">L1  用户交互层 / Client Layer</text>
+
+        <g transform="translate(140,62)">
+            <rect width="120" height="42" rx="4" fill="#ffffff" stroke="#60a5fa" stroke-width="1"/>
+            <text x="60" y="18" text-anchor="middle" font-size="13" fill="#1e40af" font-weight="600">Web 前端</text>
+            <text x="60" y="33" text-anchor="middle" font-size="10" fill="#64748b">Vue3 / React</text>
+        </g>
+        <g transform="translate(290,62)">
+            <rect width="120" height="42" rx="4" fill="#ffffff" stroke="#60a5fa" stroke-width="1"/>
+            <text x="60" y="18" text-anchor="middle" font-size="13" fill="#1e40af" font-weight="600">移动 APP</text>
+            <text x="60" y="33" text-anchor="middle" font-size="10" fill="#64748b">iOS / Android</text>
+        </g>
+        <g transform="translate(440,62)">
+            <rect width="120" height="42" rx="4" fill="#ffffff" stroke="#60a5fa" stroke-width="1"/>
+            <text x="60" y="18" text-anchor="middle" font-size="13" fill="#1e40af" font-weight="600">微信小程序</text>
+            <text x="60" y="33" text-anchor="middle" font-size="10" fill="#64748b">WeChat Mini</text>
+        </g>
+        <g transform="translate(590,62)">
+            <rect width="120" height="42" rx="4" fill="#ffffff" stroke="#60a5fa" stroke-width="1"/>
+            <text x="60" y="18" text-anchor="middle" font-size="13" fill="#1e40af" font-weight="600">开放 API</text>
+            <text x="60" y="33" text-anchor="middle" font-size="10" fill="#64748b">REST / WebSocket</text>
+        </g>
+        <g transform="translate(740,62)">
+            <rect width="120" height="42" rx="4" fill="#ffffff" stroke="#60a5fa" stroke-width="1"/>
+            <text x="60" y="18" text-anchor="middle" font-size="13" fill="#1e40af" font-weight="600">第三方 IM</text>
+            <text x="60" y="33" text-anchor="middle" font-size="10" fill="#64748b">钉钉 / 企微</text>
+        </g>
+    </g>
+
+    <!-- L1 → L2 箭头 -->
+    <line x1="550" y1="120" x2="550" y2="145" stroke="#1e40af" stroke-width="1.5" marker-end="url(#cyw_arrow)"/>
+    <text x="565" y="137" font-size="10" fill="#64748b">HTTPS / WSS</text>
+
+    <!-- ==================== LAYER 2: 接入网关层 ==================== -->
+    <g id="cyw_layer2">
+        <rect x="40" y="145" width="1020" height="80" rx="8" fill="url(#cyw_grad_gateway)" stroke="#86efac" stroke-width="1" stroke-dasharray="4,3"/>
+        <text x="58" y="167" font-size="12" font-weight="700" fill="#166534" letter-spacing="1">L2  接入网关层 / API Gateway</text>
+
+        <g transform="translate(180,175)">
+            <rect width="110" height="38" rx="4" fill="#ffffff" stroke="#4ade80" stroke-width="1"/>
+            <text x="55" y="17" text-anchor="middle" font-size="12" fill="#166534" font-weight="600">身份认证</text>
+            <text x="55" y="31" text-anchor="middle" font-size="9" fill="#64748b">JWT / OAuth2</text>
+        </g>
+        <g transform="translate(320,175)">
+            <rect width="110" height="38" rx="4" fill="#ffffff" stroke="#4ade80" stroke-width="1"/>
+            <text x="55" y="17" text-anchor="middle" font-size="12" fill="#166534" font-weight="600">限流熔断</text>
+            <text x="55" y="31" text-anchor="middle" font-size="9" fill="#64748b">Rate Limit</text>
+        </g>
+        <g transform="translate(460,175)">
+            <rect width="110" height="38" rx="4" fill="#ffffff" stroke="#4ade80" stroke-width="1"/>
+            <text x="55" y="17" text-anchor="middle" font-size="12" fill="#166534" font-weight="600">负载均衡</text>
+            <text x="55" y="31" text-anchor="middle" font-size="9" fill="#64748b">Nginx / SLB</text>
+        </g>
+        <g transform="translate(600,175)">
+            <rect width="110" height="38" rx="4" fill="#ffffff" stroke="#4ade80" stroke-width="1"/>
+            <text x="55" y="17" text-anchor="middle" font-size="12" fill="#166534" font-weight="600">日志审计</text>
+            <text x="55" y="31" text-anchor="middle" font-size="9" fill="#64748b">Access Log</text>
+        </g>
+        <g transform="translate(740,175)">
+            <rect width="110" height="38" rx="4" fill="#ffffff" stroke="#4ade80" stroke-width="1"/>
+            <text x="55" y="17" text-anchor="middle" font-size="12" fill="#166534" font-weight="600">请求路由</text>
+            <text x="55" y="31" text-anchor="middle" font-size="9" fill="#64748b">Service Mesh</text>
+        </g>
+    </g>
+
+    <!-- L2 → L3 箭头 -->
+    <line x1="550" y1="225" x2="550" y2="252" stroke="#1e40af" stroke-width="1.5" marker-end="url(#cyw_arrow)"/>
+
+    <!-- ==================== LAYER 3: NLU 理解层 ==================== -->
+    <g id="cyw_layer3">
+        <rect x="40" y="252" width="1020" height="100" rx="8" fill="url(#cyw_grad_nlu)" stroke="#fde68a" stroke-width="1" stroke-dasharray="4,3"/>
+        <text x="58" y="274" font-size="12" font-weight="700" fill="#854d0e" letter-spacing="1">L3  自然语言理解层 / NLU Engine</text>
+
+        <g transform="translate(110,286)">
+            <rect width="140" height="52" rx="4" fill="#ffffff" stroke="#fbbf24" stroke-width="1"/>
+            <text x="70" y="20" text-anchor="middle" font-size="12" fill="#854d0e" font-weight="600">意图识别</text>
+            <text x="70" y="36" text-anchor="middle" font-size="10" fill="#64748b">Intent Classification</text>
+            <text x="70" y="48" text-anchor="middle" font-size="9" fill="#94a3b8">BERT / RoBERTa</text>
+        </g>
+        <g transform="translate(280,286)">
+            <rect width="140" height="52" rx="4" fill="#ffffff" stroke="#fbbf24" stroke-width="1"/>
+            <text x="70" y="20" text-anchor="middle" font-size="12" fill="#854d0e" font-weight="600">实体抽取</text>
+            <text x="70" y="36" text-anchor="middle" font-size="10" fill="#64748b">Named Entity Recog</text>
+            <text x="70" y="48" text-anchor="middle" font-size="9" fill="#94a3b8">BiLSTM-CRF</text>
+        </g>
+        <g transform="translate(450,286)">
+            <rect width="140" height="52" rx="4" fill="#ffffff" stroke="#fbbf24" stroke-width="1"/>
+            <text x="70" y="20" text-anchor="middle" font-size="12" fill="#854d0e" font-weight="600">情感分析</text>
+            <text x="70" y="36" text-anchor="middle" font-size="10" fill="#64748b">Sentiment Analysis</text>
+            <text x="70" y="48" text-anchor="middle" font-size="9" fill="#94a3b8">细粒度极性</text>
+        </g>
+        <g transform="translate(620,286)">
+            <rect width="140" height="52" rx="4" fill="#ffffff" stroke="#fbbf24" stroke-width="1"/>
+            <text x="70" y="20" text-anchor="middle" font-size="12" fill="#854d0e" font-weight="600">对话管理</text>
+            <text x="70" y="36" text-anchor="middle" font-size="10" fill="#64748b">Dialogue Management</text>
+            <text x="70" y="48" text-anchor="middle" font-size="9" fill="#94a3b8">状态追踪 DST</text>
+        </g>
+        <g transform="translate(790,286)">
+            <rect width="140" height="52" rx="4" fill="#ffffff" stroke="#fbbf24" stroke-width="1"/>
+            <text x="70" y="20" text-anchor="middle" font-size="12" fill="#854d0e" font-weight="600">上下文记忆</text>
+            <text x="70" y="36" text-anchor="middle" font-size="10" fill="#64748b">Context Memory</text>
+            <text x="70" y="48" text-anchor="middle" font-size="9" fill="#94a3b8">多轮会话历史</text>
+        </g>
+    </g>
+
+    <!-- L3 → L4 箭头 -->
+    <line x1="550" y1="352" x2="550" y2="378" stroke="#1e40af" stroke-width="1.5" marker-end="url(#cyw_arrow)"/>
+    <text x="565" y="370" font-size="10" fill="#64748b">Query / Intent + Entities</text>
+
+    <!-- ==================== LAYER 4: RAG 检索增强生成层 ==================== -->
+    <g id="cyw_layer4">
+        <rect x="40" y="378" width="1020" height="120" rx="8" fill="url(#cyw_grad_rag)" stroke="#c4b5fd" stroke-width="1.5"/>
+        <text x="58" y="400" font-size="12" font-weight="700" fill="#6d28d9" letter-spacing="1">L4  RAG 检索增强生成层 / Retrieval-Augmented Generation</text>
+
+        <!-- Query Embedding -->
+        <g transform="translate(90,414)">
+            <rect width="120" height="60" rx="4" fill="#ffffff" stroke="#a78bfa" stroke-width="1.5"/>
+            <text x="60" y="18" text-anchor="middle" font-size="12" fill="#6d28d9" font-weight="600">Query 向量化</text>
+            <text x="60" y="34" text-anchor="middle" font-size="10" fill="#64748b">Embedding Model</text>
+            <text x="60" y="50" text-anchor="middle" font-size="9" fill="#94a3b8">text-embedding-3</text>
+        </g>
+        <line x1="210" y1="444" x2="240" y2="444" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#cyw_arrow_gray)"/>
+
+        <!-- 向量检索 -->
+        <g transform="translate(240,414)">
+            <rect width="130" height="60" rx="4" fill="#ffffff" stroke="#a78bfa" stroke-width="1.5"/>
+            <text x="65" y="18" text-anchor="middle" font-size="12" fill="#6d28d9" font-weight="600">向量相似度检索</text>
+            <text x="65" y="34" text-anchor="middle" font-size="10" fill="#64748b">Vector Search</text>
+            <text x="65" y="50" text-anchor="middle" font-size="9" fill="#94a3b8">HNSW / FAISS</text>
+        </g>
+        <line x1="370" y1="444" x2="400" y2="444" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#cyw_arrow_gray)"/>
+
+        <!-- 重排序 -->
+        <g transform="translate(400,414)">
+            <rect width="110" height="60" rx="4" fill="#ffffff" stroke="#a78bfa" stroke-width="1.5"/>
+            <text x="55" y="18" text-anchor="middle" font-size="12" fill="#6d28d9" font-weight="600">重排序</text>
+            <text x="55" y="34" text-anchor="middle" font-size="10" fill="#64748b">Reranker</text>
+            <text x="55" y="50" text-anchor="middle" font-size="9" fill="#94a3b8">Cross-Encoder</text>
+        </g>
+        <line x1="510" y1="444" x2="540" y2="444" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#cyw_arrow_gray)"/>
+
+        <!-- Prompt 构建 -->
+        <g transform="translate(540,414)">
+            <rect width="130" height="60" rx="4" fill="#ffffff" stroke="#a78bfa" stroke-width="1.5"/>
+            <text x="65" y="18" text-anchor="middle" font-size="12" fill="#6d28d9" font-weight="600">Prompt 构建</text>
+            <text x="65" y="34" text-anchor="middle" font-size="10" fill="#64748b">Template / CoT</text>
+            <text x="65" y="50" text-anchor="middle" font-size="9" fill="#94a3b8">Chain-of-Thought</text>
+        </g>
+        <line x1="670" y1="444" x2="700" y2="444" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#cyw_arrow_gray)"/>
+
+        <!-- 结果生成 -->
+        <g transform="translate(700,414)">
+            <rect width="120" height="60" rx="4" fill="#ffffff" stroke="#a78bfa" stroke-width="1.5"/>
+            <text x="60" y="18" text-anchor="middle" font-size="12" fill="#6d28d9" font-weight="600">答案生成</text>
+            <text x="60" y="34" text-anchor="middle" font-size="10" fill="#64748b">Response Gen</text>
+            <text x="60" y="50" text-anchor="middle" font-size="9" fill="#94a3b8">Streaming Output</text>
+        </g>
+        <line x1="820" y1="444" x2="850" y2="444" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#cyw_arrow_gray)"/>
+
+        <!-- 引用溯源 -->
+        <g transform="translate(850,414)">
+            <rect width="140" height="60" rx="4" fill="#ffffff" stroke="#a78bfa" stroke-width="1.5"/>
+            <text x="70" y="18" text-anchor="middle" font-size="12" fill="#6d28d9" font-weight="600">引用溯源</text>
+            <text x="70" y="34" text-anchor="middle" font-size="10" fill="#64748b">Citation Grounding</text>
+            <text x="70" y="50" text-anchor="middle" font-size="9" fill="#94a3b8">幻觉抑制</text>
+        </g>
+    </g>
+
+    <!-- RAG → LLM / KB 双向 -->
+    <line x1="400" y1="498" x2="400" y2="532" stroke="#1e40af" stroke-width="1.5" marker-end="url(#cyw_arrow)"/>
+    <line x1="700" y1="498" x2="700" y2="532" stroke="#1e40af" stroke-width="1.5" marker-end="url(#cyw_arrow)"/>
+
+    <!-- ==================== LAYER 5: 大模型 + 知识库（并列） ==================== -->
+    <!-- L5a: 大模型服务 -->
+    <g id="cyw_layer5a">
+        <rect x="40" y="532" width="480" height="110" rx="8" fill="url(#cyw_grad_llm)" stroke="#fb923c" stroke-width="1.5"/>
+        <text x="58" y="554" font-size="12" font-weight="700" fill="#c2410c" letter-spacing="1">L5-A  大模型服务层 / LLM Service</text>
+
+        <g transform="translate(60,566)">
+            <rect width="130" height="60" rx="4" fill="#ffffff" stroke="#f97316" stroke-width="1.5"/>
+            <text x="65" y="18" text-anchor="middle" font-size="12" fill="#c2410c" font-weight="600">商用 API 模型</text>
+            <text x="65" y="34" text-anchor="middle" font-size="10" fill="#64748b">GPT-4 / Claude / 文心</text>
+            <text x="65" y="50" text-anchor="middle" font-size="9" fill="#94a3b8">闭源 · 高效果</text>
+        </g>
+        <g transform="translate(210,566)">
+            <rect width="130" height="60" rx="4" fill="#ffffff" stroke="#f97316" stroke-width="1.5"/>
+            <text x="65" y="18" text-anchor="middle" font-size="12" fill="#c2410c" font-weight="600">开源本地模型</text>
+            <text x="65" y="34" text-anchor="middle" font-size="10" fill="#64748b">Llama3 / Qwen / Mistral</text>
+            <text x="65" y="50" text-anchor="middle" font-size="9" fill="#94a3b8">私有化部署</text>
+        </g>
+        <g transform="translate(360,566)">
+            <rect width="140" height="60" rx="4" fill="#ffffff" stroke="#f97316" stroke-width="1.5"/>
+            <text x="70" y="18" text-anchor="middle" font-size="12" fill="#c2410c" font-weight="600">领域微调 SFT</text>
+            <text x="70" y="34" text-anchor="middle" font-size="10" fill="#64748b">LoRA / QLoRA</text>
+            <text x="70" y="50" text-anchor="middle" font-size="9" fill="#94a3b8">RLHF 对齐</text>
+        </g>
+    </g>
+
+    <!-- L5b: 知识库 -->
+    <g id="cyw_layer5b">
+        <rect x="580" y="532" width="480" height="110" rx="8" fill="url(#cyw_grad_kb)" stroke="#94a3b8" stroke-width="1.5"/>
+        <text x="598" y="554" font-size="12" font-weight="700" fill="#334155" letter-spacing="1">L5-B  知识库层 / Knowledge Base</text>
+
+        <g transform="translate(600,566)">
+            <rect width="110" height="60" rx="4" fill="#ffffff" stroke="#64748b" stroke-width="1.5"/>
+            <text x="55" y="18" text-anchor="middle" font-size="12" fill="#334155" font-weight="600">向量数据库</text>
+            <text x="55" y="34" text-anchor="middle" font-size="10" fill="#64748b">Milvus / Pinecone</text>
+            <text x="55" y="50" text-anchor="middle" font-size="9" fill="#94a3b8">Chroma / pgvector</text>
+        </g>
+        <g transform="translate(730,566)">
+            <rect width="110" height="60" rx="4" fill="#ffffff" stroke="#64748b" stroke-width="1.5"/>
+            <text x="55" y="18" text-anchor="middle" font-size="12" fill="#334155" font-weight="600">结构化知识</text>
+            <text x="55" y="34" text-anchor="middle" font-size="10" fill="#64748b">Neo4j 知识图谱</text>
+            <text x="55" y="50" text-anchor="middle" font-size="9" fill="#94a3b8">MySQL 关系库</text>
+        </g>
+        <g transform="translate(860,566)">
+            <rect width="110" height="60" rx="4" fill="#ffffff" stroke="#64748b" stroke-width="1.5"/>
+            <text x="55" y="18" text-anchor="middle" font-size="12" fill="#334155" font-weight="600">非结构化知识</text>
+            <text x="55" y="34" text-anchor="middle" font-size="10" fill="#64748b">PDF / Word / FAQ</text>
+            <text x="55" y="50" text-anchor="middle" font-size="9" fill="#94a3b8">爬虫 / 人工录入</text>
+        </g>
+        <g transform="translate(980,566)">
+            <rect width="60" height="60" rx="4" fill="#ffffff" stroke="#64748b" stroke-width="1.5"/>
+            <text x="30" y="22" text-anchor="middle" font-size="10" fill="#334155" font-weight="600">缓存</text>
+            <text x="30" y="36" text-anchor="middle" font-size="9" fill="#64748b">Redis</text>
+            <text x="30" y="48" text-anchor="middle" font-size="8" fill="#94a3b8">Hot Data</text>
+        </g>
+    </g>
+
+    <!-- 知识入库流程虚线 -->
+    <path d="M 540 570 L 575 570 L 575 600" fill="none" stroke="#6366f1" stroke-width="1.2" stroke-dasharray="5,3" marker-end="url(#cyw_arrow_dashed)"/>
+    <text x="518" y="562" font-size="9" fill="#6366f1" text-anchor="end">知识入库</text>
+
+    <!-- ==================== LAYER 6: 运营监控层 ==================== -->
+    <g id="cyw_layer6">
+        <rect x="40" y="672" width="1020" height="90" rx="8" fill="url(#cyw_grad_ops)" stroke="#f9a8d4" stroke-width="1" stroke-dasharray="4,3"/>
+        <text x="58" y="694" font-size="12" font-weight="700" fill="#be185d" letter-spacing="1">L6  运营监控 & 反馈迭代层 / Ops & Feedback Loop</text>
+
+        <g transform="translate(100,706)">
+            <rect width="140" height="42" rx="4" fill="#ffffff" stroke="#ec4899" stroke-width="1"/>
+            <text x="70" y="18" text-anchor="middle" font-size="12" fill="#be185d" font-weight="600">用户反馈收集</text>
+            <text x="70" y="33" text-anchor="middle" font-size="10" fill="#64748b">Thumbs up/down · 纠错</text>
+        </g>
+        <g transform="translate(270,706)">
+            <rect width="140" height="42" rx="4" fill="#ffffff" stroke="#ec4899" stroke-width="1"/>
+            <text x="70" y="18" text-anchor="middle" font-size="12" fill="#be185d" font-weight="600">对话日志分析</text>
+            <text x="70" y="33" text-anchor="middle" font-size="10" fill="#64748b">Session Trace · 漏斗</text>
+        </g>
+        <g transform="translate(440,706)">
+            <rect width="140" height="42" rx="4" fill="#ffffff" stroke="#ec4899" stroke-width="1"/>
+            <text x="70" y="18" text-anchor="middle" font-size="12" fill="#be185d" font-weight="600">模型评测评估</text>
+            <text x="70" y="33" text-anchor="middle" font-size="10" fill="#64748b">BLEU / ROUGE / 人工</text>
+        </g>
+        <g transform="translate(610,706)">
+            <rect width="140" height="42" rx="4" fill="#ffffff" stroke="#ec4899" stroke-width="1"/>
+            <text x="70" y="18" text-anchor="middle" font-size="12" fill="#be185d" font-weight="600">知识库迭代</text>
+            <text x="70" y="33" text-anchor="middle" font-size="10" fill="#64748b">Bad Case → Retrain</text>
+        </g>
+        <g transform="translate(780,706)">
+            <rect width="140" height="42" rx="4" fill="#ffffff" stroke="#ec4899" stroke-width="1"/>
+            <text x="70" y="18" text-anchor="middle" font-size="12" fill="#be185d" font-weight="600">A/B 实验平台</text>
+            <text x="70" y="33" text-anchor="middle" font-size="10" fill="#64748b">Prompt / 模型灰度</text>
+        </g>
+    </g>
+
+    <!-- L6 反馈回上游的虚线 -->
+    <path d="M 850 672 Q 970 620 970 590" fill="none" stroke="#ec4899" stroke-width="1.2" stroke-dasharray="4,3"/>
+    <text x="990" y="635" font-size="9" fill="#be185d">反馈闭环</text>
+
+    <!-- 侧边标签：技术栈标注 -->
+    <g transform="translate(1075,420)">
+        <text font-size="10" fill="#1e40af" text-anchor="middle" font-weight="700">核心</text>
+        <text font-size="10" fill="#1e40af" text-anchor="middle">技术路线</text>
+        <text y="22" font-size="9" fill="#475569" text-anchor="middle">Transformer</text>
+        <text y="36" font-size="9" fill="#475569" text-anchor="middle">RAG Pipeline</text>
+        <text y="50" font-size="9" fill="#475569" text-anchor="middle">Vector DB</text>
+        <text y="64" font-size="9" fill="#475569" text-anchor="middle">LLM Fine-tuning</text>
+        <text y="78" font-size="9" fill="#475569" text-anchor="middle">Knowledge Graph</text>
+    </g>
+
+    <!-- 标题小标注 -->
+    <text x="1075" y="55" font-size="10" fill="#94a3b8" text-anchor="middle">Frontend</text>
+    <text x="1075" y="185" font-size="10" fill="#94a3b8" text-anchor="middle">Traffic</text>
+    <text x="1075" y="305" font-size="10" fill="#94a3b8" text-anchor="middle">NLU</text>
+    <text x="1075" y="710" font-size="10" fill="#94a3b8" text-anchor="middle">Feedback Loop</text>
+
+</svg>
+        </div>
+
+        <div class="cyw-legend">
+            <h3>图例 / Legend</h3>
+            <div class="cyw-legend-row">
+                <div class="cyw-legend-item"><div class="cyw-legend-swatch" style="background:#dbeafe"></div>L1 用户交互层</div>
+                <div class="cyw-legend-item"><div class="cyw-legend-swatch" style="background:#dcfce7"></div>L2 接入网关层</div>
+                <div class="cyw-legend-item"><div class="cyw-legend-swatch" style="background:#fef9c3"></div>L3 NLU 理解层</div>
+                <div class="cyw-legend-item"><div class="cyw-legend-swatch" style="background:#f3e8ff"></div>L4 RAG 检索增强生成层</div>
+                <div class="cyw-legend-item"><div class="cyw-legend-swatch" style="background:#ffedd5"></div>L5-A 大模型服务</div>
+                <div class="cyw-legend-item"><div class="cyw-legend-swatch" style="background:#e2e8f0"></div>L5-B 知识库</div>
+                <div class="cyw-legend-item"><div class="cyw-legend-swatch" style="background:#fce7f3"></div>L6 运营反馈层</div>
+                <div class="cyw-legend-item">──▶ 数据流向</div>
+                <div class="cyw-legend-item">╌╌▶ 知识入库 / 反馈闭环</div>
+            </div>
+        </div>
+
+        <div class="cyw-ref">
+            <b>参考模型：</b>该架构参考了当前学术界 RAG + LLM 的主流范式，核心流程
+            <b>Query → Embedding → 向量检索 → Rerank → Prompt 构建 → LLM 生成 → 引用溯源</b>
+            可作为论文系统设计章节的参考模板。关键技术关键词：
+            <b>Retrieval-Augmented Generation (RAG)</b>, 
+            <b>Large Language Model (LLM)</b>, 
+            <b>Embedding</b>, 
+            <b>Vector Similarity Search</b>, 
+            <b>Knowledge Graph (KG)</b>, 
+            <b>Dialogue State Tracking (DST)</b>, 
+            <b>Reinforcement Learning from Human Feedback (RLHF)</b>.
+        </div>
+
+        <div class="cyw-home"><a href="./1-1.html">← 返回首页</a></div>
+    </div>
+</body>
+</html>
