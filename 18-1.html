@@ -1,272 +1,300 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <!-- 姓名：崔溢文，日期：2026-11-05，功能名称：Canvas 文字下落动画 -->
+    <!-- 姓名：崔溢文，日期：2026-11-05，功能名称：Canvas 粒子文字动画 -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>18-1 Canvas 文字下落</title>
+    <title>18-1 Canvas 粒子文字动画</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { height: 100%; }
         body {
-            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
-            background: #0a0a1a;
-            color: #22304a;
-            min-height: 100vh;
-            padding: 20px 16px;
-        }
-        .cyw-wrap { max-width: 1000px; margin: 0 auto; }
-        .cyw-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: #1fa0e0;
-            margin-bottom: 12px;
-            text-align: center;
-        }
-        .cyw-panel {
-            background: #14142a;
-            border-radius: 8px;
-            padding: 14px 18px;
-            margin-bottom: 14px;
-            border: 1px solid #2a2a4a;
-        }
-        .cyw-panel h2 {
-            font-size: 14px;
-            color: #5ecdf3;
-            margin-bottom: 8px;
-        }
-        .cyw-panel p {
-            font-size: 12px;
-            color: #aaa;
-            line-height: 1.8;
-        }
-        .cyw-panel code {
-            background: #2a2a4a;
-            color: #a6e22e;
-            padding: 1px 6px;
-            border-radius: 3px;
-            font-size: 11px;
-            font-family: Consolas, "Courier New", monospace;
-        }
-        .cyw-canvas-box {
-            background: #0a0a1a;
-            border-radius: 8px;
+            font-family: "Microsoft YaHei", sans-serif;
+            background: #0d1117;
+            color: #fff;
             overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0,255,100,0.1);
-            margin-bottom: 14px;
+        }
+        .cyw-head {
+            text-align: center;
+            padding-top: 14px;
+            z-index: 10;
+            position: relative;
+            pointer-events: none;
+        }
+        .cyw-head h1 {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: 4px;
+            color: #f0f0f0;
+        }
+        .cyw-head p {
+            font-size: 12px;
+            color: #888;
+            margin-top: 4px;
+            letter-spacing: 1px;
+        }
+        .cyw-wrap {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
         }
         canvas {
             display: block;
             width: 100%;
-            height: 380px;
+            height: 100%;
+            cursor: crosshair;
         }
         .cyw-controls {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
             display: flex;
             gap: 10px;
-            justify-content: center;
-            flex-wrap: wrap;
-            padding: 12px 18px;
-            background: #14142a;
-            border-radius: 8px;
-            border: 1px solid #2a2a4a;
-            margin-bottom: 14px;
+            z-index: 10;
         }
         .cyw-btn {
-            padding: 7px 18px;
-            background: #1fa0e0;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
+            padding: 9px 22px;
             font-size: 13px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: #ddd;
+            border-radius: 4px;
             cursor: pointer;
-            transition: background 0.15s;
+            transition: all 0.2s;
+            font-family: inherit;
         }
-        .cyw-btn:hover { background: #1890cc; }
-        .cyw-btn.cyw-pause { background: #fa8c16; }
-        .cyw-btn.cyw-pause:hover { background: #d46b08; }
-        .cyw-btn.cyw-reset { background: #999; }
-        .cyw-btn.cyw-reset:hover { background: #777; }
-        .cyw-label {
-            font-size: 12px;
-            color: #888;
-            align-self: center;
+        .cyw-btn:hover { background: rgba(255,255,255,0.15); }
+        .cyw-btn.cyw-active {
+            background: rgba(0,255,150,0.15);
+            border-color: #00ff96;
+            color: #00ff96;
         }
-        .cyw-home { text-align: center; margin-top: 14px; }
+        .cyw-home {
+            position: fixed;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+        }
         .cyw-home a {
-            display: inline-block;
-            padding: 8px 24px;
-            background: #1fa0e0;
-            color: #fff;
+            color: #666;
             text-decoration: none;
-            border-radius: 20px;
-            font-size: 14px;
+            font-size: 12px;
+            letter-spacing: 1px;
         }
+        .cyw-home a:hover { color: #00ff96; }
     </style>
 </head>
 <body>
-    <div class="cyw-wrap">
-        <div class="cyw-title">Canvas 文字下落动画 —— 黑客帝国风</div>
-
-        <div class="cyw-panel">
-            <h2>🎨 技术要点</h2>
-            <p>
-                使用 <code>canvas.getContext("2d")</code> 获取 2D 绘图上下文，<br>
-                每列有一个 <code>y</code> 坐标，循环 <code>requestAnimationFrame</code> 让它不断增加实现下落，<br>
-                底部留一段渐隐（半透明黑色矩形覆盖）制造拖尾效果，顶部新字符是亮绿色，其余暗绿色。
-            </p>
-        </div>
-
-        <div class="cyw-canvas-box">
-            <canvas id="cyw_canvas"></canvas>
-        </div>
-
-        <div class="cyw-controls">
-            <button id="cyw_pauseBtn" class="cyw-btn cyw-pause">⏸ 暂停</button>
-            <button id="cyw_resetBtn" class="cyw-btn cyw-reset">🔄 重置</button>
-            <span class="cyw-label">速度：</span>
-            <select id="cyw_speed" class="cyw-btn" style="padding:7px 12px">
-                <option value="0.5">慢</option>
-                <option value="1" selected>正常</option>
-                <option value="2">快</option>
-                <option value="4">极快</option>
-            </select>
-            <span class="cyw-label">颜色：</span>
-            <select id="cyw_color" class="cyw-btn" style="padding:7px 12px">
-                <option value="#00ff66" selected>经典绿</option>
-                <option value="#1fa0e0">科技蓝</option>
-                <option value="#ff4d4f">警报红</option>
-                <option value="#ffd700">黄金</option>
-                <option value="#ffffff">纯白</option>
-            </select>
-        </div>
-
-        <div class="cyw-home"><a href="./1-1.html">首页</a></div>
+    <div class="cyw-head">
+        <h1>崔 溢 文</h1>
+        <p>姓名：崔溢文 · 18-1 · Canvas 粒子文字动画</p>
     </div>
+
+    <div class="cyw-wrap">
+        <canvas id="cyw_canvas"></canvas>
+    </div>
+
+    <div class="cyw-controls">
+        <button class="cyw-btn" id="cyw_btAttract">吸引模式</button>
+        <button class="cyw-btn cyw-active" id="cyw_btRepel">排斥模式</button>
+        <button class="cyw-btn" id="cyw_btFollow">鼠标跟随</button>
+        <button class="cyw-btn" id="cyw_btExplode">爆炸重组</button>
+    </div>
+
+    <div class="cyw-home"><a href="./1-1.html">← 首页</a></div>
 
     <script>
         (function () {
             var cywCanvas = document.getElementById("cyw_canvas");
             var cywCtx = cywCanvas.getContext("2d");
-            var cywSpeedSel = document.getElementById("cyw_speed");
-            var cywColorSel = document.getElementById("cyw_color");
-            var cywPauseBtn = document.getElementById("cyw_pauseBtn");
-            var cywResetBtn = document.getElementById("cyw_resetBtn");
 
-            var cywLines = [
-                "崔 溢 文",
-                "高级网页设计",
-                "课堂实践作业",
-                "Canvas 文字下落",
-                "JavaScript 动画",
-                "requestAnimationFrame",
-                "2026 秋",
-                "加油！冲冲冲 🔥"
-            ];
+            var cywW = 0, cywH = 0;
+            var cywParticles = [];
+            var cywMouse = { x: -9999, y: -9999, active: false };
+            var cywMode = "repel";
+            var cywExploding = false;
 
-            var cywStreams = [];
-            var cywStreamH = 0;
+            function cyw_resize() {
+                cywW = cywCanvas.width = window.innerWidth;
+                cywH = cywCanvas.height = window.innerHeight;
+                cyw_buildText();
+            }
 
-            function cyw_initStreams() {
-                cywStreams = [];
-                var cywCols = Math.ceil(cywCanvas.width / cywFontSize);
-                for (var i = 0; i < cywCols; i++) {
-                    var cywText = cywLines[Math.floor(Math.random() * cywLines.length)];
-                    var cywChars = cywText.split("");
-                    cywStreams.push({
-                        x: i * cywFontSize,
-                        y: -Math.random() * cywStreamH,
-                        text: cywText,
-                        chars: cywChars,
-                        offset: Math.floor(Math.random() * cywChars.length),
-                        speed: cywSpeed * (0.7 + Math.random() * 0.8)
+            function cyw_buildText() {
+                var cywOff = document.createElement("canvas");
+                var cywOffCtx = cywOff.getContext("2d");
+                var cywFontSize = Math.min(cywW / 5, cywH * 0.35);
+                cywOff.width = cywW;
+                cywOff.height = cywH;
+
+                cywOffCtx.fillStyle = "#000";
+                cywOffCtx.fillRect(0, 0, cywW, cywH);
+                cywOffCtx.fillStyle = "#fff";
+                cywOffCtx.font = "bold " + cywFontSize + "px 'Microsoft YaHei', sans-serif";
+                cywOffCtx.textAlign = "center";
+                cywOffCtx.textBaseline = "middle";
+                cywOffCtx.fillText("崔溢文", cywW / 2, cywH / 2);
+
+                var cywImg = cywOffCtx.getImageData(0, 0, cywW, cywH).data;
+                var cywStep = Math.max(3, Math.floor(cywFontSize / 60));
+                var cywNewParts = [];
+
+                for (var y = 0; y < cywH; y += cywStep) {
+                    for (var x = 0; x < cywW; x += cywStep) {
+                        var cywIdx = (y * cywW + x) * 4;
+                        if (cywImg[cywIdx] > 128) {
+                            var cywHue = 140 + Math.random() * 50;
+                            cywNewParts.push({
+                                tx: x,
+                                ty: y,
+                                x: Math.random() * cywW,
+                                y: Math.random() * cywH,
+                                vx: 0,
+                                vy: 0,
+                                size: cywStep,
+                                hue: cywHue,
+                                sat: 80 + Math.random() * 20,
+                                light: 55 + Math.random() * 25
+                            });
+                        }
+                    }
+                }
+
+                if (cywParticles.length === 0) {
+                    cywParticles = cywNewParts;
+                } else {
+                    var cywOldMap = {};
+                    cywParticles.forEach(function (p) {
+                        var cywKey = Math.round(p.tx) + "," + Math.round(p.ty);
+                        cywOldMap[cywKey] = p;
+                    });
+                    cywParticles = cywNewParts.map(function (np) {
+                        var cywK = Math.round(np.tx) + "," + Math.round(np.ty);
+                        if (cywOldMap[cywK]) {
+                            np.x = cywOldMap[cywK].x;
+                            np.y = cywOldMap[cywK].y;
+                            np.vx = cywOldMap[cywK].vx;
+                            np.vy = cywOldMap[cywK].vy;
+                        }
+                        return np;
                     });
                 }
             }
 
-            function cyw_resize() {
-                var cywRect = cywCanvas.parentElement.getBoundingClientRect();
-                cywCanvas.width = cywRect.width;
-                cywCanvas.height = 420;
-                cywStreamH = cywCanvas.height + 200;
-                cywCtx.fillStyle = "#0a0a1a";
-                cywCtx.fillRect(0, 0, cywCanvas.width, cywCanvas.height);
-                cyw_initStreams();
+            function cyw_forceToTarget(p) {
+                var cywAx = (p.tx - p.x) * 0.02;
+                var cywAy = (p.ty - p.y) * 0.02;
+                p.vx += cywAx;
+                p.vy += cywAy;
+            }
+
+            function cyw_applyMouse(p) {
+                if (!cywMouse.active) return;
+                var cywDx = p.x - cywMouse.x;
+                var cywDy = p.y - cywMouse.y;
+                var cywDist = Math.sqrt(cywDx * cywDx + cywDy * cywDy);
+                var cywRadius = 120;
+                if (cywDist > cywRadius) return;
+
+                var cywForce = (cywRadius - cywDist) / cywRadius;
+                cywForce = cywForce * cywForce;
+
+                if (cywMode === "repel") {
+                    p.vx += cywDx / cywDist * cywForce * 3;
+                    p.vy += cywDy / cywDist * cywForce * 3;
+                } else if (cywMode === "attract") {
+                    p.vx -= cywDx / cywDist * cywForce * 2;
+                    p.vy -= cywDy / cywDist * cywForce * 2;
+                } else if (cywMode === "follow") {
+                    p.vx -= cywDx / cywDist * cywForce * 4;
+                    p.vy -= cywDy / cywDist * cywForce * 4;
+                }
+            }
+
+            function cyw_update() {
+                cywParticles.forEach(function (p) {
+                    if (cywMode !== "follow") {
+                        cyw_forceToTarget(p);
+                    } else {
+                        p.vx *= 0.9;
+                        p.vy *= 0.9;
+                    }
+
+                    cyw_applyMouse(p);
+
+                    p.vx *= 0.86;
+                    p.vy *= 0.86;
+                    p.x += p.vx;
+                    p.y += p.vy;
+                });
             }
 
             function cyw_draw() {
-                if (!cywRunning) {
-                    cywAnimId = requestAnimationFrame(cyw_draw);
-                    return;
-                }
+                cywCtx.fillStyle = "rgba(13, 17, 23, 0.25)";
+                cywCtx.fillRect(0, 0, cywW, cywH);
 
-                cywCtx.fillStyle = "rgba(10, 10, 26, 0.1)";
-                cywCtx.fillRect(0, 0, cywCanvas.width, cywCanvas.height);
-
-                cywCtx.font = cywFontSize + "px 'Microsoft YaHei', Consolas, monospace";
-                cywCtx.textBaseline = "top";
-
-                cywStreams.forEach(function (s) {
-                    for (var j = 0; j < s.chars.length; j++) {
-                        var cywIdx = (s.offset + j) % s.chars.length;
-                        var cywChar = s.chars[cywIdx];
-                        var cywY = s.y + j * cywFontSize;
-
-                        if (cywY < -cywFontSize || cywY > cywCanvas.height) continue;
-
-                        if (j === s.chars.length - 1) {
-                            cywCtx.fillStyle = "#ffffff";
-                            cywCtx.shadowColor = cywColor;
-                            cywCtx.shadowBlur = 8;
-                        } else if (j === s.chars.length - 2) {
-                            cywCtx.fillStyle = cywColor;
-                            cywCtx.shadowBlur = 0;
-                        } else {
-                            var cywAlpha = 1 - j / s.chars.length;
-                            cywCtx.fillStyle = cywColor;
-                            cywCtx.globalAlpha = cywAlpha * 0.7;
-                            cywCtx.shadowBlur = 0;
-                        }
-
-                        cywCtx.fillText(cywChar, s.x, cywY);
-                    }
-                    cywCtx.globalAlpha = 1;
-                    cywCtx.shadowBlur = 0;
-
-                    s.y += s.speed;
-                    if (s.y > cywStreamH) {
-                        s.y = -cywStreamH * 0.3;
-                        s.text = cywLines[Math.floor(Math.random() * cywLines.length)];
-                        s.chars = s.text.split("");
-                        s.offset = Math.floor(Math.random() * s.chars.length);
-                        s.speed = cywSpeed * (0.7 + Math.random() * 0.8);
-                    }
+                cywParticles.forEach(function (p) {
+                    var cywColor = "hsl(" + p.hue + "," + p.sat + "%," + p.light + "%)";
+                    cywCtx.fillStyle = cywColor;
+                    cywCtx.fillRect(p.x, p.y, p.size - 1, p.size - 1);
                 });
 
-                cywAnimId = requestAnimationFrame(cyw_draw);
+                cyw_update();
+                requestAnimationFrame(cyw_draw);
             }
 
-            cywPauseBtn.addEventListener("click", function () {
-                cywRunning = !cywRunning;
-                cywPauseBtn.textContent = cywRunning ? "⏸ 暂停" : "▶ 继续";
-                cywPauseBtn.className = "cyw-btn " + (cywRunning ? "cyw-pause" : "");
+            function cyw_explode() {
+                cywParticles.forEach(function (p) {
+                    var cywAng = Math.random() * Math.PI * 2;
+                    var cywSpeed = 2 + Math.random() * 5;
+                    p.vx = Math.cos(cywAng) * cywSpeed;
+                    p.vy = Math.sin(cywAng) * cywSpeed;
+                });
+                cywExploding = true;
+                setTimeout(function () { cywExploding = false; }, 1500);
+            }
+
+            document.getElementById("cyw_btRepel").addEventListener("click", function () {
+                cywMode = "repel";
+                cyw_setActive("cyw_btRepel");
+            });
+            document.getElementById("cyw_btAttract").addEventListener("click", function () {
+                cywMode = "attract";
+                cyw_setActive("cyw_btAttract");
+            });
+            document.getElementById("cyw_btFollow").addEventListener("click", function () {
+                cywMode = "follow";
+                cyw_setActive("cyw_btFollow");
+            });
+            document.getElementById("cyw_btExplode").addEventListener("click", function () {
+                cyw_explode();
+                cywMode = "repel";
+                cyw_setActive("cyw_btRepel");
             });
 
-            cywResetBtn.addEventListener("click", function () {
-                cyw_resize();
-                cywSpeed = parseFloat(cywSpeedSel.value);
-                cywColor = cywColorSel.value;
-            });
+            function cyw_setActive(id) {
+                document.querySelectorAll(".cyw-btn").forEach(function (b) { b.classList.remove("cyw-active"); });
+                document.getElementById(id).classList.add("cyw-active");
+            }
 
-            cywSpeedSel.addEventListener("change", function () {
-                cywSpeed = parseFloat(cywSpeedSel.value);
+            window.addEventListener("mousemove", function (e) {
+                cywMouse.x = e.clientX;
+                cywMouse.y = e.clientY;
+                cywMouse.active = true;
             });
-
-            cywColorSel.addEventListener("change", function () {
-                cywColor = cywColorSel.value;
+            window.addEventListener("mouseleave", function () {
+                cywMouse.active = false;
+                cywMouse.x = -9999;
+                cywMouse.y = -9999;
             });
+            window.addEventListener("resize", cyw_resize);
 
             cyw_resize();
             cyw_draw();
-            window.addEventListener("resize", cyw_resize);
         })();
     </script>
 </body>
