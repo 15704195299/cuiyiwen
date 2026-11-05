@@ -57,13 +57,16 @@
             flex: 1;
             display: grid;
             grid-template-columns: 1fr 1.6fr 1fr;
+            grid-template-rows: 1fr;
             gap: 10px;
             min-height: 0;
+            height: 0;
         }
         .cyw-col {
             display: grid;
             gap: 10px;
             min-height: 0;
+            height: 100%;
         }
         .cyw-col-left { grid-template-rows: 1.2fr 1fr 1fr; }
         .cyw-col-mid { grid-template-rows: 2fr 1fr; }
@@ -106,7 +109,7 @@
             font-size: 10px; color: #00b4ff; padding: 1px 6px;
             border: 1px solid rgba(0,180,255,0.3); border-radius: 2px;
         }
-        .cyw-chart { flex: 1; width: 100%; min-height: 0; }
+        .cyw-chart { flex: 1; width: 100%; min-height: 0; height: 0; position: relative; }
 
         /* ======== 顶部指标条 ======== */
         .cyw-kpi {
@@ -142,6 +145,7 @@
         .cyw-mid-lower {
             display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
             min-height: 0;
+            height: 100%;
         }
 
         .cyw-home-link {
@@ -295,9 +299,13 @@
             });
 
         function cyw_initCharts() {
+            console.log("[DEBUG] cyw_initCharts start, ECharts version:", echarts.version);
+            try {
 
             // ============ 中列上方：中国地图散点 ============
-            var cyw_map = echarts.init(document.getElementById("cyw_map"));
+            var _mapEl = document.getElementById("cyw_map");
+            console.log("[DEBUG] cyw_map container size:", _mapEl.offsetWidth, "x", _mapEl.offsetHeight);
+            var cyw_map = echarts.init(_mapEl);
             var cyw_provinces = [
                 { name: "北京", value: [116.46, 39.92, 1823] },
                 { name: "上海", value: [121.48, 31.22, 2105] },
@@ -613,6 +621,10 @@
 
                 cyw_c5.setOption({ series: [{ data: [{ value: Math.floor(700 + Math.random() * 400) }] }] });
             }, 3000);
+
+            } catch (err) {
+                console.error("[cyw_initCharts] 初始化报错:", err);
+            }
         }
 
     })();
