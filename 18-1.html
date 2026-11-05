@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <!-- 姓名：崔溢文，日期：2026-11-05，功能名称：Canvas 文字下落动画 -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>18-1 Canvas 文字下落</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            background: #0a0a1a;
+            color: #22304a;
+            min-height: 100vh;
+            padding: 20px 16px;
+        }
+        .cyw-wrap { max-width: 1000px; margin: 0 auto; }
+        .cyw-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1fa0e0;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        .cyw-panel {
+            background: #14142a;
+            border-radius: 8px;
+            padding: 14px 18px;
+            margin-bottom: 14px;
+            border: 1px solid #2a2a4a;
+        }
+        .cyw-panel h2 {
+            font-size: 14px;
+            color: #5ecdf3;
+            margin-bottom: 8px;
+        }
+        .cyw-panel p {
+            font-size: 12px;
+            color: #aaa;
+            line-height: 1.8;
+        }
+        .cyw-panel code {
+            background: #2a2a4a;
+            color: #a6e22e;
+            padding: 1px 6px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-family: Consolas, "Courier New", monospace;
+        }
+        .cyw-canvas-box {
+            background: #0a0a1a;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,255,100,0.1);
+            margin-bottom: 14px;
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            height: 380px;
+        }
+        .cyw-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            padding: 12px 18px;
+            background: #14142a;
+            border-radius: 8px;
+            border: 1px solid #2a2a4a;
+            margin-bottom: 14px;
+        }
+        .cyw-btn {
+            padding: 7px 18px;
+            background: #1fa0e0;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .cyw-btn:hover { background: #1890cc; }
+        .cyw-btn.cyw-pause { background: #fa8c16; }
+        .cyw-btn.cyw-pause:hover { background: #d46b08; }
+        .cyw-btn.cyw-reset { background: #999; }
+        .cyw-btn.cyw-reset:hover { background: #777; }
+        .cyw-label {
+            font-size: 12px;
+            color: #888;
+            align-self: center;
+        }
+        .cyw-home { text-align: center; margin-top: 14px; }
+        .cyw-home a {
+            display: inline-block;
+            padding: 8px 24px;
+            background: #1fa0e0;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="cyw-wrap">
+        <div class="cyw-title">Canvas 文字下落动画 —— 黑客帝国风</div>
+
+        <div class="cyw-panel">
+            <h2>🎨 技术要点</h2>
+            <p>
+                使用 <code>canvas.getContext("2d")</code> 获取 2D 绘图上下文，<br>
+                每列有一个 <code>y</code> 坐标，循环 <code>requestAnimationFrame</code> 让它不断增加实现下落，<br>
+                底部留一段渐隐（半透明黑色矩形覆盖）制造拖尾效果，顶部新字符是亮绿色，其余暗绿色。
+            </p>
+        </div>
+
+        <div class="cyw-canvas-box">
+            <canvas id="cyw_canvas"></canvas>
+        </div>
+
+        <div class="cyw-controls">
+            <button id="cyw_pauseBtn" class="cyw-btn cyw-pause">⏸ 暂停</button>
+            <button id="cyw_resetBtn" class="cyw-btn cyw-reset">🔄 重置</button>
+            <span class="cyw-label">速度：</span>
+            <select id="cyw_speed" class="cyw-btn" style="padding:7px 12px">
+                <option value="0.5">慢</option>
+                <option value="1" selected>正常</option>
+                <option value="2">快</option>
+                <option value="4">极快</option>
+            </select>
+            <span class="cyw-label">颜色：</span>
+            <select id="cyw_color" class="cyw-btn" style="padding:7px 12px">
+                <option value="#00ff66" selected>经典绿</option>
+                <option value="#1fa0e0">科技蓝</option>
+                <option value="#ff4d4f">警报红</option>
+                <option value="#ffd700">黄金</option>
+                <option value="#ffffff">纯白</option>
+            </select>
+        </div>
+
+        <div class="cyw-home"><a href="./1-1.html">首页</a></div>
+    </div>
+
+    <script>
+        (function () {
+            var cywCanvas = document.getElementById("cyw_canvas");
+            var cywCtx = cywCanvas.getContext("2d");
+            var cywSpeedSel = document.getElementById("cyw_speed");
+            var cywColorSel = document.getElementById("cyw_color");
+            var cywPauseBtn = document.getElementById("cyw_pauseBtn");
+            var cywResetBtn = document.getElementById("cyw_resetBtn");
+
+            var cywCols = 0;
+            var cywDrops = [];
+            var cywFontSize = 18;
+            var cywRunning = true;
+            var cywSpeed = 1;
+            var cywColor = "#00ff66";
+            var cywAnimId = null;
+
+            var cywChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()_+-=[]{};:'\",.<>|/?\\`~中文黑客帝国崔溢文JavaScriptCanvas";
+
+            function cyw_resize() {
+                var cywRect = cywCanvas.parentElement.getBoundingClientRect();
+                cywCanvas.width = cywRect.width;
+                cywCanvas.height = 380;
+                cywCols = Math.floor(cywCanvas.width / cywFontSize);
+                cywDrops = [];
+                for (var i = 0; i < cywCols; i++) {
+                    cywDrops.push(Math.random() * -cywCanvas.height);
+                }
+                cywCtx.fillStyle = "#0a0a1a";
+                cywCtx.fillRect(0, 0, cywCanvas.width, cywCanvas.height);
+            }
+
+            function cyw_draw() {
+                if (!cywRunning) {
+                    cywAnimId = requestAnimationFrame(cyw_draw);
+                    return;
+                }
+
+                cywCtx.fillStyle = "rgba(10, 10, 26, 0.08)";
+                cywCtx.fillRect(0, 0, cywCanvas.width, cywCanvas.height);
+
+                cywCtx.font = cywFontSize + "px Consolas, monospace";
+
+                for (var i = 0; i < cywCols; i++) {
+                    var cywChar = cywChars.charAt(Math.floor(Math.random() * cywChars.length));
+                    var cywX = i * cywFontSize;
+                    var cywY = cywDrops[i] * cywFontSize;
+
+                    cywCtx.fillStyle = cywColor;
+                    cywCtx.fillText(cywChar, cywX, cywY);
+
+                    cywCtx.fillStyle = "#ffffff";
+                    cywCtx.fillText(cywChar, cywX, cywY - cywFontSize);
+
+                    if (cywY > cywCanvas.height && Math.random() > 0.975) {
+                        cywDrops[i] = 0;
+                    }
+                    cywDrops[i] += cywSpeed;
+                }
+
+                cywAnimId = requestAnimationFrame(cyw_draw);
+            }
+
+            cywPauseBtn.addEventListener("click", function () {
+                cywRunning = !cywRunning;
+                cywPauseBtn.textContent = cywRunning ? "⏸ 暂停" : "▶ 继续";
+                cywPauseBtn.className = "cyw-btn " + (cywRunning ? "cyw-pause" : "");
+            });
+
+            cywResetBtn.addEventListener("click", function () {
+                cyw_resize();
+                cywSpeed = parseFloat(cywSpeedSel.value);
+                cywColor = cywColorSel.value;
+            });
+
+            cywSpeedSel.addEventListener("change", function () {
+                cywSpeed = parseFloat(cywSpeedSel.value);
+            });
+
+            cywColorSel.addEventListener("change", function () {
+                cywColor = cywColorSel.value;
+            });
+
+            cyw_resize();
+            cyw_draw();
+            window.addEventListener("resize", cyw_resize);
+        })();
+    </script>
+</body>
+</html>

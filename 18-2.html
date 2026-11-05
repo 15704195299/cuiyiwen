@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <!-- 姓名：崔溢文，日期：2026-11-05，功能名称：Canvas 绘制电商系统架构图 -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>18-2 电商系统架构图</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            background: #f4f6f9;
+            color: #22304a;
+            min-height: 100vh;
+            padding: 20px 16px;
+        }
+        .cyw-wrap { max-width: 1200px; margin: 0 auto; }
+        .cyw-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1fa0e0;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        .cyw-panel {
+            background: #fff;
+            border-radius: 8px;
+            padding: 14px 18px;
+            margin-bottom: 14px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+        }
+        .cyw-panel h2 {
+            font-size: 14px;
+            color: #1fa0e0;
+            margin-bottom: 8px;
+        }
+        .cyw-panel p {
+            font-size: 12px;
+            color: #666;
+            line-height: 1.8;
+        }
+        .cyw-panel code {
+            background: #e6f7ff;
+            color: #1fa0e0;
+            padding: 1px 6px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-family: Consolas, "Courier New", monospace;
+        }
+        .cyw-canvas-box {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            margin-bottom: 14px;
+            overflow: auto;
+            max-height: 80vh;
+        }
+        canvas {
+            display: block;
+        }
+        .cyw-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px 18px;
+            padding: 12px 18px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+            margin-bottom: 14px;
+        }
+        .cyw-legend-item {
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+            color: #555;
+        }
+        .cyw-legend-color {
+            width: 28px;
+            height: 14px;
+            border-radius: 3px;
+            margin-right: 6px;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+        .cyw-home { text-align: center; margin-top: 14px; }
+        .cyw-home a {
+            display: inline-block;
+            padding: 8px 24px;
+            background: #1fa0e0;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="cyw-wrap">
+        <div class="cyw-title">Canvas 绘制电商系统架构图</div>
+
+        <div class="cyw-panel">
+            <h2>🏗️ 架构分层</h2>
+            <p>
+                使用 Canvas 2D 绘制分层架构图，5 层自上而下：<br>
+                ① <code>客户端层</code>（Web / APP / 小程序） → ② <code>CDN + 负载均衡</code> → ③ <code>微服务业务层</code>（网关 / 商品 / 订单 / 用户 / 支付 / 搜索）→ ④ <code>数据存储层</code>（MySQL / Redis / MongoDB / ElasticSearch）→ ⑤ <code>基础设施层</code>（Docker / K8s / 监控）
+            </p>
+        </div>
+
+        <div class="cyw-legend">
+            <div class="cyw-legend-item"><div class="cyw-legend-color" style="background:#e6f7ff"></div>客户端层</div>
+            <div class="cyw-legend-item"><div class="cyw-legend-color" style="background:#f6ffed"></div>CDN / 网关层</div>
+            <div class="cyw-legend-item"><div class="cyw-legend-color" style="background:#fff7e6"></div>微服务业务层</div>
+            <div class="cyw-legend-item"><div class="cyw-legend-color" style="background:#f9f0ff"></div>数据存储层</div>
+            <div class="cyw-legend-item"><div class="cyw-legend-color" style="background:#fff1f0"></div>基础设施层</div>
+        </div>
+
+        <div class="cyw-canvas-box">
+            <canvas id="cyw_canvas"></canvas>
+        </div>
+
+        <div class="cyw-home"><a href="./1-1.html">首页</a></div>
+    </div>
+
+    <script>
+        (function () {
+            var cywCanvas = document.getElementById("cyw_canvas");
+            var cywCtx = cywCanvas.getContext("2d");
+
+            var cywPadding = 40;
+            var cywBoxH = 52;
+            var cywGapY = 42;
+            var cywBoxW = 150;
+            var cywGapX = 18;
+            var cywLayerPad = 16;
+
+            var cywLayers = [
+                {
+                    name: "① 客户端层",
+                    x: 60,
+                    y: 40,
+                    items: [
+                        { name: "Web 浏览器", icon: "🌐" },
+                        { name: "iOS APP", icon: "📱" },
+                        { name: "Android APP", icon: "🤖" },
+                        { name: "微信小程序", icon: "💬" },
+                        { name: "PC 客户端", icon: "💻" }
+                    ],
+                    bg: "#e6f7ff",
+                    border: "#91d5ff",
+                    text: "#1890ff"
+                },
+                {
+                    name: "② CDN + 负载均衡",
+                    items: [
+                        { name: "静态资源 CDN", icon: "🖼️" },
+                        { name: "Nginx 反向代理", icon: "🔀" },
+                        { name: "F5 / SLB", icon: "⚖️" },
+                        { name: "SSL 证书", icon: "🔒" }
+                    ],
+                    bg: "#f6ffed",
+                    border: "#b7eb8f",
+                    text: "#52c41a"
+                },
+                {
+                    name: "③ 微服务业务层 (Spring Cloud / Dubbo)",
+                    items: [
+                        { name: "API 网关", icon: "🚪" },
+                        { name: "商品服务", icon: "📦" },
+                        { name: "订单服务", icon: "🛒" },
+                        { name: "用户服务", icon: "👤" },
+                        { name: "支付服务", icon: "💰" },
+                        { name: "搜索服务", icon: "🔍" },
+                        { name: "购物车", icon: "🛑" },
+                        { name: "消息队列", icon: "📨" }
+                    ],
+                    bg: "#fff7e6",
+                    border: "#ffd591",
+                    text: "#fa8c16"
+                },
+                {
+                    name: "④ 数据存储层",
+                    items: [
+                        { name: "MySQL 主从", icon: "🗄️" },
+                        { name: "Redis 缓存", icon: "⚡" },
+                        { name: "MongoDB", icon: "🍃" },
+                        { name: "ElasticSearch", icon: "🔎" },
+                        { name: "HDFS / OSS", icon: "☁️" }
+                    ],
+                    bg: "#f9f0ff",
+                    border: "#d3adf7",
+                    text: "#722ed1"
+                },
+                {
+                    name: "⑤ 基础设施层",
+                    items: [
+                        { name: "Docker 容器", icon: "🐳" },
+                        { name: "Kubernetes", icon: "⚙️" },
+                        { name: "ZooKeeper", icon: "🌳" },
+                        { name: "Prometheus 监控", icon: "📊" },
+                        { name: "ELK 日志", icon: "📋" }
+                    ],
+                    bg: "#fff1f0",
+                    border: "#ffa39e",
+                    text: "#f5222d"
+                }
+            ];
+
+            function cyw_calcLayout() {
+                var cywMaxCols = 8;
+                var cywTotalW = 0;
+                var cywHeights = [];
+
+                cywLayers.forEach(function (layer) {
+                    var cywCols = Math.min(layer.items.length, cywMaxCols);
+                    var cywRows = Math.ceil(layer.items.length / cywMaxCols);
+                    var cywRowW = cywCols * cywBoxW + (cywCols - 1) * cywGapX;
+                    cywTotalW = Math.max(cywTotalW, cywRowW);
+                    cywHeights.push(cywRows * cywBoxH + (cywRows - 1) * cywGapY + cywLayerPad * 2 + 36);
+                });
+
+                cywCanvas.width = cywTotalW + cywPadding * 2 + cywMaxCols * cywGapX;
+                cywCanvas.height = cywHeights.reduce(function (a, b) { return a + b; }, 0) + cywGapY * 4 + cywPadding * 2;
+
+                var cywY = cywPadding;
+                cywLayers.forEach(function (layer, idx) {
+                    layer.rows = Math.ceil(layer.items.length / cywMaxCols);
+                    layer.cols = Math.min(layer.items.length, cywMaxCols);
+                    var cywRowW = layer.cols * cywBoxW + (layer.cols - 1) * cywGapX;
+                    layer.x = Math.floor((cywCanvas.width - cywRowW) / 2);
+                    layer.y = cywY;
+                    layer.h = cywHeights[idx];
+                    cywY += layer.h + cywGapY;
+                });
+            }
+
+            function cyw_drawRoundRect(x, y, w, h, r, fill, stroke, lineW) {
+                cywCtx.beginPath();
+                cywCtx.moveTo(x + r, y);
+                cywCtx.lineTo(x + w - r, y);
+                cywCtx.quadraticCurveTo(x + w, y, x + w, y + r);
+                cywCtx.lineTo(x + w, y + h - r);
+                cywCtx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+                cywCtx.lineTo(x + r, y + h);
+                cywCtx.quadraticCurveTo(x, y + h, x, y + h - r);
+                cywCtx.lineTo(x, y + r);
+                cywCtx.quadraticCurveTo(x, y, x + r, y);
+                cywCtx.closePath();
+                if (fill) { cywCtx.fillStyle = fill; cywCtx.fill(); }
+                if (stroke) { cywCtx.strokeStyle = stroke; cywCtx.lineWidth = lineW || 1; cywCtx.stroke(); }
+            }
+
+            function cyw_arrow(x1, y1, x2, y2, color, dashed) {
+                cywCtx.save();
+                cywCtx.strokeStyle = color;
+                cywCtx.fillStyle = color;
+                cywCtx.lineWidth = 1.5;
+                if (dashed) cywCtx.setLineDash([6, 4]);
+
+                cywCtx.beginPath();
+                cywCtx.moveTo(x1, y1);
+                cywCtx.lineTo(x2, y2);
+                cywCtx.stroke();
+
+                var cywAngle = Math.atan2(y2 - y1, x2 - x1);
+                var cywSize = 8;
+                cywCtx.setLineDash([]);
+                cywCtx.beginPath();
+                cywCtx.moveTo(x2, y2);
+                cywCtx.lineTo(x2 - cywSize * Math.cos(cywAngle - Math.PI / 6), y2 - cywSize * Math.sin(cywAngle - Math.PI / 6));
+                cywCtx.lineTo(x2 - cywSize * Math.cos(cywAngle + Math.PI / 6), y2 - cywSize * Math.sin(cywAngle + Math.PI / 6));
+                cywCtx.closePath();
+                cywCtx.fill();
+                cywCtx.restore();
+            }
+
+            function cyw_draw() {
+                cywCtx.clearRect(0, 0, cywCanvas.width, cywCanvas.height);
+
+                cywLayers.forEach(function (layer, idx) {
+                    cyw_drawRoundRect(layer.x - cywLayerPad, layer.y,
+                        layer.cols * cywBoxW + (layer.cols - 1) * cywGapX + cywLayerPad * 2,
+                        layer.h, 10, layer.bg, layer.border, 1.5);
+
+                    cywCtx.font = "bold 14px 'Microsoft YaHei', sans-serif";
+                    cywCtx.fillStyle = layer.text;
+                    cywCtx.textAlign = "center";
+                    cywCtx.fillText(layer.name, cywCanvas.width / 2, layer.y + 22);
+
+                    layer.items.forEach(function (item, i) {
+                        var cywRow = Math.floor(i / layer.cols);
+                        var cywCol = i % layer.cols;
+                        var cywX = layer.x + cywCol * (cywBoxW + cywGapX);
+                        var cywY = layer.y + 36 + cywLayerPad + cywRow * (cywBoxH + cywGapY);
+
+                        cyw_drawRoundRect(cywX, cywY, cywBoxW, cywBoxH, 6, "#ffffff", layer.border, 1);
+
+                        cywCtx.font = "20px sans-serif";
+                        cywCtx.textAlign = "center";
+                        cywCtx.fillStyle = layer.text;
+                        cywCtx.fillText(item.icon, cywX + cywBoxW / 2, cywY + 24);
+
+                        cywCtx.font = "12px 'Microsoft YaHei', sans-serif";
+                        cywCtx.fillStyle = "#333";
+                        cywCtx.fillText(item.name, cywX + cywBoxW / 2, cywY + 42);
+
+                        item._cx = cywX + cywBoxW / 2;
+                        item._cy = cywY + cywBoxH;
+                    });
+
+                    layer._centerY = layer.y + layer.h;
+                });
+
+                for (var k = 0; k < cywLayers.length - 1; k++) {
+                    var cywTop = cywLayers[k];
+                    var cywBot = cywLayers[k + 1];
+                    var cywMidY = (cywTop._centerY + cywBot.y) / 2;
+
+                    cyw_arrow(cywCanvas.width / 2 - 40, cywTop._centerY, cywCanvas.width / 2 - 40, cywMidY, cywTop.border, true);
+                    cyw_arrow(cywCanvas.width / 2 + 40, cywMidY, cywCanvas.width / 2 + 40, cywBot.y, cywBot.border, true);
+                    cyw_arrow(cywCanvas.width / 2, cywMidY, cywCanvas.width / 2, cywMidY, "#ccc", false);
+                }
+            }
+
+            cyw_calcLayout();
+            cyw_draw();
+        })();
+    </script>
+</body>
+</html>
