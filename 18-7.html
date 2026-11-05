@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <!-- 姓名：崔溢文，日期：2026-11-05，功能名称：Three.js 两个 3D 可视化图表 -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>18-7 Three.js 3D 可视化图表</title>
+    <script src="./cdn/three.min.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 28px 20px 40px;
+            min-height: 100vh;
+        }
+        .cyw-wrap { max-width: 1280px; margin: 0 auto; }
+        .cyw-title { text-align: center; margin-bottom: 6px; }
+        .cyw-title h1 { font-size: 22px; font-weight: 700; letter-spacing: 3px; color: #f1f5f9; }
+        .cyw-title .cyw-en { font-size: 12px; color: #64748b; letter-spacing: 4px; margin-top: 4px; }
+        .cyw-divider { width: 60px; height: 2px; background: linear-gradient(90deg, transparent, #06b6d4, transparent); margin: 14px auto 22px; }
+        .cyw-meta { text-align: center; font-size: 12px; color: #64748b; margin-bottom: 24px; }
+
+        .cyw-card {
+            background: #1e293b; border-radius: 10px;
+            border: 1px solid #334155; margin-bottom: 22px; overflow: hidden;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+        }
+        .cyw-card-head {
+            padding: 14px 22px; border-bottom: 1px solid #334155;
+            display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+        }
+        .cyw-card-title { display: flex; align-items: center; gap: 12px; }
+        .cyw-card-title .cyw-tag {
+            font-size: 10px; padding: 2px 8px; border-radius: 10px;
+            font-weight: 600; letter-spacing: 0.5px;
+        }
+        .cyw-tag-globe { background: #083344; color: #06b6d4; }
+        .cyw-tag-bars { background: #431407; color: #fb923c; }
+        .cyw-card-title h2 { font-size: 15px; font-weight: 600; color: #f1f5f9; }
+        .cyw-card-desc { font-size: 11px; color: #64748b; }
+
+        .cyw-canvas-wrap {
+            width: 100%; height: 520px; position: relative; background: #020617;
+        }
+        .cyw-canvas-wrap canvas { display: block; width: 100% !important; height: 100% !important; }
+        .cyw-hint {
+            position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%);
+            font-size: 11px; color: #64748b; letter-spacing: 1px;
+            pointer-events: none; user-select: none;
+            background: rgba(2,6,23,0.7); padding: 4px 14px; border-radius: 10px;
+            border: 1px solid #1e293b;
+        }
+        .cyw-controls {
+            position: absolute; top: 14px; right: 14px;
+            display: flex; gap: 6px;
+        }
+        .cyw-ctrl-btn {
+            padding: 5px 12px; font-size: 11px; border-radius: 4px;
+            background: rgba(30,41,59,0.8); border: 1px solid #334155;
+            color: #cbd5e1; cursor: pointer; font-family: inherit;
+            transition: all 0.15s;
+        }
+        .cyw-ctrl-btn:hover { background: #334155; color: #fff; }
+        .cyw-ctrl-btn.cyw-on { background: #06b6d4; border-color: #06b6d4; color: #020617; font-weight: 600; }
+
+        .cyw-home { text-align: center; margin-top: 22px; }
+        .cyw-home a {
+            display: inline-block; padding: 8px 26px;
+            background: #06b6d4; color: #020617; text-decoration: none;
+            border-radius: 20px; font-size: 13px; letter-spacing: 1px; font-weight: 600;
+            transition: background 0.15s;
+        }
+        .cyw-home a:hover { background: #22d3ee; }
+    </style>
+</head>
+<body>
+    <div class="cyw-wrap">
+        <div class="cyw-title">
+            <h1>Three.js 3D 数据可视化</h1>
+            <div class="cyw-en">WebGL Interactive 3D Graphics</div>
+        </div>
+        <div class="cyw-divider"></div>
+        <div class="cyw-meta">崔溢文 · 18-7 · three.js 0.160 · 本地 CDN · 鼠标拖拽旋转 / 滚轮缩放</div>
+
+        <!-- ========== Scene 1: 粒子地球 ========== -->
+        <div class="cyw-card">
+            <div class="cyw-card-head">
+                <div class="cyw-card-title">
+                    <span class="cyw-tag cyw-tag-globe">PARTICLE GLOBE</span>
+                    <h2>粒子星球 / Particle Globe</h2>
+                </div>
+                <div class="cyw-card-desc">5000 粒子 Points · BufferGeometry · 发光 Shader</div>
+            </div>
+            <div class="cyw-canvas-wrap" id="cyw_scene1">
+                <div class="cyw-controls">
+                    <button class="cyw-ctrl-btn cyw-on" id="cyw_auto1">自动旋转</button>
+                </div>
+                <div class="cyw-hint">🖱 拖拽旋转 · 滚轮缩放</div>
+            </div>
+        </div>
+
+        <!-- ========== Scene 2: 3D 柱状图 ========== -->
+        <div class="cyw-card">
+            <div class="cyw-card-head">
+                <div class="cyw-card-title">
+                    <span class="cyw-tag cyw-tag-bars">3D BAR</span>
+                    <h2>科技公司市值 3D 柱状图 / 3D Bar Chart</h2>
+                </div>
+                <div class="cyw-card-desc">BoxGeometry · 多材质渐变 · 动画升降</div>
+            </div>
+            <div class="cyw-canvas-wrap" id="cyw_scene2">
+                <div class="cyw-controls">
+                    <button class="cyw-ctrl-btn cyw-on" id="cyw_auto2">自动旋转</button>
+                    <button class="cyw-ctrl-btn" id="cyw_anim2">升降动画</button>
+                </div>
+                <div class="cyw-hint">🖱 拖拽旋转 · 滚轮缩放</div>
+            </div>
+        </div>
+
+        <div class="cyw-home"><a href="./1-1.html">← 返回首页</a></div>
+    </div>
+
+    <script>
+    (function () {
+
+        // ========== 通用：简易 Orbit 控制器 ==========
+        function cyw_createOrbit(cyw_canvas, cyw_camera, cyw_target) {
+            var cyw_state = {
+                isDown: false,
+                lastX: 0, lastY: 0,
+                rotX: 0, rotY: 0,
+                dist: 4.5,
+                autoRotate: true,
+                autoTilt: 0.3
+            };
+            cyw_canvas.addEventListener("mousedown", function (e) {
+                cyw_state.isDown = true; cyw_state.lastX = e.clientX; cyw_state.lastY = e.clientY;
+            });
+            window.addEventListener("mouseup", function () { cyw_state.isDown = false; });
+            window.addEventListener("mousemove", function (e) {
+                if (!cyw_state.isDown) return;
+                var dx = e.clientX - cyw_state.lastX;
+                var dy = e.clientY - cyw_state.lastY;
+                cyw_state.lastX = e.clientX; cyw_state.lastY = e.clientY;
+                cyw_state.rotY += dx * 0.008;
+                cyw_state.rotX += dy * 0.008;
+                cyw_state.rotX = Math.max(-1.3, Math.min(1.3, cyw_state.rotX));
+            });
+            cyw_canvas.addEventListener("wheel", function (e) {
+                e.preventDefault();
+                cyw_state.dist += e.deltaY * 0.003;
+                cyw_state.dist = Math.max(1.5, Math.min(12, cyw_state.dist));
+            }, { passive: false });
+            function cyw_update() {
+                if (cyw_state.autoRotate && !cyw_state.isDown) cyw_state.rotY += 0.004;
+                var cx = cyw_dist * Math.cos(cyw_state.rotX) * Math.sin(cyw_state.rotY);
+                var cy = cyw_dist * Math.sin(cyw_state.rotX);
+                var cz = cyw_dist * Math.cos(cyw_state.rotX) * Math.cos(cyw_state.rotY);
+                cyw_camera.position.set(cx, cy, cz);
+                cyw_camera.lookAt(cyw_target);
+            }
+            return { state: cyw_state, update: cyw_update };
+        }
+
+        // ============================================================
+        // SCENE 1 — 粒子星球
+        // ============================================================
+        (function () {
+            var cyw_wrap = document.getElementById("cyw_scene1");
+            var cyw_w = cyw_wrap.clientWidth;
+            var cyw_h = cyw_wrap.clientHeight;
+
+            var cyw_scene = new THREE.Scene();
+            cyw_scene.background = new THREE.Color(0x020617);
+
+            var cyw_camera = new THREE.PerspectiveCamera(60, cyw_w / cyw_h, 0.1, 1000);
+            cyw_camera.position.set(0, 0.5, 4.5);
+
+            var cyw_renderer = new THREE.WebGLRenderer({ antialias: true });
+            cyw_renderer.setPixelRatio(window.devicePixelRatio);
+            cyw_renderer.setSize(cyw_w, cyw_h);
+            cyw_wrap.insertBefore(cyw_renderer.domElement, cyw_wrap.firstChild);
+
+            // 星空背景
+            var cyw_starGeo = new THREE.BufferGeometry();
+            var cyw_starCount = 800;
+            var cyw_starPos = new Float32Array(cyw_starCount * 3);
+            for (var i = 0; i < cyw_starCount; i++) {
+                cyw_starPos[i * 3] = (Math.random() - 0.5) * 80;
+                cyw_starPos[i * 3 + 1] = (Math.random() - 0.5) * 80;
+                cyw_starPos[i * 3 + 2] = (Math.random() - 0.5) * 80;
+            }
+            cyw_starGeo.setAttribute("position", new THREE.BufferAttribute(cyw_starPos, 3));
+            var cyw_starMat = new THREE.PointsMaterial({ color: 0x64748b, size: 0.04, transparent: true, opacity: 0.6 });
+            var cyw_stars = new THREE.Points(cyw_starGeo, cyw_starMat);
+            cyw_scene.add(cyw_stars);
+
+            // 粒子球 —— 在球面上均匀分布 5000 个点
+            var cyw_particleCount = 5000;
+            var cyw_radius = 1.5;
+            var cyw_pGeo = new THREE.BufferGeometry();
+            var cyw_positions = new Float32Array(cyw_particleCount * 3);
+            var cyw_colors = new Float32Array(cyw_particleCount * 3);
+            var cyw_sizes = new Float32Array(cyw_particleCount);
+
+            for (var j = 0; j < cyw_particleCount; j++) {
+                // Fibonacci sphere 均匀采样
+                var phi = Math.acos(-1 + (2 * j) / cyw_particleCount);
+                var theta = Math.sqrt(cyw_particleCount * Math.PI) * phi;
+                var cywR = cyw_radius + (Math.random() - 0.5) * 0.04;
+                cyw_positions[j * 3] = cywR * Math.cos(theta) * Math.sin(phi);
+                cyw_positions[j * 3 + 1] = cywR * Math.sin(theta) * Math.sin(phi);
+                cyw_positions[j * 3 + 2] = cywR * Math.cos(phi);
+
+                // 颜色：大部分青色，少量紫色点缀
+                var cywHue = Math.random() > 0.85 ? 0.78 : 0.52 + (Math.random() - 0.5) * 0.06;
+                var c = new THREE.Color().setHSL(cywHue, 0.8, 0.55 + Math.random() * 0.25);
+                cyw_colors[j * 3] = c.r;
+                cyw_colors[j * 3 + 1] = c.g;
+                cyw_colors[j * 3 + 2] = c.b;
+                cyw_sizes[j] = 0.025 + Math.random() * 0.025;
+            }
+            cyw_pGeo.setAttribute("position", new THREE.BufferAttribute(cyw_positions, 3));
+            cyw_pGeo.setAttribute("color", new THREE.BufferAttribute(cyw_colors, 3));
+
+            // 圆形点纹理（Canvas 生成）
+            var cyw_texC = document.createElement("canvas");
+            cyw_texC.width = cyw_texC.height = 64;
+            var cyw_texCtx = cyw_texC.getContext("2d");
+            var cyw_grad = cyw_texCtx.createRadialGradient(32, 32, 0, 32, 32, 32);
+            cyw_grad.addColorStop(0, "rgba(255,255,255,1)");
+            cyw_grad.addColorStop(0.3, "rgba(255,255,255,0.6)");
+            cyw_grad.addColorStop(1, "rgba(255,255,255,0)");
+            cyw_texCtx.fillStyle = cyw_grad;
+            cyw_texCtx.fillRect(0, 0, 64, 64);
+            var cyw_pointTex = new THREE.CanvasTexture(cyw_texC);
+
+            var cyw_pMat = new THREE.PointsMaterial({
+                size: 0.08,
+                vertexColors: true,
+                map: cyw_pointTex,
+                transparent: true,
+                depthWrite: false,
+                blending: THREE.AdditiveBlending,
+                sizeAttenuation: true
+            });
+            var cyw_particles = new THREE.Points(cyw_pGeo, cyw_pMat);
+            cyw_scene.add(cyw_particles);
+
+            // 内部发光球
+            var cyw_innerGeo = new THREE.SphereGeometry(cyw_radius * 0.92, 32, 32);
+            var cyw_innerMat = new THREE.MeshBasicMaterial({
+                color: 0x0a3d4d, transparent: true, opacity: 0.15, side: THREE.BackSide
+            });
+            var cyw_inner = new THREE.Mesh(cyw_innerGeo, cyw_innerMat);
+            cyw_scene.add(cyw_inner);
+
+            // 环
+            var cyw_ringGeo = new THREE.RingGeometry(cyw_radius * 1.35, cyw_radius * 1.38, 128);
+            var cyw_ringMat = new THREE.MeshBasicMaterial({
+                color: 0x06b6d4, transparent: true, opacity: 0.5, side: THREE.DoubleSide
+            });
+            var cyw_ring = new THREE.Mesh(cyw_ringGeo, cyw_ringMat);
+            cyw_ring.rotation.x = Math.PI / 2.3;
+            cyw_scene.add(cyw_ring);
+
+            var cyw_orbit1 = cyw_createOrbit(cyw_renderer.domElement, cyw_camera, new THREE.Vector3(0, 0, 0));
+            document.getElementById("cyw_auto1").addEventListener("click", function () {
+                cyw_orbit1.state.autoRotate = !cyw_orbit1.state.autoRotate;
+                this.classList.toggle("cyw-on", cyw_orbit1.state.autoRotate);
+            });
+
+            function cyw_animate1() {
+                requestAnimationFrame(cyw_animate1);
+                cyw_particles.rotation.y += 0.001;
+                cyw_inner.rotation.y -= 0.0008;
+                cyw_ring.rotation.z += 0.002;
+                cyw_stars.rotation.y += 0.0001;
+                cyw_orbit1.update();
+                cyw_renderer.render(cyw_scene, cyw_camera);
+            }
+            cyw_animate1();
+
+            window.addEventListener("resize", function () {
+                var w1 = cyw_wrap.clientWidth, h1 = cyw_wrap.clientHeight;
+                cyw_camera.aspect = w1 / h1; cyw_camera.updateProjectionMatrix();
+                cyw_renderer.setSize(w1, h1);
+            });
+        })();
+
+        // ============================================================
+        // SCENE 2 — 3D 柱状图
+        // ============================================================
+        (function () {
+            var cyw_wrap2 = document.getElementById("cyw_scene2");
+            var cyw_w2 = cyw_wrap2.clientWidth;
+            var cyw_h2 = cyw_wrap2.clientHeight;
+
+            var cyw_scene2 = new THREE.Scene();
+            cyw_scene2.background = new THREE.Color(0x020617);
+
+            var cyw_camera2 = new THREE.PerspectiveCamera(55, cyw_w2 / cyw_h2, 0.1, 1000);
+            cyw_camera2.position.set(7, 8, 10);
+
+            var cyw_renderer2 = new THREE.WebGLRenderer({ antialias: true });
+            cyw_renderer2.setPixelRatio(window.devicePixelRatio);
+            cyw_renderer2.setSize(cyw_w2, cyw_h2);
+            cyw_wrap2.insertBefore(cyw_renderer2.domElement, cyw_wrap2.firstChild);
+            cyw_renderer2.shadowMap.enabled = true;
+            cyw_renderer2.shadowMap.type = THREE.PCFSoftShadowMap;
+
+            // 光照
+            var cyw_ambient = new THREE.AmbientLight(0xffffff, 0.35);
+            cyw_scene2.add(cyw_ambient);
+            var cyw_dir = new THREE.DirectionalLight(0xffffff, 1.0);
+            cyw_dir.position.set(10, 15, 8);
+            cyw_dir.castShadow = true;
+            cyw_dir.shadow.mapSize.set(1024, 1024);
+            cyw_scene2.add(cyw_dir);
+            var cyw_point = new THREE.PointLight(0x06b6d4, 0.8, 30);
+            cyw_point.position.set(-5, 6, -5);
+            cyw_scene2.add(cyw_point);
+
+            // 地面
+            var cyw_floorGeo = new THREE.PlaneGeometry(20, 20);
+            var cyw_floorMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.9 });
+            var cyw_floor = new THREE.Mesh(cyw_floorGeo, cyw_floorMat);
+            cyw_floor.rotation.x = -Math.PI / 2;
+            cyw_floor.receiveShadow = true;
+            cyw_scene2.add(cyw_floor);
+
+            // 网格辅助
+            var cyw_grid = new THREE.GridHelper(20, 20, 0x334155, 0x1e293b);
+            cyw_grid.position.y = 0.01;
+            cyw_scene2.add(cyw_grid);
+
+            // 数据：科技公司市值（单位：千亿 USD，2024 数据模拟）
+            var cyw_data = [
+                { name: "Apple",     value: 290, hue: 0.08 },
+                { name: "Microsoft", value: 310, hue: 0.58 },
+                { name: "NVIDIA",    value: 220, hue: 0.14 },
+                { name: "Google",    value: 210, hue: 0.32 },
+                { name: "Amazon",    value: 190, hue: 0.02 },
+                { name: "Meta",      value: 130, hue: 0.64 },
+                { name: "Tesla",     value:  85, hue: 0.44 },
+                { name: "Netflix",   value:  45, hue: 0.94 },
+                { name: "Tencent",   value: 380, hue: 0.74 },
+                { name: "Alibaba",   value: 230, hue: 0.50 }
+            ];
+
+            var cyw_bars = [];
+            var cyw_maxVal = 400;
+            var cyw_spacing = 1.8;
+            var cyw_startX = -((cyw_data.length - 1) * cyw_spacing) / 2;
+
+            cyw_data.forEach(function (d, i) {
+                var h = (d.value / cyw_maxVal) * 6 + 0.3;
+                var geo = new THREE.BoxGeometry(1.2, h, 1.2);
+                var col = new THREE.Color().setHSL(d.hue, 0.8, 0.5);
+                var mat = new THREE.MeshStandardMaterial({
+                    color: col, roughness: 0.3, metalness: 0.6,
+                    emissive: col.clone().multiplyScalar(0.15)
+                });
+                var bar = new THREE.Mesh(geo, mat);
+                bar.position.set(cyw_startX + i * cyw_spacing, h / 2, 0);
+                bar.castShadow = true;
+                bar.receiveShadow = true;
+                bar.userData = { targetH: h, baseH: h, name: d.name, value: d.value, hue: d.hue };
+                cyw_scene2.add(bar);
+
+                // 顶部光晕小球
+                var haloGeo = new THREE.SphereGeometry(0.22, 16, 16);
+                var haloMat = new THREE.MeshBasicMaterial({
+                    color: col.clone().offsetHSL(0, 0, 0.1),
+                    transparent: true, opacity: 0.8
+                });
+                var halo = new THREE.Mesh(haloGeo, haloMat);
+                halo.position.set(bar.position.x, h + 0.15, 0);
+                bar.userData.halo = halo;
+                cyw_scene2.add(halo);
+
+                cyw_bars.push(bar);
+            });
+
+            var cyw_orbit2 = cyw_createOrbit(cyw_renderer2.domElement, cyw_camera2, new THREE.Vector3(0, 3, 0));
+
+            var cyw_animOn = false;
+            document.getElementById("cyw_auto2").addEventListener("click", function () {
+                cyw_orbit2.state.autoRotate = !cyw_orbit2.state.autoRotate;
+                this.classList.toggle("cyw-on", cyw_orbit2.state.autoRotate);
+            });
+            document.getElementById("cyw_anim2").addEventListener("click", function () {
+                cyw_animOn = !cyw_animOn;
+                this.classList.toggle("cyw-on", cyw_animOn);
+                if (cyw_animOn) {
+                    cyw_bars.forEach(function (b) { b.userData.t0 = performance.now() + Math.random() * 1000; });
+                } else {
+                    cyw_bars.forEach(function (b) {
+                        b.scale.y = 1;
+                        b.position.y = b.userData.baseH / 2;
+                        if (b.userData.halo) b.userData.halo.position.y = b.userData.baseH + 0.15;
+                    });
+                }
+            });
+
+            function cyw_animate2() {
+                requestAnimationFrame(cyw_animate2);
+
+                if (cyw_animOn) {
+                    var cywT = performance.now();
+                    cyw_bars.forEach(function (b) {
+                        var phase = (cywT - b.userData.t0) / 1000;
+                        var s = 0.6 + Math.sin(phase * 1.2) * 0.4;
+                        b.scale.y = s;
+                        b.position.y = (b.userData.baseH * s) / 2;
+                        if (b.userData.halo) {
+                            b.userData.halo.position.y = b.userData.baseH * s + 0.15;
+                        }
+                    });
+                }
+
+                cyw_point.position.x = Math.sin(performance.now() * 0.0005) * 8;
+                cyw_point.position.z = Math.cos(performance.now() * 0.0005) * 8;
+
+                cyw_orbit2.update();
+                cyw_renderer2.render(cyw_scene2, cyw_camera2);
+            }
+            cyw_animate2();
+
+            window.addEventListener("resize", function () {
+                var w2 = cyw_wrap2.clientWidth, h2 = cyw_wrap2.clientHeight;
+                cyw_camera2.aspect = w2 / h2; cyw_camera2.updateProjectionMatrix();
+                cyw_renderer2.setSize(w2, h2);
+            });
+        })();
+
+    })();
+    </script>
+</body>
+</html>
