@@ -151,27 +151,45 @@
             var cywPauseBtn = document.getElementById("cyw_pauseBtn");
             var cywResetBtn = document.getElementById("cyw_resetBtn");
 
-            var cywCols = 0;
-            var cywDrops = [];
-            var cywFontSize = 18;
-            var cywRunning = true;
-            var cywSpeed = 1;
-            var cywColor = "#00ff66";
-            var cywAnimId = null;
+            var cywLines = [
+                "崔 溢 文",
+                "高级网页设计",
+                "课堂实践作业",
+                "Canvas 文字下落",
+                "JavaScript 动画",
+                "requestAnimationFrame",
+                "2026 秋",
+                "加油！冲冲冲 🔥"
+            ];
 
-            var cywChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()_+-=[]{};:'\",.<>|/?\\`~中文黑客帝国崔溢文JavaScriptCanvas";
+            var cywStreams = [];
+            var cywStreamH = 0;
+
+            function cyw_initStreams() {
+                cywStreams = [];
+                var cywCols = Math.ceil(cywCanvas.width / cywFontSize);
+                for (var i = 0; i < cywCols; i++) {
+                    var cywText = cywLines[Math.floor(Math.random() * cywLines.length)];
+                    var cywChars = cywText.split("");
+                    cywStreams.push({
+                        x: i * cywFontSize,
+                        y: -Math.random() * cywStreamH,
+                        text: cywText,
+                        chars: cywChars,
+                        offset: Math.floor(Math.random() * cywChars.length),
+                        speed: cywSpeed * (0.7 + Math.random() * 0.8)
+                    });
+                }
+            }
 
             function cyw_resize() {
                 var cywRect = cywCanvas.parentElement.getBoundingClientRect();
                 cywCanvas.width = cywRect.width;
-                cywCanvas.height = 380;
-                cywCols = Math.floor(cywCanvas.width / cywFontSize);
-                cywDrops = [];
-                for (var i = 0; i < cywCols; i++) {
-                    cywDrops.push(Math.random() * -cywCanvas.height);
-                }
+                cywCanvas.height = 420;
+                cywStreamH = cywCanvas.height + 200;
                 cywCtx.fillStyle = "#0a0a1a";
                 cywCtx.fillRect(0, 0, cywCanvas.width, cywCanvas.height);
+                cyw_initStreams();
             }
 
             function cyw_draw() {
@@ -180,27 +198,48 @@
                     return;
                 }
 
-                cywCtx.fillStyle = "rgba(10, 10, 26, 0.08)";
+                cywCtx.fillStyle = "rgba(10, 10, 26, 0.1)";
                 cywCtx.fillRect(0, 0, cywCanvas.width, cywCanvas.height);
 
-                cywCtx.font = cywFontSize + "px Consolas, monospace";
+                cywCtx.font = cywFontSize + "px 'Microsoft YaHei', Consolas, monospace";
+                cywCtx.textBaseline = "top";
 
-                for (var i = 0; i < cywCols; i++) {
-                    var cywChar = cywChars.charAt(Math.floor(Math.random() * cywChars.length));
-                    var cywX = i * cywFontSize;
-                    var cywY = cywDrops[i] * cywFontSize;
+                cywStreams.forEach(function (s) {
+                    for (var j = 0; j < s.chars.length; j++) {
+                        var cywIdx = (s.offset + j) % s.chars.length;
+                        var cywChar = s.chars[cywIdx];
+                        var cywY = s.y + j * cywFontSize;
 
-                    cywCtx.fillStyle = cywColor;
-                    cywCtx.fillText(cywChar, cywX, cywY);
+                        if (cywY < -cywFontSize || cywY > cywCanvas.height) continue;
 
-                    cywCtx.fillStyle = "#ffffff";
-                    cywCtx.fillText(cywChar, cywX, cywY - cywFontSize);
+                        if (j === s.chars.length - 1) {
+                            cywCtx.fillStyle = "#ffffff";
+                            cywCtx.shadowColor = cywColor;
+                            cywCtx.shadowBlur = 8;
+                        } else if (j === s.chars.length - 2) {
+                            cywCtx.fillStyle = cywColor;
+                            cywCtx.shadowBlur = 0;
+                        } else {
+                            var cywAlpha = 1 - j / s.chars.length;
+                            cywCtx.fillStyle = cywColor;
+                            cywCtx.globalAlpha = cywAlpha * 0.7;
+                            cywCtx.shadowBlur = 0;
+                        }
 
-                    if (cywY > cywCanvas.height && Math.random() > 0.975) {
-                        cywDrops[i] = 0;
+                        cywCtx.fillText(cywChar, s.x, cywY);
                     }
-                    cywDrops[i] += cywSpeed;
-                }
+                    cywCtx.globalAlpha = 1;
+                    cywCtx.shadowBlur = 0;
+
+                    s.y += s.speed;
+                    if (s.y > cywStreamH) {
+                        s.y = -cywStreamH * 0.3;
+                        s.text = cywLines[Math.floor(Math.random() * cywLines.length)];
+                        s.chars = s.text.split("");
+                        s.offset = Math.floor(Math.random() * s.chars.length);
+                        s.speed = cywSpeed * (0.7 + Math.random() * 0.8);
+                    }
+                });
 
                 cywAnimId = requestAnimationFrame(cyw_draw);
             }
