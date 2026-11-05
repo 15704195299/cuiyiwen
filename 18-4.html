@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <!-- 姓名：崔溢文，日期：2026-11-05，功能名称：ECharts 南丁格尔玫瑰图 + 3D力导向图 -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>18-4 ECharts 南丁格尔玫瑰图 & 3D 力导向图</title>
+    <script src="./cdn/echarts.min.js"></script>
+    <script src="./cdn/echarts-gl.min.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            background: #f3f4f6;
+            color: #1f2937;
+            padding: 28px 20px 40px;
+            min-height: 100vh;
+        }
+        .cyw-wrap { max-width: 1300px; margin: 0 auto; }
+        .cyw-title { text-align: center; margin-bottom: 6px; }
+        .cyw-title h1 {
+            font-size: 22px; font-weight: 700; letter-spacing: 2px; color: #0f172a;
+        }
+        .cyw-title .cyw-en {
+            font-size: 12px; color: #64748b; letter-spacing: 3px; margin-top: 4px;
+        }
+        .cyw-divider {
+            width: 60px; height: 2px; background: linear-gradient(90deg, transparent, #1e40af, transparent);
+            margin: 14px auto 22px;
+        }
+        .cyw-meta { text-align: center; font-size: 12px; color: #94a3b8; margin-bottom: 24px; }
+
+        .cyw-card {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.06);
+            border: 1px solid #e2e8f0;
+            margin-bottom: 22px;
+            overflow: hidden;
+        }
+        .cyw-card-head {
+            padding: 14px 22px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .cyw-card-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .cyw-card-title .cyw-tag {
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        .cyw-tag-pie { background: #fef3c7; color: #b45309; }
+        .cyw-tag-gl { background: #ede9fe; color: #6d28d9; }
+        .cyw-card-title h2 { font-size: 15px; font-weight: 600; color: #1e293b; }
+        .cyw-card-desc { font-size: 11px; color: #94a3b8; }
+        .cyw-chart { width: 100%; height: 480px; }
+
+        .cyw-home { text-align: center; margin-top: 22px; }
+        .cyw-home a {
+            display: inline-block; padding: 8px 26px;
+            background: #1e40af; color: #fff; text-decoration: none;
+            border-radius: 20px; font-size: 13px; letter-spacing: 1px;
+            transition: background 0.15s;
+        }
+        .cyw-home a:hover { background: #1e3a8a; }
+    </style>
+</head>
+<body>
+    <div class="cyw-wrap">
+        <div class="cyw-title">
+            <h1>ECharts 数据可视化示例</h1>
+            <div class="cyw-en">Data Visualization with Apache ECharts</div>
+        </div>
+        <div class="cyw-divider"></div>
+        <div class="cyw-meta">崔溢文 · 18-4 · 南丁格尔玫瑰图 + 3D 力导向图 · 本地 CDN</div>
+
+        <div class="cyw-card">
+            <div class="cyw-card-head">
+                <div class="cyw-card-title">
+                    <span class="cyw-tag cyw-tag-pie">PIE</span>
+                    <h2>南丁格尔玫瑰图 / Nightingale Rose Chart</h2>
+                </div>
+                <div class="cyw-card-desc">roseType: area · 圆角玫瑰花瓣</div>
+            </div>
+            <div id="cyw_chart1" class="cyw-chart"></div>
+        </div>
+
+        <div class="cyw-card">
+            <div class="cyw-card-head">
+                <div class="cyw-card-title">
+                    <span class="cyw-tag cyw-tag-gl">GL · 3D</span>
+                    <h2>npm 依赖关系 3D 力导向图 / Force-Directed Graph</h2>
+                </div>
+                <div class="cyw-card-desc">graphGL · 1000+ 节点 · 鼠标拖拽旋转缩放</div>
+            </div>
+            <div id="cyw_chart2" class="cyw-chart" style="height:580px;background:#000"></div>
+        </div>
+
+        <div class="cyw-home"><a href="./1-1.html">← 返回首页</a></div>
+    </div>
+
+    <script>
+        (function () {
+            // ========== Chart 1: 南丁格尔玫瑰图 ==========
+            var cyw_chart1 = echarts.init(document.getElementById("cyw_chart1"));
+            var cyw_option1 = {
+                backgroundColor: "#ffffff",
+                legend: {
+                    top: "bottom",
+                    textStyle: { color: "#475569", fontSize: 12 }
+                },
+                toolbox: {
+                    show: true,
+                    feature: {
+                        mark: { show: true },
+                        dataView: { show: true, readOnly: false },
+                        restore: { show: true },
+                        saveAsImage: { show: true }
+                    }
+                },
+                tooltip: {
+                    trigger: "item",
+                    formatter: "{b}<br/>数量: {c}<br/>占比: {d}%"
+                },
+                color: ["#f97316", "#eab308", "#22c55e", "#06b6d4", "#6366f1", "#ec4899", "#ef4444", "#8b5cf6"],
+                series: [{
+                    name: "崔溢文的课程兴趣调查",
+                    type: "pie",
+                    radius: ["45", "220"],
+                    center: ["50%", "50%"],
+                    roseType: "area",
+                    itemStyle: {
+                        borderRadius: 8,
+                        borderColor: "#ffffff",
+                        borderWidth: 2
+                    },
+                    label: {
+                        show: true,
+                        color: "#334155",
+                        fontSize: 12,
+                        formatter: "{b}\n{c}"
+                    },
+                    labelLine: {
+                        length: 10,
+                        length2: 12,
+                        lineStyle: { color: "#cbd5e1" }
+                    },
+                    emphasis: {
+                        scale: true,
+                        scaleSize: 10,
+                        itemStyle: {
+                            shadowBlur: 20,
+                            shadowColor: "rgba(0,0,0,0.3)"
+                        }
+                    },
+                    data: [
+                        { value: 40, name: "JavaScript" },
+                        { value: 38, name: "HTML/CSS" },
+                        { value: 32, name: "Node.js" },
+                        { value: 30, name: "Vue / React" },
+                        { value: 28, name: "Canvas 动画" },
+                        { value: 26, name: "SVG 图形" },
+                        { value: 22, name: "数据可视化" },
+                        { value: 18, name: "WebGL / 3D" }
+                    ]
+                }]
+            };
+            cyw_chart1.setOption(cyw_option1);
+
+            // ========== Chart 2: npm 依赖 3D 力导向图 ==========
+            var cyw_chart2 = echarts.init(document.getElementById("cyw_chart2"));
+            cyw_chart2.showLoading({ text: "加载 npm 依赖数据中...", textColor: "#fff", maskColor: "rgba(0,0,0,0.5)" });
+
+            fetch("./cdn/npmdep.json")
+                .then(function (res) { return res.json(); })
+                .then(function (data) {
+                    cyw_chart2.hideLoading();
+                    var cyw_nodes = data.nodes.map(function (nodeName, idx) {
+                        return {
+                            name: nodeName,
+                            value: data.dependentsCount[idx]
+                        };
+                    });
+                    var cyw_edges = [];
+                    for (var i = 0; i < data.edges.length; ) {
+                        var s = data.edges[i++];
+                        var t = data.edges[i++];
+                        cyw_edges.push({ source: s, target: t });
+                    }
+                    cyw_nodes.forEach(function (node) {
+                        node.emphasis = { label: { show: true } };
+                        if (node.value > 5000) { node.label = { show: true }; }
+                    });
+
+                    var cyw_option2 = {
+                        backgroundColor: "#000",
+                        tooltip: {},
+                        xAxis3D: { type: "value" },
+                        yAxis3D: { type: "value" },
+                        zAxis3D: { type: "value" },
+                        grid3D: {
+                            show: false,
+                            boxHeight: 20,
+                            viewControl: {
+                                autoRotate: true,
+                                autoRotateSpeed: 1.2,
+                                distance: 180
+                            }
+                        },
+                        series: [{
+                            type: "graph",
+                            layout: "force",
+                            force: {
+                                repulsion: 10,
+                                edgeLength: [2, 10],
+                                gravity: 0.1
+                            },
+                            data: cyw_nodes,
+                            links: cyw_edges,
+                            lineStyle: {
+                                color: "source",
+                                opacity: 0.4,
+                                curveness: 0
+                            },
+                            itemStyle: {
+                                color: "#10b981",
+                                borderColor: "#064e3b"
+                            },
+                            emphasis: {
+                                itemStyle: {
+                                    color: "#fbbf24"
+                                },
+                                lineStyle: {
+                                    color: "#fbbf24",
+                                    width: 3,
+                                    opacity: 1
+                                }
+                            },
+                            label: {
+                                show: false
+                            },
+                            roam: true,
+                            draggable: true
+                        }, {
+                            type: "graphGL",
+                            layout: "force",
+                            force: {
+                                repulsion: 10,
+                                edgeLength: [2, 10],
+                                gravity: 0.1
+                            },
+                            data: cyw_nodes,
+                            links: cyw_edges,
+                            lineStyle: {
+                                color: "source",
+                                opacity: 0.3
+                            },
+                            itemStyle: {
+                                color: "#6366f1",
+                                borderColor: "#312e81"
+                            },
+                            emphasis: {
+                                itemStyle: { color: "#f472b6" },
+                                lineStyle: { color: "#f472b6", width: 3 }
+                            },
+                            label: { show: false }
+                        }]
+                    };
+                    cyw_chart2.setOption(cyw_option2);
+                })
+                .catch(function (err) {
+                    cyw_chart2.hideLoading();
+                    cyw_chart2.setOption({
+                        backgroundColor: "#000",
+                        title: {
+                            text: "数据加载失败，请通过 http 服务器访问",
+                            subtext: "不能用 file:// 协议打开，需启动静态服务器",
+                            left: "center", top: "center",
+                            textStyle: { color: "#ef4444", fontSize: 16 },
+                            subtextStyle: { color: "#94a3b8", fontSize: 12 }
+                        }
+                    });
+                });
+
+            window.addEventListener("resize", function () {
+                cyw_chart1.resize();
+                cyw_chart2.resize();
+            });
+        })();
+    </script>
+</body>
+</html>
