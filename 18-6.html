@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <!-- 姓名：崔溢文，日期：2026-11-05，功能名称：Mermaid 智能客服系统流程图 + ER 图 -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>18-6 Mermaid 智能客服系统流程图 & ER 图</title>
+    <script src="./cdn/mermaid.min.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            background: #f3f4f6;
+            color: #1f2937;
+            padding: 28px 20px 40px;
+            min-height: 100vh;
+        }
+        .cyw-wrap { max-width: 1280px; margin: 0 auto; }
+        .cyw-title { text-align: center; margin-bottom: 6px; }
+        .cyw-title h1 { font-size: 22px; font-weight: 700; letter-spacing: 2px; color: #0f172a; }
+        .cyw-title .cyw-en { font-size: 12px; color: #64748b; letter-spacing: 3px; margin-top: 4px; }
+        .cyw-divider { width: 60px; height: 2px; background: linear-gradient(90deg, transparent, #7c3aed, transparent); margin: 14px auto 22px; }
+        .cyw-meta { text-align: center; font-size: 12px; color: #94a3b8; margin-bottom: 24px; }
+
+        .cyw-card {
+            background: #fff; border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.06);
+            border: 1px solid #e2e8f0; margin-bottom: 22px; overflow: hidden;
+        }
+        .cyw-card-head {
+            padding: 14px 22px; border-bottom: 1px solid #e2e8f0;
+            display: flex; align-items: center; justify-content: space-between; gap: 12px;
+            flex-wrap: wrap;
+        }
+        .cyw-card-title { display: flex; align-items: center; gap: 12px; }
+        .cyw-card-title .cyw-tag {
+            font-size: 10px; padding: 2px 8px; border-radius: 10px;
+            font-weight: 600; letter-spacing: 0.5px;
+        }
+        .cyw-tag-flow { background: #ede9fe; color: #6d28d9; }
+        .cyw-tag-er { background: #dcfce7; color: #166534; }
+        .cyw-card-title h2 { font-size: 15px; font-weight: 600; color: #1e293b; }
+        .cyw-card-desc { font-size: 11px; color: #94a3b8; }
+
+        .cyw-mermaid-box { padding: 28px 16px; overflow-x: auto; background: #fafbfc; }
+        .cyw-mermaid-box svg { display: block; margin: 0 auto; max-width: 100%; }
+
+        .cyw-src {
+            background: #1e293b; color: #e2e8f0; padding: 14px 22px;
+            font-family: "Consolas", "Fira Code", monospace;
+            font-size: 12px; line-height: 1.7; white-space: pre-wrap;
+            border-top: 1px solid #334155;
+            max-height: 200px; overflow-y: auto;
+        }
+        .cyw-src-title {
+            padding: 8px 22px; background: #0f172a;
+            color: #94a3b8; font-size: 11px; font-family: "Microsoft YaHei", sans-serif;
+            letter-spacing: 1px; border-top: 1px solid #334155;
+            cursor: pointer; user-select: none;
+        }
+        .cyw-src-title:hover { color: #cbd5e1; }
+        .cyw-src.cyw-hide { display: none; }
+
+        .cyw-home { text-align: center; margin-top: 22px; }
+        .cyw-home a {
+            display: inline-block; padding: 8px 26px;
+            background: #7c3aed; color: #fff; text-decoration: none;
+            border-radius: 20px; font-size: 13px; letter-spacing: 1px;
+            transition: background 0.15s;
+        }
+        .cyw-home a:hover { background: #6d28d9; }
+    </style>
+</head>
+<body>
+    <div class="cyw-wrap">
+        <div class="cyw-title">
+            <h1>Mermaid 系统建模图</h1>
+            <div class="cyw-en">Intelligent Customer Service · Flowchart & ER Diagram</div>
+        </div>
+        <div class="cyw-divider"></div>
+        <div class="cyw-meta">崔溢文 · 18-6 · Mermaid.js 本地 CDN · 流程图 + 实体关系图</div>
+
+        <!-- ========== Card 1: 流程图 ========== -->
+        <div class="cyw-card">
+            <div class="cyw-card-head">
+                <div class="cyw-card-title">
+                    <span class="cyw-tag cyw-tag-flow">FLOWCHART</span>
+                    <h2>智能客服系统请求处理流程</h2>
+                </div>
+                <div class="cyw-card-desc">mermaid.js · flowchart TD</div>
+            </div>
+            <div class="cyw-mermaid-box">
+                <pre class="mermaid">
+flowchart TD
+    A([用户发起提问]) --> B{身份识别}
+    B -->|已登录| C[获取用户画像]
+    B -->|游客| D[匿名模式]
+    C --> E[NLU 自然语言理解]
+    D --> E
+    E --> F{意图识别}
+    F -->|FAQ 查询| G[知识库向量检索]
+    F -->|闲聊| H[LLM 自由对话]
+    F -->|业务办理| I[对话状态追踪 DST]
+    G --> J{RAG 结果相关?}
+    J -->|是| K[返回检索答案 + 引用]
+    J -->|否| L[转人工客服]
+    H --> M[生成回复]
+    I --> N{多轮信息完整?}
+    N -->|否| O[追问用户补充信息]
+    N -->|是| P[调用后端 API 办理业务]
+    K --> Q[输出回复]
+    L --> Q
+    M --> Q
+    P --> Q
+    O --> E
+    Q --> R[记录对话日志]
+    R --> S([结束])
+
+    style A fill:#dbeafe,stroke:#1e40af
+    style S fill:#fce7f3,stroke:#be185d
+    style L fill:#fef3c7,stroke:#b45309
+    style P fill:#dcfce7,stroke:#166534
+                </pre>
+            </div>
+            <div class="cyw-src-title" onclick="this.nextElementSibling.classList.toggle('cyw-hide')">▶ 查看 Mermaid 源码</div>
+            <pre class="cyw-src">flowchart TD
+    A([用户发起提问]) --> B{身份识别}
+    B -->|已登录| C[获取用户画像]
+    B -->|游客| D[匿名模式]
+    C --> E[NLU 自然语言理解]
+    D --> E
+    E --> F{意图识别}
+    F -->|FAQ 查询| G[知识库向量检索]
+    F -->|闲聊| H[LLM 自由对话]
+    F -->|业务办理| I[对话状态追踪 DST]
+    G --> J{RAG 结果相关?}
+    J -->|是| K[返回检索答案 + 引用]
+    J -->|否| L[转人工客服]
+    H --> M[生成回复]
+    I --> N{多轮信息完整?}
+    N -->|否| O[追问用户补充信息]
+    N -->|是| P[调用后端 API 办理业务]
+    K --> Q[输出回复]
+    L --> Q
+    M --> Q
+    P --> Q
+    O --> E
+    Q --> R[记录对话日志]
+    R --> S([结束])</pre>
+        </div>
+
+        <!-- ========== Card 2: ER 图 ========== -->
+        <div class="cyw-card">
+            <div class="cyw-card-head">
+                <div class="cyw-card-title">
+                    <span class="cyw-tag cyw-tag-er">ER DIAGRAM</span>
+                    <h2>智能客服系统数据库 ER 图</h2>
+                </div>
+                <div class="cyw-card-desc">mermaid.js · erDiagram</div>
+            </div>
+            <div class="cyw-mermaid-box">
+                <pre class="mermaid">
+erDiagram
+    USER ||--o{ SESSION : "发起"
+    USER ||--o{ FEEDBACK : "提交"
+    SESSION ||--|{ MESSAGE : "包含"
+    SESSION ||--|| CONTEXT : "拥有"
+    MESSAGE }o--|| KNOWLEDGE : "引用"
+    KNOWLEDGE ||--|{ KNOWLEDGE_TAG : "标记"
+    TAG ||--|{ KNOWLEDGE_TAG : "关联"
+    INTENT ||--o{ MESSAGE : "识别为"
+    FEEDBACK }o--|| MESSAGE : "评价"
+    HUMAN_AGENT ||--o{ TRANSFER : "处理"
+    TRANSFER }o--|| SESSION : "转人工"
+
+    USER {
+        bigint user_id PK
+        varchar username
+        varchar email
+        tinyint gender
+        date birthday
+        timestamp created_at
+    }
+    SESSION {
+        bigint session_id PK
+        bigint user_id FK
+        tinyint channel
+        tinyint status
+        timestamp start_time
+        timestamp end_time
+        float satisfaction
+    }
+    CONTEXT {
+        bigint context_id PK
+        bigint session_id FK
+        varchar current_intent
+        json slot_values
+        tinyint turn_count
+    }
+    MESSAGE {
+        bigint msg_id PK
+        bigint session_id FK
+        tinyint role
+        text content
+        bigint intent_id FK
+        vector embedding
+        timestamp created_at
+    }
+    INTENT {
+        bigint intent_id PK
+        varchar intent_name
+        tinyint domain
+        text description
+    }
+    KNOWLEDGE {
+        bigint doc_id PK
+        varchar title
+        text content
+        vector embedding
+        int source_type
+        timestamp updated_at
+    }
+    TAG {
+        bigint tag_id PK
+        varchar tag_name
+        varchar tag_color
+    }
+    KNOWLEDGE_TAG {
+        bigint doc_id FK
+        bigint tag_id FK
+    }
+    FEEDBACK {
+        bigint feedback_id PK
+        bigint user_id FK
+        bigint msg_id FK
+        tinyint rating
+        text comment
+        timestamp created_at
+    }
+    HUMAN_AGENT {
+        bigint agent_id PK
+        varchar agent_name
+        tinyint status
+        int current_load
+    }
+    TRANSFER {
+        bigint transfer_id PK
+        bigint session_id FK
+        bigint agent_id FK
+        tinyint reason
+        timestamp transfer_time
+    }
+                </pre>
+            </div>
+            <div class="cyw-src-title" onclick="this.nextElementSibling.classList.toggle('cyw-hide')">▶ 查看 Mermaid 源码</div>
+            <pre class="cyw-src">erDiagram
+    USER ||--o{ SESSION : "发起"
+    USER ||--o{ FEEDBACK : "提交"
+    SESSION ||--|{ MESSAGE : "包含"
+    SESSION ||--|| CONTEXT : "拥有"
+    MESSAGE }o--|| KNOWLEDGE : "引用"
+    KNOWLEDGE ||--|{ KNOWLEDGE_TAG : "标记"
+    TAG ||--|{ KNOWLEDGE_TAG : "关联"
+    INTENT ||--o{ MESSAGE : "识别为"
+    FEEDBACK }o--|| MESSAGE : "评价"
+    HUMAN_AGENT ||--o{ TRANSFER : "处理"
+    TRANSFER }o--|| SESSION : "转人工"
+
+    USER { bigint user_id PK; varchar username; ... }
+    SESSION { bigint session_id PK; bigint user_id FK; ... }
+    CONTEXT { bigint context_id PK; bigint session_id FK; ... }
+    MESSAGE { bigint msg_id PK; bigint session_id FK; ... }
+    INTENT { bigint intent_id PK; varchar intent_name; ... }
+    KNOWLEDGE { bigint doc_id PK; varchar title; vector embedding; ... }
+    TAG { bigint tag_id PK; varchar tag_name; ... }
+    KNOWLEDGE_TAG { bigint doc_id FK; bigint tag_id FK; }
+    FEEDBACK { bigint feedback_id PK; bigint user_id FK; ... }
+    HUMAN_AGENT { bigint agent_id PK; varchar agent_name; ... }
+    TRANSFER { bigint transfer_id PK; bigint session_id FK; ... }</pre>
+        </div>
+
+        <div class="cyw-home"><a href="./1-1.html">← 返回首页</a></div>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: "default",
+            flowchart: { useMaxWidth: true, htmlLabels: true, curve: "basis" },
+            er: { useMaxWidth: true },
+            securityLevel: "loose"
+        });
+    </script>
+</body>
+</html>

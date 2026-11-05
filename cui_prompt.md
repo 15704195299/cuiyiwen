@@ -223,3 +223,8 @@
 
 - model: opencode/mimo
 - prompt: 实现 18-4.html，echarts 两个图：南丁格尔玫瑰饼图 + dataset-encode0 示例，文件下载到 cdn 目录。
+
+## 2026-11-05-16-20
+
+- model: opencode/mimo
+- prompt: 实现 18-6.html，mermaid 智能客服系统的流程图和 ER 图，cdn 文件下载到 cdn 目录。
